@@ -13,12 +13,12 @@ export const Navbar = () => {
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
                 <Headphones className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">VocalVerse</span>
+              <span className="text-xl font-bold text-gray-900">VocalVerse Studio</span>
             </Link>
             <div className="hidden md:block ml-10">
               <div className="flex items-center space-x-4">
                 <Link to="/app" className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary">
-                  Dashboard
+                  Studio Dashboard
                 </Link>
                 <Link to="/audio" className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary">
                   Audio Processing

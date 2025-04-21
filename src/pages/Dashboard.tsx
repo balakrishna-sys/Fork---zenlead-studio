@@ -8,7 +8,7 @@ import { TextInput } from "@/components/TextInput";
 import { ExcelUpload } from "@/components/ExcelUpload";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { VoiceSelector } from "@/components/VoiceSelector";
-import { Mic, FileText, Languages, Headphones } from "lucide-react";
+import { Mic, FileText, Languages, Clapperboard } from "lucide-react";
 
 const Dashboard = () => {
   const [targetLanguage, setTargetLanguage] = useState("");
@@ -18,9 +18,12 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Welcome to VocalVerse</h1>
+        <h1 className="text-3xl font-bold mb-4">VocalVerse Studio Dashboard</h1>
+        <p className="text-lg text-muted-foreground mb-8">
+          Process audio, text, and video with advanced AI technology. Select what you want to do!
+        </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center">
@@ -62,6 +65,27 @@ const Dashboard = () => {
               </p>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center">
+                <Clapperboard className="h-5 w-5 mr-2 text-primary" />
+                Video Generation
+              </CardTitle>
+              <CardDescription>Generate animated video from a prompt</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                0 videos generated this month
+              </p>
+              <div className="mt-2 h-2 w-full bg-secondary rounded-full overflow-hidden">
+                <div className="bg-primary h-full rounded-full" style={{ width: "0%" }}></div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                0/10 videos (Pro Plan)
+              </p>
+            </CardContent>
+          </Card>
           
           <Card>
             <CardHeader className="pb-3">
@@ -86,10 +110,11 @@ const Dashboard = () => {
         </div>
         
         <Tabs defaultValue="audio" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="audio">Audio Processing</TabsTrigger>
             <TabsTrigger value="text">Text to Speech</TabsTrigger>
             <TabsTrigger value="excel">Excel to Audio</TabsTrigger>
+            <TabsTrigger value="video">Video Generation</TabsTrigger>
           </TabsList>
           
           <TabsContent value="audio" className="space-y-6">
@@ -177,6 +202,29 @@ const Dashboard = () => {
                       placeholder="Select voice..." 
                     />
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="video" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Video Generation</CardTitle>
+                <CardDescription>
+                  Describe your scene and generate an animated video with AI.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <span className="font-semibold">New!</span> Create short animated videos by providing a prompt.
+                  </p>
+                  <a href="/video">
+                    <button className="w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition font-semibold">
+                      Go to Video Generation
+                    </button>
+                  </a>
                 </div>
               </CardContent>
             </Card>
