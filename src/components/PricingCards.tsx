@@ -2,19 +2,46 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import React from "react";
+
+const USD_PRICES = [
+  { name: "Basic", price: 9.99 },
+  { name: "Pro", price: 24.99 },
+  { name: "Enterprise", price: 59.99 }
+];
+
+const INR_PRICES = [
+  { name: "Basic", price: 799 },
+  { name: "Pro", price: 1999 },
+  { name: "Enterprise", price: 4999 }
+];
 
 export const PricingCards = () => {
+  // Simple country detection: Use INR for India, USD otherwise
+  const [currency, setCurrency] = React.useState<"USD" | "INR">("USD");
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const lang = navigator.language || "";
+      if (lang.startsWith("en-IN") || lang.startsWith("hi") || lang.includes("IN")) {
+        setCurrency("INR");
+      }
+    }
+  }, []);
+
   const pricingPlans = [
     {
       name: "Basic",
-      price: "$9.99",
+      priceUSD: "$9.99",
+      priceINR: "₹799",
       credits: "150 credits included",
-      description: "Essential voice and text conversion features",
+      description: "Essential voice, text, and video conversion features",
       features: [
         "150 initial credits (5 credits per minute)",
         "Audio language translation (3 languages)",
         "Basic voice cloning (2 voices)",
         "Text-to-speech conversion",
+        "Video description-to-animation",
         "Standard quality output"
       ],
       buttonText: "Get Started",
@@ -23,7 +50,8 @@ export const PricingCards = () => {
     },
     {
       name: "Pro",
-      price: "$24.99",
+      priceUSD: "$24.99",
+      priceINR: "₹1999",
       credits: "400 credits included",
       description: "Advanced features for professionals",
       features: [
@@ -32,6 +60,7 @@ export const PricingCards = () => {
         "Advanced voice cloning (10 voices)",
         "Text & Excel to speech conversion",
         "Text summarization",
+        "Video script-to-animation (HD)",
         "High quality output"
       ],
       buttonText: "Try Pro",
@@ -40,7 +69,8 @@ export const PricingCards = () => {
     },
     {
       name: "Enterprise",
-      price: "$59.99",
+      priceUSD: "$59.99",
+      priceINR: "₹4999",
       credits: "1000 credits included",
       description: "Complete solution for businesses",
       features: [
@@ -49,6 +79,7 @@ export const PricingCards = () => {
         "Unlimited voice cloning",
         "Batch processing of files",
         "Advanced summarization with customization",
+        "Video generation from description (Full HD)",
         "Premium quality output",
         "Priority support"
       ],
@@ -68,7 +99,24 @@ export const PricingCards = () => {
           Start with 150 credits on us. Choose the plan that works best for you.
         </p>
       </div>
-      
+      <div className="flex justify-center mb-8">
+        <span className="text-sm mr-3 text-gray-600">Currency:</span>
+        <Button
+          variant={currency === "USD" ? "secondary" : "outline"}
+          size="sm"
+          className="mr-2"
+          onClick={() => setCurrency("USD")}
+        >
+          USD $
+        </Button>
+        <Button
+          variant={currency === "INR" ? "secondary" : "outline"}
+          size="sm"
+          onClick={() => setCurrency("INR")}
+        >
+          INR ₹
+        </Button>
+      </div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {pricingPlans.map((plan) => (
           <Card 
@@ -78,7 +126,6 @@ export const PricingCards = () => {
             } overflow-hidden`}
           >
             <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-50`} />
-            
             {plan.popular && (
               <div className="absolute top-0 right-0 transform translate-x-2 -translate-y-2">
                 <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
@@ -86,17 +133,17 @@ export const PricingCards = () => {
                 </span>
               </div>
             )}
-            
             <CardHeader className="relative z-10">
               <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
               <div className="mt-2">
-                <span className="text-4xl font-bold tracking-tight">{plan.price}</span>
+                <span className="text-4xl font-bold tracking-tight">
+                  {currency === "INR" ? plan.priceINR : plan.priceUSD}
+                </span>
                 <span className="text-muted-foreground ml-1">/month</span>
               </div>
               <p className="text-sm font-medium text-primary mt-2">{plan.credits}</p>
               <CardDescription className="mt-3">{plan.description}</CardDescription>
             </CardHeader>
-            
             <CardContent className="flex-grow relative z-10">
               <ul className="space-y-4">
                 {plan.features.map((feature) => (
@@ -107,7 +154,6 @@ export const PricingCards = () => {
                 ))}
               </ul>
             </CardContent>
-            
             <CardFooter className="relative z-10">
               <Button 
                 className={`w-full ${
@@ -122,12 +168,11 @@ export const PricingCards = () => {
           </Card>
         ))}
       </div>
-      
       <div className="mt-16 text-center">
         <p className="text-sm text-muted-foreground">
           All plans include a 7-day free trial with 150 initial credits. 
           <br />
-          1 credit = 12 seconds of audio processing. Additional credits can be purchased separately.
+          1 credit = 12 seconds of processing. Additional credits can be purchased separately.
         </p>
       </div>
     </div>
