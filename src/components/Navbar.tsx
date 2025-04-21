@@ -1,6 +1,9 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Headphones, Clapperboard } from "lucide-react";
+import { Headphones, Menu } from "lucide-react";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export const Navbar = () => {
   return (
@@ -43,13 +46,46 @@ export const Navbar = () => {
               <Button>Get Started</Button>
             </div>
           </div>
+          
+          {/* Mobile menu button */}
           <div className="md:hidden">
-            {/* Mobile menu button - would implement with state for actual toggle */}
-            <Button variant="ghost" className="px-2">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </Button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" className="px-2">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[85%] sm:w-[385px] pt-10">
+                <div className="flex flex-col space-y-4 mt-4">
+                  <Link to="/" className="px-3 py-2 text-lg font-medium text-gray-900 hover:text-primary">
+                    Home
+                  </Link>
+                  <Link to="/app" className="px-3 py-2 text-lg font-medium text-gray-900 hover:text-primary">
+                    Studio Dashboard
+                  </Link>
+                  <Link to="/audio" className="px-3 py-2 text-lg font-medium text-gray-900 hover:text-primary">
+                    Audio Processing
+                  </Link>
+                  <Link to="/text" className="px-3 py-2 text-lg font-medium text-gray-900 hover:text-primary">
+                    Text Processing
+                  </Link>
+                  <Link to="/video" className="px-3 py-2 text-lg font-medium text-gray-900 hover:text-primary">
+                    Video Processing
+                  </Link>
+                  <Link to="/pricing" className="px-3 py-2 text-lg font-medium text-gray-900 hover:text-primary">
+                    Pricing
+                  </Link>
+                  <Link to="/library" className="px-3 py-2 text-lg font-medium text-gray-900 hover:text-primary">
+                    Library
+                  </Link>
+                  <div className="pt-4 border-t border-gray-200">
+                    <Button variant="outline" className="w-full mb-2">Sign In</Button>
+                    <Button className="w-full">Get Started</Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
