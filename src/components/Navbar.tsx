@@ -32,6 +32,9 @@ export const Navbar = () => {
                 <Link to="/pricing" className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary">
                   Pricing
                 </Link>
+                <Link to="/library" className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary">
+                  Library
+                </Link>
               </div>
             </div>
           </div>
@@ -54,3 +57,4 @@ export const Navbar = () => {
     </nav>
   );
 };
+
