@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 export const Hero = () => {
@@ -9,9 +8,9 @@ export const Hero = () => {
         <div className="mx-auto max-w-3xl text-center relative z-10">
           <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-              VocalVerse
+              Zenlead
             </span>
-            <span className="block mt-2">AI Voice Technology</span>
+            <span className="block mt-2">AI Technologies as a Magic</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600">
             Transform your audio and text with advanced AI. Translate audio across languages, clone voices,
