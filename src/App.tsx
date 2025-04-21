@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +12,7 @@ import VideoProcessing from "./pages/VideoProcessing";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import Library from "./pages/Library";
+import SignIn from "./pages/SignIn";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,7 @@ const App = () => (
           <Route path="/video" element={<VideoProcessing />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/library" element={<Library />} />
+          <Route path="/signin" element={<SignIn />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
@@ -36,3 +39,4 @@ const App = () => (
 );
 
 export default App;
+

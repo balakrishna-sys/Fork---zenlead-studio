@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Headphones, Menu } from "lucide-react";
@@ -42,8 +41,12 @@ export const Navbar = () => {
           </div>
           <div className="hidden md:block">
             <div className="flex items-center">
-              <Button variant="outline" className="mr-4">Sign In</Button>
-              <Button>Get Started</Button>
+              <Link to="/signin">
+                <Button variant="outline" className="mr-4">Sign In</Button>
+              </Link>
+              <Link to="/app">
+                <Button>Get Started</Button>
+              </Link>
             </div>
           </div>
           
@@ -80,8 +83,12 @@ export const Navbar = () => {
                     Library
                   </Link>
                   <div className="pt-4 border-t border-gray-200">
-                    <Button variant="outline" className="w-full mb-2">Sign In</Button>
-                    <Button className="w-full">Get Started</Button>
+                    <Link to="/signin">
+                      <Button variant="outline" className="w-full mb-2">Sign In</Button>
+                    </Link>
+                    <Link to="/app">
+                      <Button className="w-full">Get Started</Button>
+                    </Link>
                   </div>
                 </div>
               </SheetContent>
