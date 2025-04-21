@@ -99,22 +99,23 @@ export const PricingCards = () => {
           Start with 150 credits on us. Choose the plan that works best for you.
         </p>
       </div>
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center items-center mb-8">
         <span className="text-sm mr-3 text-gray-600">Currency:</span>
         <Button
           variant={currency === "USD" ? "secondary" : "outline"}
           size="sm"
-          className="mr-2"
+          className="mr-2 min-w-[90px]"
           onClick={() => setCurrency("USD")}
         >
-          USD $
+          USD <span className="ml-1">$</span>
         </Button>
         <Button
           variant={currency === "INR" ? "secondary" : "outline"}
           size="sm"
+          className="min-w-[90px]"
           onClick={() => setCurrency("INR")}
         >
-          INR ₹
+          INR <span className="ml-1">₹</span>
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -178,3 +179,4 @@ export const PricingCards = () => {
     </div>
   );
 };
+
