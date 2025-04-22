@@ -1,4 +1,3 @@
-
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +45,8 @@ export const PricingCards = () => {
       ],
       buttonText: "Get Started",
       popular: false,
-      gradient: "from-blue-500/10 via-transparent to-purple-500/10"
+      gradient: "from-blue-500/10 via-transparent to-purple-500/10",
+      buttonVariant: "default"
     },
     {
       name: "Pro",
@@ -65,7 +65,8 @@ export const PricingCards = () => {
       ],
       buttonText: "Try Pro",
       popular: true,
-      gradient: "from-purple-500/10 via-transparent to-pink-500/10"
+      gradient: "from-purple-500/10 via-transparent to-pink-500/10",
+      buttonVariant: "secondary"
     },
     {
       name: "Enterprise",
@@ -85,7 +86,8 @@ export const PricingCards = () => {
       ],
       buttonText: "Contact Sales",
       popular: false,
-      gradient: "from-pink-500/10 via-transparent to-orange-500/10"
+      gradient: "from-pink-500/10 via-transparent to-orange-500/10",
+      buttonVariant: "outline"
     }
   ];
 
@@ -157,11 +159,8 @@ export const PricingCards = () => {
             </CardContent>
             <CardFooter className="relative z-10">
               <Button 
-                className={`w-full ${
-                  plan.popular 
-                    ? 'bg-primary hover:bg-primary/90 shadow-lg' 
-                    : 'bg-secondary/80 hover:bg-secondary/90'
-                } transition-all duration-300`}
+                variant={plan.buttonVariant || "default"}
+                className="w-full transition-all duration-300"
               >
                 {plan.buttonText}
               </Button>

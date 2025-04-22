@@ -40,7 +40,7 @@ export const HowItWorks = () => {
             {steps.map((item, index) => (
               <div key={index} className="relative text-center">
                 <div className="flex items-center justify-center">
-                  <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white text-xl font-bold z-10">
+                  <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white dark:text-gray-900 text-xl font-bold z-10">
                     {item.step}
                   </div>
                 </div>
@@ -57,7 +57,7 @@ export const HowItWorks = () => {
         
         <div className="mt-16 flex justify-center">
           <Link to="/app">
-            <Button className="flex items-center bg-primary hover:bg-primary/90">
+            <Button className="flex items-center bg-primary text-white hover:bg-primary/90">
               Try The Studio
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
