@@ -14,13 +14,13 @@ const Index = () => {
       <FeatureSection />
       
       {/* How It Works Section */}
-      <div className="py-24 bg-white">
+      <div className="py-24 bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
               How It Works
             </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
               Transform your <strong>audio, text, and video</strong> in three simple steps
             </p>
           </div>
@@ -51,10 +51,10 @@ const Index = () => {
                       {item.step}
                     </div>
                   </div>
-                  <h3 className="mt-6 text-xl font-semibold leading-7 text-gray-900">
+                  <h3 className="mt-6 text-xl font-semibold leading-7 text-gray-900 dark:text-gray-100">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-base leading-7 text-gray-600 mx-auto max-w-xs">
+                  <p className="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300 mx-auto max-w-xs">
                     {item.description}
                   </p>
                 </div>
@@ -74,13 +74,13 @@ const Index = () => {
       </div>
       
       {/* Use Cases Section */}
-      <div className="py-24 bg-gradient-to-b from-muted/30 to-background">
+      <div className="py-24 bg-gradient-to-b from-muted/30 to-background dark:from-gray-800 dark:to-background">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
               Trusted by creators, educators, and businesses
             </h2>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
               VocalVerse Studio empowers users to unlock new possibilities with AI <span className="font-semibold text-primary">voice, text, and video</span> technology.
             </p>
           </div>
@@ -117,13 +117,13 @@ const Index = () => {
               }
             ].map((useCase, index) => (
               <div key={index} className="flex flex-col rounded-2xl border bg-card/80 p-8 hover:shadow-md transition-all">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">{useCase.title}</h3>
-                <p className="text-base text-gray-600 mb-6 flex-grow">{useCase.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">{useCase.title}</h3>
+                <p className="text-base text-gray-600 dark:text-gray-300 mb-6 flex-grow">{useCase.description}</p>
                 <ul className="space-y-3">
                   {useCase.benefits.map((benefit, i) => (
                     <li key={i} className="flex items-start">
                       <CheckCircle2 className="mr-2 h-5 w-5 shrink-0 text-primary" />
-                      <span className="text-sm text-gray-700">{benefit}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{benefit}</span>
                     </li>
                   ))}
                 </ul>

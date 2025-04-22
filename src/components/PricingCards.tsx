@@ -95,12 +95,12 @@ export const PricingCards = () => {
         <h2 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-purple-500 to-secondary bg-clip-text text-transparent sm:text-5xl">
           Simple, transparent pricing
         </h2>
-        <p className="mt-6 text-lg leading-8 text-gray-600">
+        <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
           Start with 150 credits on us. Choose the plan that works best for you.
         </p>
       </div>
       <div className="flex justify-center items-center mb-8">
-        <span className="text-sm mr-3 text-gray-600">Currency:</span>
+        <span className="text-sm mr-3 text-gray-600 dark:text-gray-300">Currency:</span>
         <Button
           variant={currency === "USD" ? "secondary" : "outline"}
           size="sm"
@@ -143,14 +143,14 @@ export const PricingCards = () => {
                 <span className="text-muted-foreground ml-1">/month</span>
               </div>
               <p className="text-sm font-medium text-primary mt-2">{plan.credits}</p>
-              <CardDescription className="mt-3">{plan.description}</CardDescription>
+              <CardDescription className="mt-3 dark:text-gray-300">{plan.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow relative z-10">
               <ul className="space-y-4">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start">
                     <Check className="mr-2 h-5 w-5 shrink-0 text-primary" />
-                    <span className="text-sm text-gray-700">{feature}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -170,7 +170,7 @@ export const PricingCards = () => {
         ))}
       </div>
       <div className="mt-16 text-center">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground dark:text-gray-400">
           All plans include a 7-day free trial with 150 initial credits. 
           <br />
           1 credit = 12 seconds of processing. Additional credits can be purchased separately.
@@ -179,4 +179,3 @@ export const PricingCards = () => {
     </div>
   );
 };
-

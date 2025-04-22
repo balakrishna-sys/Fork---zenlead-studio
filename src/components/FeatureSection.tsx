@@ -36,13 +36,13 @@ export const FeatureSection = () => {
   ];
 
   return (
-    <div className="py-24 bg-gradient-to-b from-background to-muted/30">
+    <div className="py-24 bg-gradient-to-b from-background to-muted/30 dark:from-background dark:to-gray-800/30">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
             Powerful AI Voice Features
           </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
             Our advanced AI technology powers a suite of voice and text transformation tools.
           </p>
         </div>
@@ -53,10 +53,10 @@ export const FeatureSection = () => {
                 <div className="absolute left-5 top-5 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                   <feature.icon className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
-                <h3 className="mt-6 text-xl font-semibold leading-7 text-gray-900 pt-2">
+                <h3 className="mt-6 text-xl font-semibold leading-7 text-gray-900 dark:text-gray-100 pt-2">
                   {feature.name}
                 </h3>
-                <p className="mt-2 text-base leading-7 text-gray-600">
+                <p className="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300">
                   {feature.description}
                 </p>
               </div>
