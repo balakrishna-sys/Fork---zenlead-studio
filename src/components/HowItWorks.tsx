@@ -57,7 +57,9 @@ export const HowItWorks = () => {
         
         <div className="mt-16 flex justify-center">
           <Link to="/app">
-            <Button className="flex items-center bg-primary text-white hover:bg-primary/90">
+            <Button 
+              className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90 dark:text-gray-900"
+            >
               Try The Studio
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
