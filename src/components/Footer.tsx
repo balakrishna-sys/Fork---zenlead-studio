@@ -1,4 +1,6 @@
 
+import { Link } from "react-router-dom";
+
 export const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white py-12">
@@ -37,28 +39,28 @@ export const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Product</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-white">Features</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Pricing</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Case Studies</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Documentation</a></li>
+              <li><Link to="#" className="text-gray-400 hover:text-white">Features</Link></li>
+              <li><Link to="/pricing" className="text-gray-400 hover:text-white">Pricing</Link></li>
+              <li><Link to="/case-studies" className="text-gray-400 hover:text-white">Case Studies</Link></li>
+              <li><Link to="/documentation" className="text-gray-400 hover:text-white">Documentation</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">Company</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-white">About</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Blog</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Careers</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Contact</a></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-white">About</Link></li>
+              <li><Link to="/blog" className="text-gray-400 hover:text-white">Blog</Link></li>
+              <li><Link to="/careers" className="text-gray-400 hover:text-white">Careers</Link></li>
+              <li><Link to="/contact" className="text-gray-400 hover:text-white">Contact</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-white">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Terms of Service</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Cookie Policy</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">GDPR</a></li>
+              <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
+              <li><Link to="/terms-of-service" className="text-gray-400 hover:text-white">Terms of Service</Link></li>
+              <li><Link to="/cookie-policy" className="text-gray-400 hover:text-white">Cookie Policy</Link></li>
+              <li><Link to="/gdpr" className="text-gray-400 hover:text-white">GDPR</Link></li>
             </ul>
           </div>
         </div>
