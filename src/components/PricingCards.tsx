@@ -46,7 +46,7 @@ export const PricingCards = () => {
       buttonText: "Get Started",
       popular: false,
       gradient: "from-blue-500/10 via-transparent to-purple-500/10",
-      buttonVariant: "default"
+      buttonVariant: "default" // Consistent button variant
     },
     {
       name: "Pro",
@@ -66,7 +66,7 @@ export const PricingCards = () => {
       buttonText: "Try Pro",
       popular: true,
       gradient: "from-purple-500/10 via-transparent to-pink-500/10",
-      buttonVariant: "secondary"
+      buttonVariant: "default" // Changed from secondary to default for consistency
     },
     {
       name: "Enterprise",
@@ -87,7 +87,7 @@ export const PricingCards = () => {
       buttonText: "Contact Sales",
       popular: false,
       gradient: "from-pink-500/10 via-transparent to-orange-500/10",
-      buttonVariant: "outline"
+      buttonVariant: "default" // Changed from outline to default for consistency
     }
   ];
 
@@ -159,7 +159,7 @@ export const PricingCards = () => {
             </CardContent>
             <CardFooter className="relative z-10">
               <Button 
-                variant={plan.buttonVariant || "default"}
+                variant={plan.buttonVariant} // Use the consistent variant
                 className="w-full transition-all duration-300"
               >
                 {plan.buttonText}
