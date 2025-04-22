@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Headphones, Menu, Moon, Sun } from "lucide-react";
@@ -17,7 +16,7 @@ export const Navbar = () => {
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
                 <Headphones className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">Zenlead Studio</span>
+              <span className="text-xl font-bold">Vocal Verse AI Studio</span>
             </Link>
             <div className="hidden md:block ml-10">
               <div className="flex items-center space-x-4">
@@ -65,7 +64,6 @@ export const Navbar = () => {
             </div>
           </div>
           
-          {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-2">
             <Button
               variant="ghost"
