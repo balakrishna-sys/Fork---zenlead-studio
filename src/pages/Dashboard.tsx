@@ -8,7 +8,7 @@ import { TextInput } from "@/components/TextInput";
 import { ExcelUpload } from "@/components/ExcelUpload";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { VoiceSelector } from "@/components/VoiceSelector";
-import { Mic, FileText, Languages, Clapperboard } from "lucide-react";
+import { Mic, FileText, Languages, Clapperboard, FileTextIcon } from "lucide-react";
 
 const Dashboard = () => {
   const [targetLanguage, setTargetLanguage] = useState("");
@@ -26,18 +26,33 @@ const Dashboard = () => {
         {/* Top models and video generation summary */}
         <div className="mb-6">
           <div className="mb-2 text-primary font-semibold text-xl">Check out top models</div>
-          <Card className="mb-4 border-l-4 border-primary bg-secondary/40">
-            <CardContent className="flex flex-col gap-2 py-4">
-              <div className="flex items-center gap-2">
-                <Clapperboard className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Video Generation</span>
-              </div>
-              <div className="text-muted-foreground text-sm">
-                Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals and fast turnaround times.
-                <a className="ml-2 underline text-primary font-medium" href="/video">Try now &rarr;</a>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="border-l-4 border-primary bg-secondary/40">
+              <CardContent className="flex flex-col gap-2 py-4">
+                <div className="flex items-center gap-2">
+                  <Clapperboard className="h-5 w-5 text-primary" />
+                  <span className="font-semibold">Video Generation</span>
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals and fast turnaround times.
+                  <a className="ml-2 underline text-primary font-medium" href="/video">Try now &rarr;</a>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-primary bg-secondary/40">
+              <CardContent className="flex flex-col gap-2 py-4">
+                <div className="flex items-center gap-2">
+                  <FileTextIcon className="h-5 w-5 text-primary" />
+                  <span className="font-semibold">Text Summarization</span>
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  Transform lengthy content into concise, easy-to-understand summaries. Supports multiple languages and customizable summary lengths.
+                  <a className="ml-2 underline text-primary font-medium" href="/text-processing">Try now &rarr;</a>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Try other AI section title */}
