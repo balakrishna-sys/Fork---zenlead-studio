@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -11,6 +10,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, FileText, FileSpreadsheet, FileDigit, Book } from "lucide-react";
 
+const exampleBookContent = (prompt: string) => [
+  { heading: "Title", content: `AI-Generated Book: ${prompt}` },
+  { heading: "Chapter 1: Introduction", content: "This is a generated introduction about your chosen topic, laying the foundation for the rest of the book." },
+  { heading: "Chapter 2: Deep Dive", content: "In this chapter, we'll explore the main concepts of your topic in great detail, with examples and explanations." },
+  { heading: "Chapter 3: Case Studies", content: "Here, real-world examples and research findings are shared to deepen your understanding." },
+  { heading: "Conclusion", content: "A summary of the book and final insights are presented here." },
+];
+
 const TextProcessing = () => {
   const [text, setText] = useState("");
   const [excelFile, setExcelFile] = useState<File | null>(null);
@@ -18,12 +25,23 @@ const TextProcessing = () => {
   const [selectedVoice, setSelectedVoice] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const [bookPrompt, setBookPrompt] = useState("");
+  const [bookContent, setBookContent] = useState<{heading: string, content: string}[]|null>(null);
+  const [isBookLoading, setIsBookLoading] = useState(false);
+
   const handleProcessText = () => {
     setIsProcessing(true);
-    // Mock processing - would connect to API in real implementation
     setTimeout(() => {
       setIsProcessing(false);
-      // Show success state or results
+    }, 2000);
+  };
+
+  const handleGenerateBook = () => {
+    setIsBookLoading(true);
+    setBookContent(null);
+    setTimeout(() => {
+      setBookContent(exampleBookContent(bookPrompt));
+      setIsBookLoading(false);
     }, 2000);
   };
 
@@ -34,7 +52,6 @@ const TextProcessing = () => {
         <h1 className="text-3xl font-bold mb-2">Text Processing</h1>
         <p className="text-gray-600 mb-8">Convert your text to natural-sounding speech</p>
         
-        {/* Long Book Generation Model Feature */}
         <div className="mb-8">
           <Card className="border-l-4 border-primary bg-secondary/40">
             <CardContent className="flex flex-col md:flex-row gap-4 py-4">
@@ -50,7 +67,7 @@ const TextProcessing = () => {
         </div>
         
         <Tabs defaultValue="text-to-speech" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="text-to-speech" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               <span>Text to Speech</span>
@@ -63,7 +80,76 @@ const TextProcessing = () => {
               <FileDigit className="h-4 w-4" />
               <span>Summarize</span>
             </TabsTrigger>
+            <TabsTrigger value="long-book" className="flex items-center gap-2">
+              <Book className="h-4 w-4" />
+              <span>Long Book (AI Model)</span>
+            </TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="long-book" className="space-y-6" id="long-book">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Book Prompt</CardTitle>
+                  <CardDescription>
+                    Enter a topic, course, or subject. The model will generate a full book or research paper!
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <textarea
+                    className="w-full border rounded-md p-3 min-h-[100px] resize-none"
+                    placeholder="e.g. Advanced AI Course, Full Stack Web Development, Quantum Computing…"
+                    value={bookPrompt}
+                    onChange={(e) => setBookPrompt(e.target.value)}
+                  />
+                  <div className="flex justify-end mt-4">
+                    <Button onClick={handleGenerateBook} disabled={!bookPrompt.trim() || isBookLoading} className="w-full">
+                      {isBookLoading ? "Generating Book..." : "Generate Book"}
+                      {!isBookLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+                    </Button>
+                  </div>
+                </CardContent>
+                <CardFooter className="text-xs text-muted-foreground">
+                  You will get a full-length, structured book—great for learning, research, or publishing as a PDF.
+                </CardFooter>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Generated Book</CardTitle>
+                  <CardDescription>
+                    The generated content will appear here in a readable, scrollable document style.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="max-h-[400px] overflow-y-auto border bg-background rounded-md px-4 py-3 shadow-inner">
+                    {isBookLoading && (
+                      <div className="text-center text-muted-foreground py-12">Generating book, please wait...</div>
+                    )}
+                    {!isBookLoading && bookContent && (
+                      <div className="space-y-6">
+                        {bookContent.map((sec, idx) => (
+                          <section key={idx}>
+                            <h3 className="font-bold text-lg mb-2">{sec.heading}</h3>
+                            <p className="text-base text-gray-700 whitespace-pre-wrap">{sec.content}</p>
+                          </section>
+                        ))}
+                      </div>
+                    )}
+                    {!isBookLoading && !bookContent && (
+                      <div className="text-muted-foreground text-sm text-center py-10">
+                        No book generated yet. Enter a prompt and start!
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+                <CardFooter className="flex items-center justify-end space-x-2 pt-2">
+                  <Button variant="outline" disabled={!bookContent} className="text-xs px-3 py-1">
+                    Download PDF
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
           
           <TabsContent value="text-to-speech" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
