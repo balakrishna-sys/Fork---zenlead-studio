@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { TextInput } from "@/components/TextInput";
 import { ExcelUpload } from "@/components/ExcelUpload";
@@ -41,7 +43,7 @@ const TextProcessing = () => {
                 <span className="font-semibold text-lg">Long Book Generation</span>
               </div>
               <div className="text-muted-foreground text-sm flex-1">
-                Instantly generate a complete book or research paper (as a downloadable PDF) from a single prompt—ideal for AI courses, full stack learning paths, or any topic you want. Go beyond chatbots—get book-length, ready-to-use content for education, research, or publishing. <a href="/text-processing#long-book" className="ml-2 underline text-primary font-medium">Try now &rarr;</a>
+                Instantly generate a complete book or research paper (as a downloadable PDF) from a single prompt—ideal for AI courses, full stack learning paths, or any topic you want. Go beyond chatbots—get book-length, ready-to-use content for education, research, or publishing. <Link to="/text-processing#long-book" className="ml-2 underline text-primary font-medium">Try now &rarr;</Link>
               </div>
             </CardContent>
           </Card>

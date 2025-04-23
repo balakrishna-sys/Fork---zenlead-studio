@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +36,7 @@ const Dashboard = () => {
                 </div>
                 <div className="text-muted-foreground text-sm">
                   Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals and fast turnaround times.
-                  <a className="ml-2 underline text-primary font-medium" href="/video">Try now &rarr;</a>
+                  <Link className="ml-2 underline text-primary font-medium" to="/video">Try now &rarr;</Link>
                 </div>
               </CardContent>
             </Card>
@@ -48,7 +49,7 @@ const Dashboard = () => {
                 </div>
                 <div className="text-muted-foreground text-sm">
                   Transform lengthy content into concise, easy-to-understand summaries. Supports multiple languages and customizable summary lengths.
-                  <a className="ml-2 underline text-primary font-medium" href="/text-processing">Try now &rarr;</a>
+                  <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now &rarr;</Link>
                 </div>
               </CardContent>
             </Card>
@@ -61,7 +62,7 @@ const Dashboard = () => {
                 </div>
                 <div className="text-muted-foreground text-sm">
                   Generate a complete book or research paper (PDF) from a single topic or prompt. Perfect for comprehensive course material, research, or in-depth guides—full-length, AI-authored, and versatile.
-                  <a className="ml-2 underline text-primary font-medium" href="/text-processing#long-book">Try now &rarr;</a>
+                  <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now &rarr;</Link>
                 </div>
               </CardContent>
             </Card>
