@@ -22,7 +22,27 @@ const Dashboard = () => {
         <p className="text-lg text-muted-foreground mb-8">
           Process audio, text, and video with advanced AI technology. Select what you want to do!
         </p>
-        
+
+        {/* Top models and video generation summary */}
+        <div className="mb-6">
+          <div className="mb-2 text-primary font-semibold text-xl">Check out top models</div>
+          <Card className="mb-4 border-l-4 border-primary bg-secondary/40">
+            <CardContent className="flex flex-col gap-2 py-4">
+              <div className="flex items-center gap-2">
+                <Clapperboard className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Video Generation</span>
+              </div>
+              <div className="text-muted-foreground text-sm">
+                Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals and fast turnaround times.
+                <a className="ml-2 underline text-primary font-medium" href="/video">Try now &rarr;</a>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Try other AI section title */}
+        <div className="font-semibold text-lg mb-2">Try other AI as well</div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           <Card>
             <CardHeader className="pb-3">
