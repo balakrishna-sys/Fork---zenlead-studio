@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -108,22 +109,104 @@ const Dashboard = () => {
           </Card>
         </div>
         
-        <div className="text-center mb-4">
-          <p className="text-xl font-semibold text-primary">
-            Check out top models
-          </p>
-        </div>
-
-        <Tabs defaultValue="video" className="w-full">
-          <p className="text-center mb-4 text-lg font-medium text-muted-foreground">
-            Try other AI as well
-          </p>
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+        <Tabs defaultValue="audio" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsTrigger value="audio">Audio Processing</TabsTrigger>
+            <TabsTrigger value="text">Text to Speech</TabsTrigger>
+            <TabsTrigger value="excel">Excel to Audio</TabsTrigger>
             <TabsTrigger value="video">Video Generation</TabsTrigger>
-            <TabsTrigger value="text">Text Summarization</TabsTrigger>
           </TabsList>
           
+          <TabsContent value="audio" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Audio Processing</CardTitle>
+                <CardDescription>
+                  Upload an audio file to translate, clone, or enhance
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <AudioUpload onUpload={(file) => console.log(file)} />
+                  </div>
+                  <div className="space-y-4">
+                    <LanguageSelector 
+                      onChange={setTargetLanguage} 
+                      label="Target Language" 
+                      placeholder="Select target language..." 
+                    />
+                    <VoiceSelector 
+                      onChange={setSelectedVoice} 
+                      label="Voice Style" 
+                      placeholder="Keep original or select new voice..." 
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
           
+          <TabsContent value="text" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Text to Speech</CardTitle>
+                <CardDescription>
+                  Convert written text to natural-sounding audio
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <TextInput onSubmit={(text) => console.log(text)} />
+                  </div>
+                  <div className="space-y-4">
+                    <LanguageSelector 
+                      onChange={setTargetLanguage} 
+                      label="Content Language" 
+                      placeholder="Select content language..." 
+                    />
+                    <VoiceSelector 
+                      onChange={setSelectedVoice} 
+                      label="Voice" 
+                      placeholder="Select voice..." 
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="excel" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Excel to Audio</CardTitle>
+                <CardDescription>
+                  Convert spreadsheet data to spoken audio
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <ExcelUpload onUpload={(file) => console.log(file)} />
+                  </div>
+                  <div className="space-y-4">
+                    <LanguageSelector 
+                      onChange={setTargetLanguage} 
+                      label="Content Language" 
+                      placeholder="Select content language..." 
+                    />
+                    <VoiceSelector 
+                      onChange={setSelectedVoice} 
+                      label="Voice" 
+                      placeholder="Select voice..." 
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="video" className="space-y-6">
             <Card>
               <CardHeader>
@@ -142,39 +225,6 @@ const Dashboard = () => {
                       Go to Video Generation
                     </button>
                   </a>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="text" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Text Summarization</CardTitle>
-                <CardDescription>
-                  Get concise summaries of your long-form content
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <TextInput onSubmit={(text) => console.log(text)} placeholder="Enter text to summarize..." />
-                  </div>
-                  <div className="space-y-4">
-                    <LanguageSelector 
-                      onChange={setTargetLanguage} 
-                      label="Summary Language" 
-                      placeholder="Select summary language..." 
-                    />
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Summary Length</label>
-                      <select className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                        <option value="short">Short Summary</option>
-                        <option value="medium">Medium Summary</option>
-                        <option value="long">Detailed Summary</option>
-                      </select>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
