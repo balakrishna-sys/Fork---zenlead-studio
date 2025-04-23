@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { TextInput } from "@/components/TextInput";
@@ -8,7 +7,7 @@ import { VoiceSelector } from "@/components/VoiceSelector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, FileText, FileSpreadsheet, FileDigit } from "lucide-react";
+import { ArrowRight, FileText, FileSpreadsheet, FileDigit, Book } from "lucide-react";
 
 const TextProcessing = () => {
   const [text, setText] = useState("");
@@ -19,7 +18,6 @@ const TextProcessing = () => {
 
   const handleProcessText = () => {
     setIsProcessing(true);
-    
     // Mock processing - would connect to API in real implementation
     setTimeout(() => {
       setIsProcessing(false);
@@ -33,6 +31,21 @@ const TextProcessing = () => {
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-2">Text Processing</h1>
         <p className="text-gray-600 mb-8">Convert your text to natural-sounding speech</p>
+        
+        {/* Long Book Generation Model Feature */}
+        <div className="mb-8">
+          <Card className="border-l-4 border-primary bg-secondary/40">
+            <CardContent className="flex flex-col md:flex-row gap-4 py-4">
+              <div className="flex items-center gap-2">
+                <Book className="h-7 w-7 text-primary" />
+                <span className="font-semibold text-lg">Long Book Generation</span>
+              </div>
+              <div className="text-muted-foreground text-sm flex-1">
+                Instantly generate a complete book or research paper (as a downloadable PDF) from a single prompt—ideal for AI courses, full stack learning paths, or any topic you want. Go beyond chatbots—get book-length, ready-to-use content for education, research, or publishing. <a href="/text-processing#long-book" className="ml-2 underline text-primary font-medium">Try now &rarr;</a>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         
         <Tabs defaultValue="text-to-speech" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">

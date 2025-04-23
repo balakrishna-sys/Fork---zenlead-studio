@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +7,7 @@ import { TextInput } from "@/components/TextInput";
 import { ExcelUpload } from "@/components/ExcelUpload";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { VoiceSelector } from "@/components/VoiceSelector";
-import { Mic, FileText, Languages, Clapperboard, FileTextIcon } from "lucide-react";
+import { Mic, FileText, Languages, Clapperboard, FileTextIcon, Book } from "lucide-react";
 
 const Dashboard = () => {
   const [targetLanguage, setTargetLanguage] = useState("");
@@ -23,10 +22,11 @@ const Dashboard = () => {
           Process audio, text, and video with advanced AI technology. Select what you want to do!
         </p>
 
-        {/* Top models and video generation summary */}
+        {/* Top models including video, summarization, and long book */}
         <div className="mb-6">
           <div className="mb-2 text-primary font-semibold text-xl">Check out top models</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Video Generation */}
             <Card className="border-l-4 border-primary bg-secondary/40">
               <CardContent className="flex flex-col gap-2 py-4">
                 <div className="flex items-center gap-2">
@@ -39,7 +39,7 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
-
+            {/* Text Summarization */}
             <Card className="border-l-4 border-primary bg-secondary/40">
               <CardContent className="flex flex-col gap-2 py-4">
                 <div className="flex items-center gap-2">
@@ -49,6 +49,19 @@ const Dashboard = () => {
                 <div className="text-muted-foreground text-sm">
                   Transform lengthy content into concise, easy-to-understand summaries. Supports multiple languages and customizable summary lengths.
                   <a className="ml-2 underline text-primary font-medium" href="/text-processing">Try now &rarr;</a>
+                </div>
+              </CardContent>
+            </Card>
+            {/* Long Book Generation */}
+            <Card className="border-l-4 border-primary bg-secondary/40">
+              <CardContent className="flex flex-col gap-2 py-4">
+                <div className="flex items-center gap-2">
+                  <Book className="h-5 w-5 text-primary" />
+                  <span className="font-semibold">Long Book Generation</span>
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  Generate a complete book or research paper (PDF) from a single topic or prompt. Perfect for comprehensive course material, research, or in-depth guides—full-length, AI-authored, and versatile.
+                  <a className="ml-2 underline text-primary font-medium" href="/text-processing#long-book">Try now &rarr;</a>
                 </div>
               </CardContent>
             </Card>
