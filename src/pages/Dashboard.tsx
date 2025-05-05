@@ -55,7 +55,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-4">VocalVerse Studio Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-4">ZenLead Studio Dashboard</h1>
         <p className="text-lg text-muted-foreground mb-8">
           Process audio, text, and video with advanced AI technology. Select what you want to do!
         </p>
