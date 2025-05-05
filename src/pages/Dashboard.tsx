@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,11 +8,48 @@ import { TextInput } from "@/components/TextInput";
 import { ExcelUpload } from "@/components/ExcelUpload";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { VoiceSelector } from "@/components/VoiceSelector";
-import { Mic, FileText, Languages, Clapperboard, FileTextIcon, Book } from "lucide-react";
+import { Mic, FileText, Languages, Clapperboard, FileTextIcon, Book, FileCheck, ChevronLeft, ChevronRight } from "lucide-react";
 
 const Dashboard = () => {
   const [targetLanguage, setTargetLanguage] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("");
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const modelsRef = useRef<HTMLDivElement>(null);
+
+  const checkScroll = () => {
+    if (modelsRef.current && window.innerWidth >= 768) { // Only check scroll on md and above
+      const { scrollLeft, scrollWidth, clientWidth } = modelsRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+    } else {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+    }
+  };
+
+  const scrollModels = (direction: "left" | "right") => {
+    if (modelsRef.current) {
+      const scrollAmount = direction === "left" ? -250 : 250;
+      modelsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    const handleResize = () => checkScroll();
+    window.addEventListener("resize", handleResize);
+    const modelsContainer = modelsRef.current;
+    if (modelsContainer) {
+      modelsContainer.addEventListener("scroll", checkScroll);
+    }
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (modelsContainer) {
+        modelsContainer.removeEventListener("scroll", checkScroll);
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -23,49 +60,94 @@ const Dashboard = () => {
           Process audio, text, and video with advanced AI technology. Select what you want to do!
         </p>
 
-        {/* Top models including video, summarization, and long book */}
+        {/* Top models including Resume Analyser, Long Book, Video Generation, ATS Score */}
         <div className="mb-6">
           <div className="mb-2 text-primary font-semibold text-xl">Check out top models</div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Video Generation */}
-            <Card className="border-l-4 border-primary bg-secondary/40">
-              <CardContent className="flex flex-col gap-2 py-4">
-                <div className="flex items-center gap-2">
-                  <Clapperboard className="h-5 w-5 text-primary" />
-                  <span className="font-semibold">Video Generation</span>
-                </div>
-                <div className="text-muted-foreground text-sm">
-                  Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals and fast turnaround times.
-                  <Link className="ml-2 underline text-primary font-medium" to="/video">Try now &rarr;</Link>
-                </div>
-              </CardContent>
-            </Card>
-            {/* Text Summarization */}
-            <Card className="border-l-4 border-primary bg-secondary/40">
-              <CardContent className="flex flex-col gap-2 py-4">
-                <div className="flex items-center gap-2">
-                  <FileTextIcon className="h-5 w-5 text-primary" />
-                  <span className="font-semibold">Text Summarization</span>
-                </div>
-                <div className="text-muted-foreground text-sm">
-                  Transform lengthy content into concise, easy-to-understand summaries. Supports multiple languages and customizable summary lengths.
-                  <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now &rarr;</Link>
-                </div>
-              </CardContent>
-            </Card>
-            {/* Long Book Generation */}
-            <Card className="border-l-4 border-primary bg-secondary/40">
-              <CardContent className="flex flex-col gap-2 py-4">
-                <div className="flex items-center gap-2">
-                  <Book className="h-5 w-5 text-primary" />
-                  <span className="font-semibold">Long Book Generation</span>
-                </div>
-                <div className="text-muted-foreground text-sm">
-                  Generate a complete book or research paper (PDF) from a single topic or prompt. Perfect for comprehensive course material, research, or in-depth guides—full-length, AI-authored, and versatile.
-                  <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now &rarr;</Link>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="relative">
+            {canScrollLeft && (
+              <button
+                onClick={() => scrollModels("left")}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-muted rounded-full shadow-sm hover:bg-muted/80 transition-colors sm:p-2 hidden md:block"
+                aria-label="Scroll models left"
+              >
+                <ChevronLeft className="h-5 w-5 text-muted-foreground" />
+              </button>
+            )}
+            <div
+              ref={modelsRef}
+              className="flex flex-col md:flex-row md:flex-nowrap overflow-x-auto scrollbar-none gap-4 py-2"
+            >
+              {/* Resume Analyser */}
+              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                <CardContent className="flex flex-col gap-2 py-4">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <span className="font-semibold">Resume Analyser</span>
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    Upload a PDF or Word resume to get AI-driven suggestions for improvement based on job descriptions.
+                    <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
+                  </div>
+                </CardContent>
+              </Card>
+              {/* Long Book Generation */}
+              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                <CardContent className="flex flex-col gap-2 py-4">
+                  <div className="flex items-center gap-2">
+                    <Book className="h-5 w-5 text-primary" />
+                    <span className="font-semibold">Long Book Generation</span>
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    Generate a complete book or research paper (PDF) from a single topic or prompt. Perfect for comprehensive course material or in-depth guides.
+                    <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
+                  </div>
+                </CardContent>
+              </Card>
+            {/* ATS Score */}
+              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                <CardContent className="flex flex-col gap-2 py-4">
+                  <div className="flex items-center gap-2">
+                    <FileCheck className="h-5 w-5 text-primary" />
+                    <span className="font-semibold">ATS Score</span>
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    Upload a resume and job description to calculate an ATS compatibility score, helping optimize for job applications.
+                    <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
+                  </div>
+                </CardContent>
+              </Card>
+              {/* Video Generation */}
+              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                <CardContent className="flex flex-col gap-2 py-4">
+                  <div className="flex items-center gap-2">
+                    <Clapperboard className="h-5 w-5 text-primary" />
+                    <span className="font-semibold">Video Generation</span>
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals.
+                    <Link className="ml-2 underline text-primary font-medium" to="/video">Try now →</Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            {canScrollRight && (
+              <button
+                onClick={() => scrollModels("right")}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-muted rounded-full shadow-sm hover:bg-muted/80 transition-colors sm:p-2 hidden md:block"
+                aria-label="Scroll models right"
+              >
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </button>
+            )}
+            <style>{`
+              .scrollbar-none {
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+              }
+              .scrollbar-none::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera */
+              }
+            `}</style>
           </div>
         </div>
 

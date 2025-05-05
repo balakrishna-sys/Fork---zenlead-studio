@@ -8,7 +8,8 @@ import { VoiceSelector } from "@/components/VoiceSelector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, FileText, FileSpreadsheet, FileDigit, Book } from "lucide-react";
+import { ArrowRight, FileText, FileSpreadsheet, FileDigit, Book, FileCheck } from "lucide-react";
+import { DocumentUpload } from "@/components/DocumentUpload";
 
 const exampleBookContent = (prompt: string) => [
   { heading: "Title", content: `AI-Generated Book: ${prompt}` },
@@ -18,16 +19,44 @@ const exampleBookContent = (prompt: string) => [
   { heading: "Conclusion", content: "A summary of the book and final insights are presented here." },
 ];
 
+const exampleResumeAnalysis = (jobDescription: string) => ({
+  bestPractices: [
+    "Use strong action verbs (e.g., 'led', 'developed', 'implemented') to describe your achievements.",
+    "Quantify results where possible (e.g., 'increased sales by 20%').",
+    "Keep your resume concise, ideally one page for most roles.",
+  ],
+  tailoredSuggestions: [
+    `Include keywords from the job description, such as "${jobDescription.slice(0, 20)}...".`,
+    "Highlight relevant skills that match the job requirements.",
+    "Emphasize experience that aligns with the role's responsibilities.",
+  ],
+  generalRecommendations: [
+    "Use a clean, professional format with consistent fonts and spacing.",
+    "Ensure no spelling or grammatical errors.",
+    "Include a summary section tailored to the job.",
+  ],
+});
+
 const TextProcessing = () => {
   const [text, setText] = useState("");
-  const [excelFile, setExcelFile] = useState<File | null>(null);
+  const [excelFile, setExcelFile] = useState(null);
   const [targetLanguage, setTargetLanguage] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [bookPrompt, setBookPrompt] = useState("");
-  const [bookContent, setBookContent] = useState<{heading: string, content: string}[]|null>(null);
+  const [bookContent, setBookContent] = useState(null);
   const [isBookLoading, setIsBookLoading] = useState(false);
+
+  const [atsFile, setAtsFile] = useState(null);
+  const [jobDescription, setJobDescription] = useState("");
+  const [atsScore, setAtsScore] = useState(null);
+  const [isAtsLoading, setIsAtsLoading] = useState(false);
+
+  const [resumeFile, setResumeFile] = useState(null);
+  const [resumeJobDescription, setResumeJobDescription] = useState("");
+  const [resumeAnalysis, setResumeAnalysis] = useState(null);
+  const [isResumeLoading, setIsResumeLoading] = useState(false);
 
   const handleProcessText = () => {
     setIsProcessing(true);
@@ -45,29 +74,46 @@ const TextProcessing = () => {
     }, 2000);
   };
 
+  const handleGenerateAtsScore = () => {
+    setIsAtsLoading(true);
+    setAtsScore(null);
+    setTimeout(() => {
+      const score = Math.floor(Math.random() * 41) + 60; // Random score between 60-100 for demo
+      setAtsScore(score);
+      setIsAtsLoading(false);
+    }, 2000);
+  };
+
+  const handleAnalyseResume = () => {
+    setIsResumeLoading(true);
+    setResumeAnalysis(null);
+    setTimeout(() => {
+      setResumeAnalysis(exampleResumeAnalysis(resumeJobDescription));
+      setIsResumeLoading(false);
+    }, 2000);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-2">Text Processing</h1>
-        <p className="text-gray-600 mb-8">Convert your text to natural-sounding speech</p>
-        
-        <div className="mb-8">
-          <Card className="border-l-4 border-primary bg-secondary/40">
-            <CardContent className="flex flex-col md:flex-row gap-4 py-4">
-              <div className="flex items-center gap-2">
-                <Book className="h-7 w-7 text-primary" />
-                <span className="font-semibold text-lg">Long Book Generation</span>
-              </div>
-              <div className="text-muted-foreground text-sm flex-1">
-                Instantly generate a complete book or research paper (as a downloadable PDF) from a single prompt—ideal for AI courses, full stack learning paths, or any topic you want. Go beyond chatbots—get book-length, ready-to-use content for education, research, or publishing. <Link to="/text-processing#long-book" className="ml-2 underline text-primary font-medium">Try now &rarr;</Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
+        <p className="text-gray-600 mb-8">Convert your text to natural-sounding speech, analyze resumes, or generate content</p>
+
         <Tabs defaultValue="text-to-speech" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="inline-flex mb-6">
+          <TabsTrigger value="long-book" className="flex items-center gap-2">
+              <Book className="h-4 w-4" />
+              <span>Long Book</span>
+            </TabsTrigger>
+            <TabsTrigger value="ats-score" className="flex items-center gap-2">
+              <FileCheck className="h-4 w-4" />
+              <span>ATS Score</span>
+            </TabsTrigger>
+            <TabsTrigger value="resume-analyser" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span>Resume Analyser</span>
+            </TabsTrigger>
             <TabsTrigger value="text-to-speech" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               <span>Text to Speech</span>
@@ -80,12 +126,8 @@ const TextProcessing = () => {
               <FileDigit className="h-4 w-4" />
               <span>Summarize</span>
             </TabsTrigger>
-            <TabsTrigger value="long-book" className="flex items-center gap-2">
-              <Book className="h-4 w-4" />
-              <span>Long Book (AI Model)</span>
-            </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="long-book" className="space-y-6" id="long-book">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
@@ -150,7 +192,7 @@ const TextProcessing = () => {
               </Card>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="text-to-speech" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
@@ -203,7 +245,7 @@ const TextProcessing = () => {
               </Card>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="excel-to-speech" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
@@ -259,7 +301,7 @@ const TextProcessing = () => {
               </Card>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="summarize" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
@@ -323,6 +365,174 @@ const TextProcessing = () => {
                 </CardContent>
                 <CardFooter className="text-xs text-muted-foreground">
                   Summaries can also be converted to audio after generation.
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="ats-score" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upload Resume</CardTitle>
+                  <CardDescription>
+                    Upload a PDF or Excel file containing resume or candidate data
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DocumentUpload 
+                    onUpload={setAtsFile} 
+                    isLoading={isAtsLoading}
+                    // accept=".pdf,.xlsx,.xls,.csv"
+                  />
+                  <div className="mt-4">
+                    <label className="text-sm font-medium mb-1 block">Job Description</label>
+                    <textarea
+                      className="w-full border rounded-md p-3 min-h-[100px] resize-none"
+                      placeholder="Enter the job description for the position..."
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="text-xs text-muted-foreground">
+                  Ensure the resume contains relevant skills and experience for accurate scoring.
+                </CardFooter>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>ATS Score</CardTitle>
+                  <CardDescription>
+                    The calculated ATS score will appear here
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="max-h-[400px] overflow-y-auto border bg-background rounded-md px-4 py-3 shadow-inner">
+                    {isAtsLoading && (
+                      <div className="text-center text-muted-foreground py-12">Calculating ATS score, please wait...</div>
+                    )}
+                    {!isAtsLoading && atsScore !== null && (
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-lg">ATS Score: {atsScore}%</h3>
+                        <p className="text-base text-gray-700">
+                          This score represents how well the resume matches the job description based on keywords, skills, and experience.
+                        </p>
+                      </div>
+                    )}
+                    {!isAtsLoading && atsScore === null && (
+                      <div className="text-muted-foreground text-sm text-center py-10">
+                        No score generated yet. Upload a file and enter a job description to start!
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button 
+                      onClick={handleGenerateAtsScore}
+                      disabled={!atsFile || !jobDescription.trim() || isAtsLoading}
+                      className="w-full"
+                    >
+                      {isAtsLoading ? "Calculating..." : "Generate ATS Score"} 
+                      {!isAtsLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+                    </Button>
+                  </div>
+                </CardContent>
+                <CardFooter className="text-xs text-muted-foreground">
+                  Higher scores indicate better alignment with the job requirements.
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="resume-analyser" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upload Resume</CardTitle>
+                  <CardDescription>
+                    Upload a PDF or Word document containing your resume
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DocumentUpload 
+                    onUpload={setResumeFile} 
+                    isLoading={isResumeLoading}
+                    // accept=".pdf,.doc,.docx"
+                  />
+                  <div className="mt-4">
+                    <label className="text-sm font-medium mb-1 block">Job Description</label>
+                    <textarea
+                      className="w-full border rounded-md p-3 min-h-[100px] resize-none"
+                      placeholder="Enter the job description or profile for the position..."
+                      value={resumeJobDescription}
+                      onChange={(e) => setResumeJobDescription(e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="text-xs text-muted-foreground">
+                  Ensure the resume is well-formatted for accurate analysis.
+                </CardFooter>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Resume Analysis</CardTitle>
+                  <CardDescription>
+                    Suggestions and best practices will appear here
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="max-h-[400px] overflow-y-auto border bg-background rounded-md px-4 py-3 shadow-inner">
+                    {isResumeLoading && (
+                      <div className="text-center text-muted-foreground py-12">Analyzing resume, please wait...</div>
+                    )}
+                    {!isResumeLoading && resumeAnalysis && (
+                      <div className="space-y-6">
+                        <section>
+                          <h3 className="font-bold text-lg mb-2">Best Practices</h3>
+                          <ul className="list-disc pl-5 text-base text-gray-700">
+                            {resumeAnalysis.bestPractices.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                            ))}
+                          </ul>
+                        </section>
+                        <section>
+                          <h3 className="font-bold text-lg mb-2">Tailored Suggestions</h3>
+                          <ul className="list-disc pl-5 text-base text-gray-700">
+                            {resumeAnalysis.tailoredSuggestions.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                            ))}
+                          </ul>
+                        </section>
+                        <section>
+                          <h3 className="font-bold text-lg mb-2">General Recommendations</h3>
+                          <ul className="list-disc pl-5 text-base text-gray-700">
+                            {resumeAnalysis.generalRecommendations.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                            ))}
+                          </ul>
+                        </section>
+                      </div>
+                    )}
+                    {!isResumeLoading && !resumeAnalysis && (
+                      <div className="text-muted-foreground text-sm text-center py-10">
+                        No analysis generated yet. Upload a resume and enter a job description to start!
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button 
+                      onClick={handleAnalyseResume}
+                      disabled={!resumeFile || !resumeJobDescription.trim() || isResumeLoading}
+                      className="w-full"
+                    >
+                      {isResumeLoading ? "Analyzing..." : "Analyse Resume"} 
+                      {!isResumeLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+                    </Button>
+                  </div>
+                </CardContent>
+                <CardFooter className="text-xs text-muted-foreground">
+                  Follow these suggestions to improve your resume's effectiveness.
                 </CardFooter>
               </Card>
             </div>
