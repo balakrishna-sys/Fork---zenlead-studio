@@ -78,7 +78,7 @@ const Dashboard = () => {
               className="flex flex-col md:flex-row md:flex-nowrap overflow-x-auto scrollbar-none gap-4 py-2"
             >
               {/* Resume Analyser */}
-              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
                 <CardContent className="flex flex-col gap-2 py-4">
                   <div className="flex items-center gap-2">
                     <FileText className="h-5 w-5 text-primary" />
@@ -91,7 +91,7 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
               {/* Long Book Generation */}
-              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
                 <CardContent className="flex flex-col gap-2 py-4">
                   <div className="flex items-center gap-2">
                     <Book className="h-5 w-5 text-primary" />
@@ -104,7 +104,7 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             {/* ATS Score */}
-              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
                 <CardContent className="flex flex-col gap-2 py-4">
                   <div className="flex items-center gap-2">
                     <FileCheck className="h-5 w-5 text-primary" />
@@ -117,7 +117,7 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
               {/* Video Generation */}
-              <Card className="border-l-4 border-primary bg-secondary/40 min-w-0 w-full md:min-w-[250px] md:flex-1">
+              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
                 <CardContent className="flex flex-col gap-2 py-4">
                   <div className="flex items-center gap-2">
                     <Clapperboard className="h-5 w-5 text-primary" />

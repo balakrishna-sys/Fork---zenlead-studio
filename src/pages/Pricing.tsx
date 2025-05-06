@@ -1,7 +1,7 @@
-
 import { Navbar } from "@/components/Navbar";
 import { PricingCards } from "@/components/PricingCards";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Link } from "react-router-dom";
 
 const Pricing = () => {
   const faqs = [
@@ -38,10 +38,10 @@ const Pricing = () => {
       
       <div className="mx-auto max-w-4xl px-6 lg:px-8 py-16">
         <div className="mx-auto max-w-2xl text-center mb-10">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Frequently asked questions
           </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-6 text-lg leading-8 text-muted-foreground">
             Find answers to common questions about VocalVerse and our services.
           </p>
         </div>
@@ -49,8 +49,10 @@ const Pricing = () => {
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+              <AccordionTrigger className="text-left text-foreground">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
@@ -58,17 +60,19 @@ const Pricing = () => {
         </Accordion>
       </div>
       
-      <div className="bg-gradient-to-r from-primary/20 to-secondary/20 py-16">
+      <div className="bg-gradient-to-r from-primary/10 to-secondary/10 dark:from-primary/20 dark:to-secondary/20 py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground mb-6">
             Ready to transform your audio and text?
           </h2>
-          <p className="mx-auto max-w-2xl text-lg leading-8 text-gray-600 mb-10">
+          <p className="mx-auto max-w-2xl text-lg leading-8 text-muted-foreground mb-10">
             Start your 7-day free trial today. No credit card required.
           </p>
-          <button className="rounded-xl bg-primary px-6 py-3 text-lg font-semibold text-white shadow-lg hover:bg-primary/90 transition-all duration-300 hover:shadow-xl">
-            Get Started for Free
-          </button>
+          <Link to="/app">
+            <button className="rounded-xl bg-primary dark:bg-primary/10 px-6 py-3 text-lg font-semibold text-white shadow-lg hover:bg-primary/80 dark:hover:bg-primary transition-all duration-300 hover:shadow-xl">
+              Get Started for Free
+            </button>
+          </Link>
         </div>
       </div>
     </div>
