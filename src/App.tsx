@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
+import { Construction } from "lucide-react";
 
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -47,10 +48,10 @@ const App = () => {
         <Toaster />
         <Sonner />
         <div className="min-h-screen bg-background">
-          <div className="w-full bg-yellow-300 text-black text-center py-1 flex items-center justify-center gap-2 text-sm">
-            <span className="text-lg">🚧</span>
-            <p className="font-semibold underline">
-              App under construction: All functionalities are currently disabled. See you soon 😉
+          <div className="w-full bg-amber-100 dark:bg-gray-800/50 text-foreground dark:text-muted-foreground text-center py-2 px-2 sm:px-4 flex items-center justify-center gap-2 text-xs sm:text-sm z-10">
+            <Construction className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+            <p className="font-medium">
+              App under construction: All functionalities are currently disabled. See you soon!
             </p>
           </div>
           <BrowserRouter>
