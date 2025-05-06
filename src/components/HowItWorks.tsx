@@ -1,4 +1,3 @@
-
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -8,18 +7,18 @@ export const HowItWorks = () => {
     {
       step: "01",
       title: "Upload Your Content",
-      description: "Upload audio files, enter text, import Excel spreadsheets, or describe your video scenario.",
+      description: "Upload audio files for translation or voice cloning, text for speech conversion or resume analysis, or describe your video scenario for AI-generated animations.",
     },
     {
       step: "02",
-      title: "Configure Options",
-      description: "Select your output type: audio, text, or video with various customization options.",
+      title: "Customize Your Output",
+      description: "Choose from audio enhancements, text-to-speech, ATS resume scoring, content summarization, or video generation with tailored options like voice style or animation type.",
     },
     {
       step: "03",
-      title: "Download Results",
-      description: "Receive high-quality audio, text, or animated video output in your preferred format.",
-    }
+      title: "Download Your Results",
+      description: "Receive high-quality audio, natural-sounding speech, optimized resumes, summarized text, or stunning animated videos in your preferred format.",
+    },
   ];
 
   return (
@@ -30,10 +29,10 @@ export const HowItWorks = () => {
             How It Works
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Transform your <strong>audio, text, and video</strong> in three simple steps
+            Transform your <strong>audio, text, and video</strong> with Zenlead's AI in three simple steps
           </p>
         </div>
-        
+
         <div className="relative">
           <div className="absolute top-14 left-12 right-12 h-0.5 bg-gradient-to-r from-purple-400 via-primary to-accent hidden lg:block"></div>
           <div className="grid grid-cols-1 gap-y-10 gap-x-8 lg:grid-cols-3">
@@ -54,12 +53,10 @@ export const HowItWorks = () => {
             ))}
           </div>
         </div>
-        
+
         <div className="mt-16 flex justify-center">
           <Link to="/app">
-            <Button 
-              className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90 dark:text-gray-900"
-            >
+            <Button className="flex items-center bg-primary text-primary-foreground hover:bg-primary/90 dark:text-gray-900">
               Try The Studio
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

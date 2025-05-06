@@ -14,8 +14,8 @@ export const Hero = () => {
             <span className="block mt-2">AI Technologies as a Magic</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Transform your audio and text with advanced AI. Translate audio across languages, clone voices,
-            convert text to speech, and summarize content effortlessly.
+          Supercharge your works with cutting-edge AI. Seamlessly translate audio, create stunning videos, 
+          summarize content, and, as a student, optimize your resume to skyrocket your job.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link

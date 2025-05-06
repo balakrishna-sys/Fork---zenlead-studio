@@ -1,35 +1,34 @@
-
 import { CheckCircle2 } from "lucide-react";
 
 export const UseCasesSection = () => {
   const useCases = [
     {
       title: "Content Creators",
-      description: "Create narration in multiple languages, clone your voice for consistent branding, and convert scripts to professional audio and video.",
+      description: "Translate audio to reach global audiences, clone your voice for branding, and turn scripts into professional audio or animated videos.",
       benefits: [
-        "Expand global audience reach",
-        "Maintain voice consistency",
-        "Save time on recording sessions",
-        "Generate animated videos from descriptions"
+        "Reach audiences in multiple languages",
+        "Ensure consistent voice identity",
+        "Save time with automated audio",
+        "Create videos from text descriptions"
       ]
     },
     {
       title: "Educators & Trainers",
-      description: "Transform learning materials into engaging audio, text, and animated video resources; create accessible content; and develop multilingual courses.",
+      description: "Convert texts to audio for accessibility, analyze resumes for training, and create multilingual videos or narrated course materials.",
       benefits: [
-        "Improve accessibility",
-        "Create multilingual materials",
-        "Convert lecture notes to audio",
-        "Generate educational videos from text"
+        "Enhance content accessibility",
+        "Support multilingual learners",
+        "Turn notes into audio narration",
+        "Generate videos for teaching"
       ]
     },
     {
       title: "Businesses",
-      description: "Produce professional voice and video content for presentations, convert data reports to speech, and create consistent brand voice assets.",
+      description: "Generate professional audio for reports, optimize resumes for hiring, and create branded videos with AI-driven voice and visuals.",
       benefits: [
-        "Professional voice & video for presentations",
-        "Automated report narration",
-        "Consistent brand voice across media"
+        "Narrate reports with AI audio",
+        "Streamline resume screening",
+        "Produce consistent video content"
       ]
     }
   ];
@@ -39,10 +38,14 @@ export const UseCasesSection = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
-            Trusted by creators, educators, and businesses
+            Trusted by creators, educators, and businesses for AI{" "}
+            <span className="relative inline-block">
+              Magic
+              <span className="absolute inset-0 w-1/5 h-full bg-gradient-to-r from-transparent via-blue-500/70 to-purple-500/70 animate-slide-line transform -skew-x-[30deg] z-[-1]"></span>
+            </span>
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            VocalVerse Studio empowers users to unlock new possibilities with AI <span className="font-semibold text-primary">voice, text, and video</span> technology.
+            Zenlead empowers users to transform <span className="font-semibold text-primary">audio, text, and video</span> with cutting-edge AI technology.
           </p>
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">

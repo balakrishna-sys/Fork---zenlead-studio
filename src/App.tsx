@@ -27,6 +27,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import GDPR from "./pages/GDPR";
+import SignUp from "./pages/SignUp";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => {
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/library" element={<Library />} />
               <Route path="/signin" element={<SignIn />} />
+              <Route path="/signup" element={<SignUp />} />
               <Route path="/case-studies" element={<CaseStudies />} />
               <Route path="/documentation" element={<Documentation />} />
               <Route path="/company" element={<Company />} />

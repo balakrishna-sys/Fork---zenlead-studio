@@ -1,37 +1,36 @@
-
-import { ArrowUpDown, Mic, File, Headphones, Languages, FileText, BarChart3 } from "lucide-react";
+import { ArrowUpDown, Mic, File, Languages, BarChart3, Video, Book } from "lucide-react";
 
 export const FeatureSection = () => {
   const features = [
     {
       name: "Language Translation",
-      description: "Convert your audio files to different languages while preserving the original voice style and emotion.",
+      description: "Translate audio across languages while preserving the original voice's emotion and style for seamless global communication.",
       icon: Languages,
     },
     {
-      name: "Voice Cloning",
-      description: "Create a digital twin of any voice with just a short audio sample. Perfect for content creators.",
-      icon: Headphones,
-    },
-    {
       name: "Text to Speech",
-      description: "Convert your written text to natural-sounding speech with customizable voices and speaking styles.",
+      description: "Turn text into lifelike speech with customizable voices, perfect for presentations, audiobooks, or accessibility.",
       icon: Mic,
     },
     {
-      name: "Excel to Audio",
-      description: "Turn spreadsheet data into spoken content. Perfect for data presentations and accessibility.",
+      name: "Resume Analyzer",
+      description: "Optimize your resume with AI-driven insights to highlight strengths and improve your job application success.",
       icon: File,
     },
     {
-      name: "Text Summarization",
-      description: "Extract the most important information from documents and create concise audio summaries.",
-      icon: FileText,
+      name: "ATS Score",
+      description: "Boost your resume’s compatibility with Applicant Tracking Systems to increase your chances of getting hired.",
+      icon: BarChart3,
     },
     {
-      name: "Analytics & Reports",
-      description: "Track your usage and optimize your content with detailed analytics on all your conversions.",
-      icon: BarChart3,
+      name: "Video Generation",
+      description: "Create animated videos from text descriptions, bringing your ideas to life with AI in minutes.",
+      icon: Video,
+    },
+    {
+      name: "Long Book Generation",
+      description: "Summarize or generate concise audio versions of long books, making complex content accessible and engaging.",
+      icon: Book,
     },
   ];
 
@@ -43,7 +42,7 @@ export const FeatureSection = () => {
             Powerful AI Voice Features
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Our advanced AI technology powers a suite of voice and text transformation tools.
+            Our advanced AI technology powers a suite of voice, text, and video transformation tools.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-7xl">
