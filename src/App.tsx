@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -47,32 +46,40 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/app" element={<Dashboard />} />
-            <Route path="/audio" element={<AudioProcessing />} />
-            <Route path="/text" element={<TextProcessing />} />
-            <Route path="/text-processing" element={<TextProcessing />} /> {/* Added this route */}
-            <Route path="/video" element={<VideoProcessing />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/case-studies" element={<CaseStudies />} />
-            <Route path="/documentation" element={<Documentation />} />
-            <Route path="/company" element={<Company />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/legal" element={<Legal />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/cookie-policy" element={<CookiePolicy />} />
-            <Route path="/gdpr" element={<GDPR />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <div className="min-h-screen bg-background">
+          <div className="w-full bg-yellow-300 text-black text-center py-1 flex items-center justify-center gap-2 text-sm">
+            <span className="text-lg">🚧</span>
+            <p className="font-semibold underline">
+              App under construction: All functionalities are currently disabled. See you soon 😉
+            </p>
+          </div>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/app" element={<Dashboard />} />
+              <Route path="/audio" element={<AudioProcessing />} />
+              <Route path="/text" element={<TextProcessing />} />
+              <Route path="/text-processing" element={<TextProcessing />} />
+              <Route path="/video" element={<VideoProcessing />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/library" element={<Library />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/case-studies" element={<CaseStudies />} />
+              <Route path="/documentation" element={<Documentation />} />
+              <Route path="/company" element={<Company />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/legal" element={<Legal />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/cookie-policy" element={<CookiePolicy />} />
+              <Route path="/gdpr" element={<GDPR />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );
