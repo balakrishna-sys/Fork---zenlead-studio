@@ -1,3 +1,4 @@
+// src/pages/Dashboard.tsx
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -8,6 +9,7 @@ import { TextInput } from "@/components/TextInput";
 import { ExcelUpload } from "@/components/ExcelUpload";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { VoiceSelector } from "@/components/VoiceSelector";
+import { LockedFeature } from "@/components/ui/locked-feature"; // Import the LockedFeature component
 import { Mic, FileText, Languages, Clapperboard, FileTextIcon, Book, FileCheck, ChevronLeft, ChevronRight } from "lucide-react";
 
 const Dashboard = () => {
@@ -51,6 +53,14 @@ const Dashboard = () => {
     };
   }, []);
 
+  // Define which features are locked (modify as needed)
+  const lockedFeatures = {
+    audioTab: true,
+    textTab: true,
+    excelTab: true,
+    videoTab: true,
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -78,57 +88,60 @@ const Dashboard = () => {
               className="flex flex-col md:flex-row md:flex-nowrap overflow-x-auto scrollbar-none gap-4 py-2"
             >
               {/* Resume Analyser */}
-              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
-                <CardContent className="flex flex-col gap-2 py-4">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Resume Analyser</span>
-                  </div>
-                  <div className="text-muted-foreground text-sm">
-                    Upload a PDF or Word resume to get AI-driven suggestions for improvement based on job descriptions.
-                    <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
-                  </div>
-                </CardContent>
-              </Card>
+                <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                  <CardContent className="flex flex-col gap-2 py-4">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <span className="font-semibold">Resume Analyser</span>
+                    </div>
+                    <div className="text-muted-foreground text-sm">
+                      Upload a PDF or Word resume to get AI-driven suggestions for improvement based on job descriptions.
+                      <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
+                    </div>
+                  </CardContent>
+                </Card>
+
               {/* Long Book Generation */}
-              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
-                <CardContent className="flex flex-col gap-2 py-4">
-                  <div className="flex items-center gap-2">
-                    <Book className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Long Book Generation</span>
-                  </div>
-                  <div className="text-muted-foreground text-sm">
-                    Generate a complete book or research paper (PDF) from a single topic or prompt. Perfect for comprehensive course material or in-depth guides.
-                    <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
-                  </div>
-                </CardContent>
-              </Card>
-            {/* ATS Score */}
-              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
-                <CardContent className="flex flex-col gap-2 py-4">
-                  <div className="flex items-center gap-2">
-                    <FileCheck className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">ATS Score</span>
-                  </div>
-                  <div className="text-muted-foreground text-sm">
-                    Upload a resume and job description to calculate an ATS compatibility score, helping optimize for job applications.
-                    <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
-                  </div>
-                </CardContent>
-              </Card>
+                <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                  <CardContent className="flex flex-col gap-2 py-4">
+                    <div className="flex items-center gap-2">
+                      <Book className="h-5 w-5 text-primary" />
+                      <span className="font-semibold">Long Book Generation</span>
+                    </div>
+                    <div className="text-muted-foreground text-sm">
+                      Generate a complete book or research paper (PDF) from a single topic or prompt. Perfect for comprehensive course material or in-depth guides.
+                      <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
+                    </div>
+                  </CardContent>
+                </Card>
+
+              {/* ATS Score */}
+                <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                  <CardContent className="flex flex-col gap-2 py-4">
+                    <div className="flex items-center gap-2">
+                      <FileCheck className="h-5 w-5 text-primary" />
+                      <span className="font-semibold">ATS Score</span>
+                    </div>
+                    <div className="text-muted-foreground text-sm">
+                      Upload a resume and job description to calculate an ATS compatibility score, helping optimize for job applications.
+                      <Link className="ml-2 underline text-primary font-medium" to="/text-processing">Try now →</Link>
+                    </div>
+                  </CardContent>
+                </Card>
+
               {/* Video Generation */}
-              <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
-                <CardContent className="flex flex-col gap-2 py-4">
-                  <div className="flex items-center gap-2">
-                    <Clapperboard className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Video Generation</span>
-                  </div>
-                  <div className="text-muted-foreground text-sm">
-                    Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals.
-                    <Link className="ml-2 underline text-primary font-medium" to="/video">Try now →</Link>
-                  </div>
-                </CardContent>
-              </Card>
+                <Card className="border-l-4 border-primary bg-secondary/20 min-w-0 w-full md:min-w-[250px] md:flex-1">
+                  <CardContent className="flex flex-col gap-2 py-4">
+                    <div className="flex items-center gap-2">
+                      <Clapperboard className="h-5 w-5 text-primary" />
+                      <span className="font-semibold">Video Generation</span>
+                    </div>
+                    <div className="text-muted-foreground text-sm">
+                      Create short or long animated videos just by describing your scene. The best-in-class text-to-video AI with vibrant visuals.
+                      <Link className="ml-2 underline text-primary font-medium" to="/video">Try now →</Link>
+                    </div>
+                  </CardContent>
+                </Card>
             </div>
             {canScrollRight && (
               <button
@@ -249,116 +262,124 @@ const Dashboard = () => {
           </TabsList>
           
           <TabsContent value="audio" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Audio Processing</CardTitle>
-                <CardDescription>
-                  Upload an audio file to translate, clone, or enhance
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <AudioUpload onUpload={(file) => console.log(file)} />
+            <LockedFeature isLocked={lockedFeatures.audioTab}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Audio Processing</CardTitle>
+                  <CardDescription>
+                    Upload an audio file to translate, clone, or enhance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <AudioUpload onUpload={(file) => console.log(file)} />
+                    </div>
+                    <div className="space-y-4">
+                      <LanguageSelector 
+                        onChange={setTargetLanguage} 
+                        label="Target Language" 
+                        placeholder="Select target language..." 
+                      />
+                      <VoiceSelector 
+                        onChange={setSelectedVoice} 
+                        label="Voice Style" 
+                        placeholder="Keep original or select new voice..." 
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-4">
-                    <LanguageSelector 
-                      onChange={setTargetLanguage} 
-                      label="Target Language" 
-                      placeholder="Select target language..." 
-                    />
-                    <VoiceSelector 
-                      onChange={setSelectedVoice} 
-                      label="Voice Style" 
-                      placeholder="Keep original or select new voice..." 
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </LockedFeature>
           </TabsContent>
           
           <TabsContent value="text" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Text to Speech</CardTitle>
-                <CardDescription>
-                  Convert written text to natural-sounding audio
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <TextInput onSubmit={(text) => console.log(text)} />
+            <LockedFeature isLocked={lockedFeatures.textTab}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Text to Speech</CardTitle>
+                  <CardDescription>
+                    Convert written text to natural-sounding audio
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <TextInput onSubmit={(text) => console.log(text)} />
+                    </div>
+                    <div className="space-y-4">
+                      <LanguageSelector 
+                        onChange={setTargetLanguage} 
+                        label="Content Language" 
+                        placeholder="Select content language..." 
+                      />
+                      <VoiceSelector 
+                        onChange={setSelectedVoice} 
+                        label="Voice" 
+                        placeholder="Select voice..." 
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-4">
-                    <LanguageSelector 
-                      onChange={setTargetLanguage} 
-                      label="Content Language" 
-                      placeholder="Select content language..." 
-                    />
-                    <VoiceSelector 
-                      onChange={setSelectedVoice} 
-                      label="Voice" 
-                      placeholder="Select voice..." 
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </LockedFeature>
           </TabsContent>
           
           <TabsContent value="excel" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Excel to Audio</CardTitle>
-                <CardDescription>
-                  Convert spreadsheet data to spoken audio
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <ExcelUpload onUpload={(file) => console.log(file)} />
+            <LockedFeature isLocked={lockedFeatures.excelTab}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Excel to Audio</CardTitle>
+                  <CardDescription>
+                    Convert spreadsheet data to spoken audio
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <ExcelUpload onUpload={(file) => console.log(file)} />
+                    </div>
+                    <div className="space-y-4">
+                      <LanguageSelector 
+                        onChange={setTargetLanguage} 
+                        label="Content Language" 
+                        placeholder="Select content language..." 
+                      />
+                      <VoiceSelector 
+                        onChange={setSelectedVoice} 
+                        label="Voice" 
+                        placeholder="Select voice..." 
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-4">
-                    <LanguageSelector 
-                      onChange={setTargetLanguage} 
-                      label="Content Language" 
-                      placeholder="Select content language..." 
-                    />
-                    <VoiceSelector 
-                      onChange={setSelectedVoice} 
-                      label="Voice" 
-                      placeholder="Select voice..." 
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </LockedFeature>
           </TabsContent>
 
           <TabsContent value="video" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Video Generation</CardTitle>
-                <CardDescription>
-                  Describe your scene and generate an animated video with AI.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    <span className="font-semibold">New!</span> Create short animated videos by providing a prompt.
-                  </p>
-                  <a href="/video">
-                    <button className="w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition font-semibold">
-                      Go to Video Generation
-                    </button>
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
+            <LockedFeature isLocked={lockedFeatures.videoTab}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Video Generation</CardTitle>
+                  <CardDescription>
+                    Describe your scene and generate an animated video with AI.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      <span className="font-semibold">New!</span> Create short animated videos by providing a prompt.
+                    </p>
+                    <a href="/video">
+                      <button className="w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg transition font-semibold">
+                        Go to Video Generation
+                      </button>
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            </LockedFeature>
           </TabsContent>
         </Tabs>
       </main>

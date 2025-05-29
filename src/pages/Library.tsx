@@ -1,7 +1,8 @@
-
+// src/pages/Library.tsx
 import { Navbar } from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
+import { LockedFeature } from "@/components/ui/locked-feature"; // Import the LockedFeature component
 import { FileAudio, FileText, FileVideo, Clock, Download, Play } from "lucide-react";
 
 const demoData = {
@@ -17,6 +18,13 @@ const demoData = {
 };
 
 export default function Library() {
+  // Define which tabs are locked (modify as needed)
+  const lockedTabs = {
+    audio: true,
+    text: true,
+    video: true,
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -35,13 +43,19 @@ export default function Library() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="audio">
-            <MediaTable data={demoData.audio} />
+            <LockedFeature isLocked={lockedTabs.audio}>
+              <MediaTable data={demoData.audio} />
+            </LockedFeature>
           </TabsContent>
           <TabsContent value="text">
-            <MediaTable data={demoData.text} />
+            <LockedFeature isLocked={lockedTabs.text}>
+              <MediaTable data={demoData.text} />
+            </LockedFeature>
           </TabsContent>
           <TabsContent value="video">
-            <MediaTable data={demoData.video} />
+            <LockedFeature isLocked={lockedTabs.video}>
+              <MediaTable data={demoData.video} />
+            </LockedFeature>
           </TabsContent>
         </Tabs>
       </main>
