@@ -15,6 +15,13 @@
 |  ├── TextInput.tsx
 |  ├── UseCasesSection.tsx
 |  ├── VoiceSelector.tsx
+|  ├── text-processing
+|  |  ├── ats-score.tsx
+|  |  ├── excel-to-speech.tsx
+|  |  ├── long-book.tsx
+|  |  ├── resume-analyser.tsx
+|  |  ├── summarize.tsx
+|  |  └── text-to-speech.tsx
 |  └── ui
 |     ├── accordion.tsx
 |     ├── alert-dialog.tsx
@@ -40,7 +47,9 @@
 |     ├── input-otp.tsx
 |     ├── input.tsx
 |     ├── label.tsx
+|     ├── locked-feature.tsx
 |     ├── menubar.tsx
+|     ├── model-card.tsx
 |     ├── navigation-menu.tsx
 |     ├── pagination.tsx
 |     ├── popover.tsx
@@ -99,5 +108,5 @@
 |  └── VideoProcessing.tsx
 └── vite-env.d.ts
 
-directory: 5 file: 94
+directory: 6 file: 102
 

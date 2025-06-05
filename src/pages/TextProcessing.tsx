@@ -1,100 +1,169 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
-import { TextInput } from "@/components/TextInput";
-import { ExcelUpload } from "@/components/ExcelUpload";
-import { LanguageSelector } from "@/components/LanguageSelector";
-import { VoiceSelector } from "@/components/VoiceSelector";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Book, FileText, FileSpreadsheet, FileDigit, FileCheck, LucideIcon } from "lucide-react";
+import LongBook from "@/components/text-processing/long-book";
+import TextToSpeech from "@/components/text-processing/text-to-speech";
+import ExcelToSpeech from "@/components/text-processing/excel-to-speech";
+import Summarize from "@/components/text-processing/summarize";
+import AtsScore from "@/components/text-processing/ats-score";
+import ResumeAnalyser from "@/components/text-processing/resume-analyser";
+import ModelCard from "@/components/ui/model-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LockedFeature } from "@/components/ui/locked-feature"; // Import the new component
-import { ArrowRight, FileText, FileSpreadsheet, FileDigit, Book, FileCheck } from "lucide-react";
-import { DocumentUpload } from "@/components/DocumentUpload";
 
-const exampleBookContent = (prompt: string) => [
-  { heading: "Title", content: `AI-Generated Book: ${prompt}` },
-  { heading: "Chapter 1: Introduction", content: "This is a generated introduction about your chosen topic, laying the foundation for the rest of the book." },
-  { heading: "Chapter 2: Deep Dive", content: "In this chapter, we'll explore the main concepts of your topic in great detail, with examples and explanations." },
-  { heading: "Chapter 3: Case Studies", content: "Here, real-world examples and research findings are shared to deepen your understanding." },
-  { heading: "Conclusion", content: "A summary of the book and final insights are presented here." },
+export interface TextProcessingState {
+  text: string;
+  setText: (text: string) => void;
+  excelFile: File | null;
+  setExcelFile: (file: File | null) => void;
+  targetLanguage: string;
+  setTargetLanguage: (lang: string) => void;
+  selectedVoice: string;
+  setSelectedVoice: (voice: string) => void;
+  isProcessing: boolean;
+  setIsProcessing: (isProcessing: boolean) => void;
+  bookPrompt: string;
+  setBookPrompt: (prompt: string) => void;
+  bookContent: { heading: string; content: string }[] | null;
+  setBookContent: (content: { heading: string; content: string }[] | null) => void;
+  isBookLoading: boolean;
+  setIsBookLoading: (isLoading: boolean) => void;
+  atsFile: File | null;
+  setAtsFile: (file: File | null) => void;
+  jobDescription: string;
+  setJobDescription: (desc: string) => void;
+  atsScore: number | null;
+  setAtsScore: (score: number | null) => void;
+  isAtsLoading: boolean;
+  setIsAtsLoading: (isLoading: boolean) => void;
+  resumeFile: File | null;
+  setResumeFile: (file: File | null) => void;
+  resumeJobDescription: string;
+  setResumeJobDescription: (desc: string) => void;
+  resumeAnalysis: { bestPractices: string[]; tailoredSuggestions: string[]; generalRecommendations: string[] } | null;
+  setResumeAnalysis: (analysis: { bestPractices: string[]; tailoredSuggestions: string[]; generalRecommendations: string[] } | null) => void;
+  isResumeLoading: boolean;
+  setIsResumeLoading: (isLoading: boolean) => void;
+}
+
+interface TextProcessingModel {
+  key: string;
+  title: string;
+  description: string;
+  image : string;
+  icon: LucideIcon;
+}
+
+const textProcessingModels: TextProcessingModel[] = [
+  {
+    key: "long-book",
+    title: "Long Book",
+    description: "Generate a full-length book or research paper based on your prompt.",
+    icon: Book,
+    image : 'https://static.vecteezy.com/system/resources/thumbnails/040/722/713/small/old-man-s-hands-reading-a-book-the-man-runs-his-fingers-through-the-book-free-video.jpg'
+  },
+  {
+    key: "text-to-speech",
+    title: "Text to Speech",
+    description: "Convert text into natural-sounding speech with customizable voices.",
+    icon: FileText,
+    image : 'https://t3.ftcdn.net/jpg/02/44/46/32/360_F_244463221_9qvm69ukrh4NSfG4Vi2F8We4ZT5uhtSh.jpg'
+
+  },
+  {
+    key: "excel-to-speech",
+    title: "Excel to Speech",
+    description: "Transform Excel or CSV data into spoken audio files.",
+    icon: FileSpreadsheet,
+    image : 'https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2018/07/vba-macros-excel.jpg'
+
+  },
+  {
+    key: "summarize",
+    title: "Summarize",
+    description: "Create concise summaries of large text documents.",
+    icon: FileDigit,
+    image : 'https://media.lovemaharashtra.org/sites/8/2016/09/Puzzle21.jpg'
+
+  },
+  {
+    key: "ats-score",
+    title: "ATS Score",
+    description: "Evaluate resumes against job descriptions for ATS compatibility.",
+    icon: FileCheck,
+    image : 'https://media.licdn.com/dms/image/v2/D5612AQGCZ6Om1N34NA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1732792994576?e=2147483647&v=beta&t=Dkxf3ohVZ_M1dVCAKnUKVdTg_uLmnveU6745iVVznYk'
+
+  },
+  {
+    key: "resume-analyser",
+    title: "Resume Analyser",
+    description: "Get tailored suggestions to improve your resume.",
+    icon: FileText,
+    image : 'https://nluglob.org/wp-content/uploads/2023/11/ResumeProcessing.jpg'
+
+  },
 ];
-
-const exampleResumeAnalysis = (jobDescription: string) => ({
-  bestPractices: [
-    "Use strong action verbs (e.g., 'led', 'developed', 'implemented') to describe your achievements.",
-    "Quantify results where possible (e.g., 'increased sales by 20%').",
-    "Keep your resume concise, ideally one page for most roles.",
-  ],
-  tailoredSuggestions: [
-    `Include keywords from the job description, such as "${jobDescription.slice(0, 20)}...".`,
-    "Highlight relevant skills that match the job requirements.",
-    "Emphasize experience that aligns with the role's responsibilities.",
-  ],
-  generalRecommendations: [
-    "Use a clean, professional format with consistent fonts and spacing.",
-    "Ensure no spelling or grammatical errors.",
-    "Include a summary section tailored to the job.",
-  ],
-});
 
 const TextProcessing = () => {
   const [text, setText] = useState("");
-  const [excelFile, setExcelFile] = useState(null);
+  const [excelFile, setExcelFile] = useState<File | null>(null);
   const [targetLanguage, setTargetLanguage] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-
   const [bookPrompt, setBookPrompt] = useState("");
-  const [bookContent, setBookContent] = useState(null);
+  const [bookContent, setBookContent] = useState<{ heading: string; content: string }[] | null>(null);
   const [isBookLoading, setIsBookLoading] = useState(false);
-
-  const [atsFile, setAtsFile] = useState(null);
+  const [atsFile, setAtsFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [atsScore, setAtsScore] = useState(null);
+  const [atsScore, setAtsScore] = useState<number | null>(null);
   const [isAtsLoading, setIsAtsLoading] = useState(false);
-
-  const [resumeFile, setResumeFile] = useState(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeJobDescription, setResumeJobDescription] = useState("");
-  const [resumeAnalysis, setResumeAnalysis] = useState(null);
+  const [resumeAnalysis, setResumeAnalysis] = useState<{
+    bestPractices: string[];
+    tailoredSuggestions: string[];
+    generalRecommendations: string[];
+  } | null>(null);
   const [isResumeLoading, setIsResumeLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<"tabs" | "grid">("grid");
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
-  const handleProcessText = () => {
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-    }, 2000);
+  const state: TextProcessingState = {
+    text,
+    setText,
+    excelFile,
+    setExcelFile,
+    targetLanguage,
+    setTargetLanguage,
+    selectedVoice,
+    setSelectedVoice,
+    isProcessing,
+    setIsProcessing,
+    bookPrompt,
+    setBookPrompt,
+    bookContent,
+    setBookContent,
+    isBookLoading,
+    setIsBookLoading,
+    atsFile,
+    setAtsFile,
+    jobDescription,
+    setJobDescription,
+    atsScore,
+    setAtsScore,
+    isAtsLoading,
+    setIsAtsLoading,
+    resumeFile,
+    setResumeFile,
+    resumeJobDescription,
+    setResumeJobDescription,
+    resumeAnalysis,
+    setResumeAnalysis,
+    isResumeLoading,
+    setIsResumeLoading,
   };
 
-  const handleGenerateBook = () => {
-    setIsBookLoading(true);
-    setBookContent(null);
-    setTimeout(() => {
-      setBookContent(exampleBookContent(bookPrompt));
-      setIsBookLoading(false);
-    }, 2000);
-  };
-
-  const handleGenerateAtsScore = () => {
-    setIsAtsLoading(true);
-    setAtsScore(null);
-    setTimeout(() => {
-      const score = Math.floor(Math.random() * 41) + 60; // Random score between 60-100 for demo
-      setAtsScore(score);
-      setIsAtsLoading(false);
-    }, 2000);
-  };
-
-  const handleAnalyseResume = () => {
-    setIsResumeLoading(true);
-    setResumeAnalysis(null);
-    setTimeout(() => {
-      setResumeAnalysis(exampleResumeAnalysis(resumeJobDescription));
-      setIsResumeLoading(false);
-    }, 2000);
-  };
-
-  // Define which tabs are locked (modify as needed)
   const lockedTabs = {
     "long-book": true,
     "ats-score": true,
@@ -104,454 +173,136 @@ const TextProcessing = () => {
     "summarize": true,
   };
 
+  // Reset activeTab when mounting or switching to grid view
+  useEffect(() => {
+    if (viewMode === "grid") {
+      setActiveTab(null);
+    }
+  }, [viewMode]);
+
+  const handleTryNow = (tabKey: string) => {
+    setActiveTab(tabKey);
+  };
+
+  const renderModelContent = () => {
+    if (!activeTab) return null;
+
+    switch (activeTab) {
+      case "long-book":
+        return <LongBook state={state} isLocked={lockedTabs["long-book"]} />;
+      case "text-to-speech":
+        return <TextToSpeech state={state} isLocked={lockedTabs["text-to-speech"]} />;
+      case "excel-to-speech":
+        return <ExcelToSpeech state={state} isLocked={lockedTabs["excel-to-speech"]} />;
+      case "summarize":
+        return <Summarize state={state} isLocked={lockedTabs["summarize"]} />;
+      case "ats-score":
+        return <AtsScore state={state} isLocked={lockedTabs["ats-score"]} />;
+      case "resume-analyser":
+        return <ResumeAnalyser state={state} isLocked={lockedTabs["resume-analyser"]} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-2">Text Processing</h1>
-        <p className="text-gray-600 mb-8">Convert your text to natural-sounding speech, analyze resumes, or generate content</p>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <div className="inline-block rounded-lg bg-lime-500/10 px-3 py-1 text-sm text-lime-500 mb-2">
+              Text Processing Models
+            </div>
+            <h1 className="text-3xl font-bold mb-2">Text Processing</h1>
+            <p className="text-gray-600">Convert your text to natural-sounding speech, analyze resumes, or generate content</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="view-toggle">Grid View</Label>
+            <Switch
+              id="view-toggle"
+              checked={viewMode === "grid"}
+              onCheckedChange={() => setViewMode(viewMode === "tabs" ? "grid" : "tabs")}
+            />
+          </div>
+        </div>
 
-        <Tabs defaultValue="text-to-speech" className="w-full">
-          <TabsList className="inline-flex mb-6">
-            <TabsTrigger value="long-book" className="flex items-center gap-2">
-              <Book className="h-4 w-4" />
-              <span>Long Book</span>
-            </TabsTrigger>
-            <TabsTrigger value="ats-score" className="flex items-center gap-2">
-              <FileCheck className="h-4 w-4" />
-              <span>ATS Score</span>
-            </TabsTrigger>
-            <TabsTrigger value="resume-analyser" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span>Resume Analyser</span>
-            </TabsTrigger>
-            <TabsTrigger value="text-to-speech" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span>Text to Speech</span>
-            </TabsTrigger>
-            <TabsTrigger value="excel-to-speech" className="flex items-center gap-2">
-              <FileSpreadsheet className="h-4 w-4" />
-              <span>Excel to Speech</span>
-            </TabsTrigger>
-            <TabsTrigger value="summarize" className="flex items-center gap-2">
-              <FileDigit className="h-4 w-4" />
-              <span>Summarize</span>
-            </TabsTrigger>
-          </TabsList>
+        {viewMode === "tabs" ? (
+          <Tabs value={activeTab || "text-to-speech"} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="inline-flex mb-6">
+              <TabsTrigger value="long-book" className="flex items-center gap-2">
+                <Book className="h-4 w-4" />
+                <span>Long Book</span>
+              </TabsTrigger>
+              <TabsTrigger value="ats-score" className="flex items-center gap-2">
+                <FileCheck className="h-4 w-4" />
+                <span>ATS Score</span>
+              </TabsTrigger>
+              <TabsTrigger value="resume-analyser" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                <span>Resume Analyser</span>
+              </TabsTrigger>
+              <TabsTrigger value="text-to-speech" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                <span>Text to Speech</span>
+              </TabsTrigger>
+              <TabsTrigger value="excel-to-speech" className="flex items-center gap-2">
+                <FileSpreadsheet className="h-4 w-4" />
+                <span>Excel to Speech</span>
+              </TabsTrigger>
+              <TabsTrigger value="summarize" className="flex items-center gap-2">
+                <FileDigit className="h-4 w-4" />
+                <span>Summarize</span>
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="long-book" className="space-y-6" id="long-book">
-            <LockedFeature isLocked={lockedTabs["long-book"]}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Book Prompt</CardTitle>
-                    <CardDescription>
-                      Enter a topic, course, or subject. The model will generate a full book or research paper!
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <textarea
-                      className="w-full border rounded-md p-3 min-h-[100px] resize-none"
-                      placeholder="e.g. Advanced AI Course, Full Stack Web Development, Quantum Computing…"
-                      value={bookPrompt}
-                      onChange={(e) => setBookPrompt(e.target.value)}
-                    />
-                    <div className="flex justify-end mt-4">
-                      <Button onClick={handleGenerateBook} disabled={!bookPrompt.trim() || isBookLoading} className="w-full">
-                        {isBookLoading ? "Generating Book..." : "Generate Book"}
-                        {!isBookLoading && <ArrowRight className="ml-2 h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    You will get a full-length, structured book—great for learning, research, or publishing as a PDF.
-                  </CardFooter>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Generated Book</CardTitle>
-                    <CardDescription>
-                      The generated content will appear here in a readable, scrollable document style.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="max-h-[400px] overflow-y-auto border bg-background rounded-md px-4 py-3 shadow-inner">
-                      {isBookLoading && (
-                        <div className="text-center text-muted-foreground py-12">Generating book, please wait...</div>
-                      )}
-                      {!isBookLoading && bookContent && (
-                        <div className="space-y-6">
-                          {bookContent.map((sec, idx) => (
-                            <section key={idx}>
-                              <h3 className="font-bold text-lg mb-2">{sec.heading}</h3>
-                              <p className="text-base text-gray-700 whitespace-pre-wrap">{sec.content}</p>
-                            </section>
-                          ))}
-                        </div>
-                      )}
-                      {!isBookLoading && !bookContent && (
-                        <div className="text-muted-foreground text-sm text-center py-10">
-                          No book generated yet. Enter a prompt and start!
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex items-center justify-end space-x-2 pt-2">
-                    <Button variant="outline" disabled={!bookContent} className="text-xs px-3 py-1">
-                      Download PDF
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </div>
-            </LockedFeature>
-          </TabsContent>
+            <TabsContent value="long-book" className="space-y-6" id="long-book">
+              <LongBook state={state} isLocked={lockedTabs["long-book"]} />
+            </TabsContent>
+            <TabsContent value="text-to-speech" className="space-y-6">
+              <TextToSpeech state={state} isLocked={lockedTabs["text-to-speech"]} />
+            </TabsContent>
+            <TabsContent value="excel-to-speech" className="space-y-6">
+              <ExcelToSpeech state={state} isLocked={lockedTabs["excel-to-speech"]} />
+            </TabsContent>
+            <TabsContent value="summarize" className="space-y-6">
+              <Summarize state={state} isLocked={lockedTabs["summarize"]} />
+            </TabsContent>
+            <TabsContent value="ats-score" className="space-y-6">
+              <AtsScore state={state} isLocked={lockedTabs["ats-score"]} />
+            </TabsContent>
+            <TabsContent value="resume-analyser" className="space-y-6">
+              <ResumeAnalyser state={state} isLocked={lockedTabs["resume-analyser"]} />
+            </TabsContent>
+          </Tabs>
+        ) : (
+          <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container h-screen overflow-hidden">
+          {/* Left: Model Cards */}
+          <div className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 flex-grow">
+              {textProcessingModels.map((model) => (
+                <ModelCard
+                  key={model.key}
+                  title={model.title}
+                  description={model.description}
+                  icon={model.icon}
+                  image={model.image}
+                  onTryNow={() => handleTryNow(model.key)}
+                />
+              ))}
+            </div>
+          </div>
+        
+          {/* Right: Selected Model Content */}
+          {activeTab && (
+            <div className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
+              {renderModelContent()}
+            </div>
+          )}
+        </div>
+        
 
-          <TabsContent value="text-to-speech" className="space-y-6">
-            <LockedFeature isLocked={lockedTabs["text-to-speech"]}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Input Text</CardTitle>
-                    <CardDescription>
-                      Enter the text you want to convert to speech
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <TextInput 
-                      onSubmit={setText} 
-                      isLoading={isProcessing} 
-                    />
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Voice Settings</CardTitle>
-                    <CardDescription>
-                      Select language and voice for your audio
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <LanguageSelector 
-                      onChange={setTargetLanguage} 
-                      label="Content Language" 
-                      placeholder="Select content language..." 
-                    />
-                    <VoiceSelector 
-                      onChange={setSelectedVoice} 
-                      label="Voice" 
-                      placeholder="Select voice..." 
-                    />
-                    <div className="pt-4">
-                      <Button 
-                        onClick={handleProcessText}
-                        disabled={!text || !targetLanguage || !selectedVoice || isProcessing}
-                        className="w-full"
-                      >
-                        {isProcessing ? "Converting..." : "Convert to Speech"} 
-                        {!isProcessing && <ArrowRight className="ml-2 h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    Processed audio can be downloaded as MP3 or WAV format.
-                  </CardFooter>
-                </Card>
-              </div>
-            </LockedFeature>
-          </TabsContent>
-
-          <TabsContent value="excel-to-speech" className="space-y-6">
-            <LockedFeature isLocked={lockedTabs["excel-to-speech"]}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upload Excel</CardTitle>
-                    <CardDescription>
-                      Upload your Excel or CSV file with text to convert
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ExcelUpload 
-                      onUpload={setExcelFile} 
-                      isLoading={isProcessing} 
-                    />
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    First column should contain the text to be converted.
-                  </CardFooter>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Conversion Settings</CardTitle>
-                    <CardDescription>
-                      Configure how your spreadsheet data will be spoken
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <LanguageSelector 
-                      onChange={setTargetLanguage} 
-                      label="Content Language" 
-                      placeholder="Select content language..." 
-                    />
-                    <VoiceSelector 
-                      onChange={setSelectedVoice} 
-                      label="Voice" 
-                      placeholder="Select voice..." 
-                    />
-                    <div className="pt-4">
-                      <Button 
-                        onClick={handleProcessText}
-                        disabled={!excelFile || !targetLanguage || !selectedVoice || isProcessing}
-                        className="w-full"
-                      >
-                        {isProcessing ? "Converting..." : "Convert to Speech"} 
-                        {!isProcessing && <ArrowRight className="ml-2 h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    Multiple rows will be processed as separate audio files.
-                  </CardFooter>
-                </Card>
-              </div>
-            </LockedFeature>
-          </TabsContent>
-
-          <TabsContent value="summarize" className="space-y-6">
-            <LockedFeature isLocked={lockedTabs["summarize"]}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Input Content</CardTitle>
-                    <CardDescription>
-                      Enter the text you want to summarize
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <TextInput 
-                      onSubmit={setText} 
-                      isLoading={isProcessing} 
-                    />
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Summarization Options</CardTitle>
-                    <CardDescription>
-                      Choose how to summarize your content
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-sm font-medium mb-1 block">Summary Length</label>
-                        <select className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                          <option value="short">Short (1-2 paragraphs)</option>
-                          <option value="medium">Medium (3-4 paragraphs)</option>
-                          <option value="long">Long (5+ paragraphs)</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-1 block">Summary Style</label>
-                        <select className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                          <option value="concise">Concise</option>
-                          <option value="detailed">Detailed</option>
-                          <option value="bullet">Bullet Points</option>
-                        </select>
-                      </div>
-                      <LanguageSelector 
-                        onChange={setTargetLanguage} 
-                        label="Output Language" 
-                        placeholder="Same as input or select new..." 
-                      />
-                    </div>
-                    <div className="pt-4">
-                      <Button 
-                        onClick={handleProcessText}
-                        disabled={!text || isProcessing}
-                        className="w-full"
-                      >
-                        {isProcessing ? "Summarizing..." : "Generate Summary"} 
-                        {!isProcessing && <ArrowRight className="ml-2 h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    Summaries can also be converted to audio after generation.
-                  </CardFooter>
-                </Card>
-              </div>
-            </LockedFeature>
-          </TabsContent>
-
-          <TabsContent value="ats-score" className="space-y-6">
-            <LockedFeature isLocked={lockedTabs["ats-score"]}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upload Resume</CardTitle>
-                    <CardDescription>
-                      Upload a PDF or Excel file containing resume or candidate data
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <DocumentUpload 
-                      onUpload={setAtsFile} 
-                      isLoading={isAtsLoading}
-                    />
-                    <div className="mt-4">
-                      <label className="text-sm font-medium mb-1 block">Job Description</label>
-                      <textarea
-                        className="w-full border rounded-md p-3 min-h-[100px] resize-none"
-                        placeholder="Enter the job description for the position..."
-                        value={jobDescription}
-                        onChange={(e) => setJobDescription(e.target.value)}
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    Ensure the resume contains relevant skills and experience for accurate scoring.
-                  </CardFooter>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>ATS Score</CardTitle>
-                    <CardDescription>
-                      The calculated ATS score will appear here
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="max-h-[400px] overflow-y-auto border bg-background rounded-md px-4 py-3 shadow-inner">
-                      {isAtsLoading && (
-                        <div className="text-center text-muted-foreground py-12">Calculating ATS score, please wait...</div>
-                      )}
-                      {!isAtsLoading && atsScore !== null && (
-                        <div className="space-y-4">
-                          <h3 className="font-bold text-lg">ATS Score: {atsScore}%</h3>
-                          <p className="text-base text-gray-700">
-                            This score represents how well the resume matches the job description based on keywords, skills, and experience.
-                          </p>
-                        </div>
-                      )}
-                      {!isAtsLoading && atsScore === null && (
-                        <div className="text-muted-foreground text-sm text-center py-10">
-                          No score generated yet. Upload a file and enter a job description to start!
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex justify-end mt-4">
-                      <Button 
-                        onClick={handleGenerateAtsScore}
-                        disabled={!atsFile || !jobDescription.trim() || isAtsLoading}
-                        className="w-full"
-                      >
-                        {isAtsLoading ? "Calculating..." : "Generate ATS Score"} 
-                        {!isAtsLoading && <ArrowRight className="ml-2 h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    Higher scores indicate better alignment with the job requirements.
-                  </CardFooter>
-                </Card>
-              </div>
-            </LockedFeature>
-          </TabsContent>
-
-          <TabsContent value="resume-analyser" className="space-y-6">
-            <LockedFeature isLocked={lockedTabs["resume-analyser"]}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upload Resume</CardTitle>
-                    <CardDescription>
-                      Upload a PDF or Word document containing your resume
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <DocumentUpload 
-                      onUpload={setResumeFile} 
-                      isLoading={isResumeLoading}
-                    />
-                    <div className="mt-4">
-                      <label className="text-sm font-medium mb-1 block">Job Description</label>
-                      <textarea
-                        className="w-full border rounded-md p-3 min-h-[100px] resize-none"
-                        placeholder="Enter the job description or profile for the position..."
-                        value={resumeJobDescription}
-                        onChange={(e) => setResumeJobDescription(e.target.value)}
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    Ensure the resume is well-formatted for accurate analysis.
-                  </CardFooter>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Resume Analysis</CardTitle>
-                    <CardDescription>
-                      Suggestions and best practices will appear here
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="max-h-[400px] overflow-y-auto border bg-background rounded-md px-4 py-3 shadow-inner">
-                      {isResumeLoading && (
-                        <div className="text-center text-muted-foreground py-12">Analyzing resume, please wait...</div>
-                      )}
-                      {!isResumeLoading && resumeAnalysis && (
-                        <div className="space-y-6">
-                          <section>
-                            <h3 className="font-bold text-lg mb-2">Best Practices</h3>
-                            <ul className="list-disc pl-5 text-base text-gray-700">
-                              {resumeAnalysis.bestPractices.map((item, idx) => (
-                                <li key={idx}>{item}</li>
-                              ))}
-                            </ul>
-                          </section>
-                          <section>
-                            <h3 className="font-bold text-lg mb-2">Tailored Suggestions</h3>
-                            <ul className="list-disc pl-5 text-base text-gray-700">
-                              {resumeAnalysis.tailoredSuggestions.map((item, idx) => (
-                                <li key={idx}>{item}</li>
-                              ))}
-                            </ul>
-                          </section>
-                          <section>
-                            <h3 className="font-bold text-lg mb-2">General Recommendations</h3>
-                            <ul className="list-disc pl-5 text-base text-gray-700">
-                              {resumeAnalysis.generalRecommendations.map((item, idx) => (
-                                <li key={idx}>{item}</li>
-                              ))}
-                            </ul>
-                          </section>
-                        </div>
-                      )}
-                      {!isResumeLoading && !resumeAnalysis && (
-                        <div className="text-muted-foreground text-sm text-center py-10">
-                          No analysis generated yet. Upload a resume and enter a job description to start!
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex justify-end mt-4">
-                      <Button 
-                        onClick={handleAnalyseResume}
-                        disabled={!resumeFile || !resumeJobDescription.trim() || isResumeLoading}
-                        className="w-full"
-                      >
-                        {isResumeLoading ? "Analyzing..." : "Analyse Resume"} 
-                        {!isResumeLoading && <ArrowRight className="ml-2 h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="text-xs text-muted-foreground">
-                    Follow these suggestions to improve your resume's effectiveness.
-                  </CardFooter>
-                </Card>
-              </div>
-            </LockedFeature>
-          </TabsContent>
-        </Tabs>
+        )}
       </main>
     </div>
   );
