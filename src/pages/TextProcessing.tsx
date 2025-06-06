@@ -36,7 +36,7 @@ export interface TextProcessingState {
   atsScore: number | null;
   setAtsScore: (score: number | null) => void;
   isAtsLoading: boolean;
-  setIsAtsLoading: (isLoading: boolean) => void;
+  setAtsLoading: (isLoading: boolean) => void;
   resumeFile: File | null;
   setResumeFile: (file: File | null) => void;
   resumeJobDescription: string;
@@ -50,58 +50,116 @@ export interface TextProcessingState {
 interface TextProcessingModel {
   key: string;
   title: string;
+  titletagline:string,
   description: string;
-  image : string;
+  modelName: string;
+  modelkeywords: string[];
+  liveornot: boolean;
+  totalruns: number;
+  sucessrate: number;
+  processingspeed: string;
+  outputquality: string;
+  compatibility: string[];
+  image: string;
   icon: LucideIcon;
 }
 
 const textProcessingModels: TextProcessingModel[] = [
   {
     key: "long-book",
-    title: "Long Book",
+    title: "Long Book", 
+    titletagline : 'Generate papers',
     description: "Generate a full-length book or research paper based on your prompt.",
+    modelName: "BookGenix",
+    modelkeywords: ["Book Generation", "Research Paper", "Content Creation"],
+    liveornot: false,
+    totalruns: 12,
+    sucessrate: 95,
+    processingspeed: "Moderate",
+    outputquality: "High",
+    compatibility: ["PDF", "DOCX"],
+    image: "https://static.vecteezy.com/system/resources/thumbnails/040/722/713/small/old-man-s-hands-reading-a-book-the-man-runs-his-fingers-through-the-book-free-video.jpg",
     icon: Book,
-    image : 'https://static.vecteezy.com/system/resources/thumbnails/040/722/713/small/old-man-s-hands-reading-a-book-the-man-runs-his-fingers-through-the-book-free-video.jpg'
   },
   {
     key: "text-to-speech",
-    title: "Text to Speech",
+    title: "Convert texts to voice",
+    titletagline : 'Translate audios',
     description: "Convert text into natural-sounding speech with customizable voices.",
+    modelName: "VoiceCraft",
+    modelkeywords: ["Text-to-Speech", "Voice Synthesis", "Multilingual"],
+    liveornot: false,
+    totalruns: 20,
+    sucessrate: 94,
+    processingspeed: "Fast",
+    outputquality: "Excellent",
+    compatibility: ["MP3", "WAV", "FLAC"],
+    image: "https://t3.ftcdn.net/jpg/02/44/46/32/360_F_244463221_9qvm69ukrh4NSfG4Vi2F8We4ZT5uhtSh.jpg",
     icon: FileText,
-    image : 'https://t3.ftcdn.net/jpg/02/44/46/32/360_F_244463221_9qvm69ukrh4NSfG4Vi2F8We4ZT5uhtSh.jpg'
-
   },
   {
-    key: "excel-to-speech",
-    title: "Excel to Speech",
-    description: "Transform Excel or CSV data into spoken audio files.",
+    key: "excel-to-charts",
+    title: "Excel to Charts",
+    titletagline: "Summarize excel sheets",
+    description: "Transform Excel or CSV data into summarized charts.",
+    modelName: "Excelerate",
+    modelkeywords: ["Excel", "CSV", "Audio Conversion"],
+    liveornot: false,
+    totalruns: 10,
+    sucessrate: 92,
+    processingspeed: "Moderate",
+    outputquality: "Good",
+    compatibility: ["XLSX", "CSV"],
+    image: "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2018/07/vba-macros-excel.jpg",
     icon: FileSpreadsheet,
-    image : 'https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2018/07/vba-macros-excel.jpg'
-
   },
   {
     key: "summarize",
     title: "Summarize",
+    titletagline: "Summarize texts",
     description: "Create concise summaries of large text documents.",
+    modelName: "TextSummarizer",
+    modelkeywords: ["Summarization", "Text Analysis", "NLP"],
+    liveornot: false,
+    totalruns: 20,
+    sucessrate: 97,
+    processingspeed: "Fast",
+    outputquality: "Excellent",
+    compatibility: ["TXT", "PDF"],
+    image: "https://media.lovemaharashtra.org/sites/8/2016/09/Puzzle21.jpg",
     icon: FileDigit,
-    image : 'https://media.lovemaharashtra.org/sites/8/2016/09/Puzzle21.jpg'
-
   },
   {
     key: "ats-score",
     title: "ATS Score",
+    titletagline: "Calculates potentiality of resume",
     description: "Evaluate resumes against job descriptions for ATS compatibility.",
+    modelName: "ResumeRater",
+    modelkeywords: ["ATS", "Resume Analysis", "Job Matching"],
+    liveornot: false,
+    totalruns: 30,
+    sucessrate: 96,
+    processingspeed: "Fast",
+    outputquality: "High",
+    compatibility: ["PDF", "DOCX"],
+    image: "https://media.licdn.com/dms/image/v2/D5612AQGCZ6Om1N34NA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1732792994576?e=2147483647&v=beta&t=Dkxf3ohVZ_M1dVCAKnUKVdTg_uLmnveU6745iVVznYk",
     icon: FileCheck,
-    image : 'https://media.licdn.com/dms/image/v2/D5612AQGCZ6Om1N34NA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1732792994576?e=2147483647&v=beta&t=Dkxf3ohVZ_M1dVCAKnUKVdTg_uLmnveU6745iVVznYk'
-
   },
   {
     key: "resume-analyser",
     title: "Resume Analyser",
+    titletagline: "Suggests and change resume",
     description: "Get tailored suggestions to improve your resume.",
+    modelName: "ResumeOptimizer",
+    modelkeywords: ["Resume Enhancement", "Career", "NLP"],
+    liveornot: false,
+    totalruns: 10,
+    sucessrate: 94,
+    processingspeed: "Moderate",
+    outputquality: "High",
+    compatibility: ["PDF", "DOCX"],
+    image: "https://nluglob.org/wp-content/uploads/2023/11/ResumeProcessing.jpg",
     icon: FileText,
-    image : 'https://nluglob.org/wp-content/uploads/2023/11/ResumeProcessing.jpg'
-
   },
 ];
 
@@ -117,7 +175,7 @@ const TextProcessing = () => {
   const [atsFile, setAtsFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [atsScore, setAtsScore] = useState<number | null>(null);
-  const [isAtsLoading, setIsAtsLoading] = useState(false);
+  const [isAtsLoading, setAtsLoading] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeJobDescription, setResumeJobDescription] = useState("");
   const [resumeAnalysis, setResumeAnalysis] = useState<{
@@ -153,7 +211,7 @@ const TextProcessing = () => {
     atsScore,
     setAtsScore,
     isAtsLoading,
-    setIsAtsLoading,
+    setAtsLoading,
     resumeFile,
     setResumeFile,
     resumeJobDescription,
@@ -192,8 +250,8 @@ const TextProcessing = () => {
         return <LongBook state={state} isLocked={lockedTabs["long-book"]} />;
       case "text-to-speech":
         return <TextToSpeech state={state} isLocked={lockedTabs["text-to-speech"]} />;
-      case "excel-to-speech":
-        return <ExcelToSpeech state={state} isLocked={lockedTabs["excel-to-speech"]} />;
+      case "excel-to-charts":
+        return <ExcelToSpeech state={state} isLocked={lockedTabs["excel-to-charts"]} />;
       case "summarize":
         return <Summarize state={state} isLocked={lockedTabs["summarize"]} />;
       case "ats-score":
@@ -246,7 +304,7 @@ const TextProcessing = () => {
                 <FileText className="h-4 w-4" />
                 <span>Text to Speech</span>
               </TabsTrigger>
-              <TabsTrigger value="excel-to-speech" className="flex items-center gap-2">
+              <TabsTrigger value="excel-to-charts" className="flex items-center gap-2">
                 <FileSpreadsheet className="h-4 w-4" />
                 <span>Excel to Speech</span>
               </TabsTrigger>
@@ -262,7 +320,7 @@ const TextProcessing = () => {
             <TabsContent value="text-to-speech" className="space-y-6">
               <TextToSpeech state={state} isLocked={lockedTabs["text-to-speech"]} />
             </TabsContent>
-            <TabsContent value="excel-to-speech" className="space-y-6">
+            <TabsContent value="excel-to-charts" className="space-y-6">
               <ExcelToSpeech state={state} isLocked={lockedTabs["excel-to-speech"]} />
             </TabsContent>
             <TabsContent value="summarize" className="space-y-6">
@@ -277,31 +335,38 @@ const TextProcessing = () => {
           </Tabs>
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container h-screen overflow-hidden">
-          {/* Left: Model Cards */}
-          <div className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 flex-grow">
-              {textProcessingModels.map((model) => (
-                <ModelCard
-                  key={model.key}
-                  title={model.title}
-                  description={model.description}
-                  icon={model.icon}
-                  image={model.image}
-                  onTryNow={() => handleTryNow(model.key)}
-                />
-              ))}
+            {/* Left: Model Cards */}
+            <div className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 flex-grow">
+                {textProcessingModels.map((model) => (
+                  <ModelCard
+                    key={model.key}
+                    title={model.title}
+                    titletagline={model.titletagline}
+                    description={model.description}
+                    modelName={model.modelName}
+                    modelkeywords={model.modelkeywords}
+                    liveornot={model.liveornot}
+                    totalruns={model.totalruns}
+                    sucessrate={model.sucessrate}
+                    processingspeed={model.processingspeed}
+                    outputquality={model.outputquality}
+                    compatibility={model.compatibility}
+                    image={model.image}
+                    icon={model.icon}
+                    onTryNow={() => handleTryNow(model.key)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        
-          {/* Right: Selected Model Content */}
-          {activeTab && (
-            <div className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
-              {renderModelContent()}
-            </div>
-          )}
-        </div>
-        
 
+            {/* Right: Selected Model Content */}
+            {activeTab && (
+              <div className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
+                {renderModelContent()}
+              </div>
+            )}
+          </div>
         )}
       </main>
     </div>

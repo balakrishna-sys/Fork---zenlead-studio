@@ -1,4 +1,3 @@
-// src/pages/AudioProcessing.tsx
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Switch } from "@/components/ui/switch";
@@ -24,7 +23,16 @@ export interface AudioProcessingState {
 interface AudioProcessingModel {
   key: string;
   title: string;
+  titletagline:string,
   description: string;
+  modelName: string;
+  modelkeywords: string[];
+  liveornot: boolean;
+  totalruns: number;
+  sucessrate: number;
+  processingspeed: string;
+  outputquality: string;
+  compatibility: string[];
   image: string;
   icon: LucideIcon;
 }
@@ -33,23 +41,50 @@ const audioProcessingModels: AudioProcessingModel[] = [
   {
     key: "translate",
     title: "Translate",
+    titletagline : "Language translation",
     description: "Translate audio into another language with customizable voices.",
-    icon: Languages,
+    modelName: "AudioTrans",
+    modelkeywords: ["Audio Translation", "Multilingual", "Voice Synthesis"],
+    liveornot: false,
+    totalruns: 25,
+    sucessrate: 97,
+    processingspeed: "Fast",
+    outputquality: "Excellent",
+    compatibility: ["MP3", "WAV", "M4A"],
     image: "https://elearningindustry.com/wp-content/uploads/2020/11/creating-multi-language-elearning-content.png",
+    icon: Languages,
   },
   {
     key: "clone",
     title: "Voice Clone",
+    titletagline : "Clone similar voice",
     description: "Create a digital clone of a voice from an audio sample.",
-    icon: Headphones,
+    modelName: "VoiceReplicator",
+    modelkeywords: ["Voice Cloning", "Audio Synthesis", "AI Voice"],
+    liveornot: false,
+    totalruns: 18,
+    sucessrate: 94,
+    processingspeed: "Moderate",
+    outputquality: "High",
+    compatibility: ["MP3", "WAV"],
     image: "https://www.isme.in/wp-content/uploads/2024/03/image-3.jpg",
+    icon: Headphones,
   },
   {
     key: "enhance",
     title: "Enhance",
+    titletagline : "Enhance audio quality",
     description: "Improve audio quality with noise reduction and clarity options.",
-    icon: Wand2,
+    modelName: "AudioClear",
+    modelkeywords: ["Audio Enhancement", "Noise Reduction", "Clarity"],
+    liveornot: false,
+    totalruns: 10,
+    sucessrate: 92,
+    processingspeed: "Fast",
+    outputquality: "Good",
+    compatibility: ["MP3", "WAV", "FLAC"],
     image: "https://cdn.arstechnica.net/wp-content/uploads/2022/12/adobe_speech_enhance_hero_1.jpg",
+    icon: Wand2,
   },
 ];
 
@@ -154,9 +189,7 @@ const AudioProcessing = () => {
             </TabsContent>
           </Tabs>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container  overflow-hidden">
-          {/* <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container h-screen overflow-hidden"> */}
-
+          <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container overflow-hidden">
             {/* Left: Model Cards */}
             <div className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 flex-grow">
@@ -164,9 +197,18 @@ const AudioProcessing = () => {
                   <ModelCard
                     key={model.key}
                     title={model.title}
+                    titletagline={model.titletagline}
                     description={model.description}
-                    icon={model.icon}
+                    modelName={model.modelName}
+                    modelkeywords={model.modelkeywords}
+                    liveornot={model.liveornot}
+                    totalruns={model.totalruns}
+                    sucessrate={model.sucessrate}
+                    processingspeed={model.processingspeed}
+                    outputquality={model.outputquality}
+                    compatibility={model.compatibility}
                     image={model.image}
+                    icon={model.icon}
                     onTryNow={() => handleTryNow(model.key)}
                   />
                 ))}

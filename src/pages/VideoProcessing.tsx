@@ -1,4 +1,3 @@
-// src/pages/VideoProcessing.tsx
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Switch } from "@/components/ui/switch";
@@ -18,7 +17,16 @@ export interface VideoProcessingState {
 interface VideoProcessingModel {
   key: string;
   title: string;
+  titletagline : string;
   description: string;
+  modelName: string;
+  modelkeywords: string[];
+  liveornot: boolean;
+  totalruns: number;
+  sucessrate: number;
+  processingspeed: string;
+  outputquality: string;
+  compatibility: string[];
   image: string;
   icon: LucideIcon;
 }
@@ -27,9 +35,18 @@ const videoProcessingModels: VideoProcessingModel[] = [
   {
     key: "video-generation",
     title: "Video Generation",
+    titletagline: "Animate videos by just prompts",
     description: "Create animated videos from text descriptions using AI.",
-    icon: Wand2,
+    modelName: "VideoGenix",
+    modelkeywords: ["Video Generation", "AI Animation", "Text-to-Video"],
+    liveornot: false,
+    totalruns: 7,
+    sucessrate: 95,
+    processingspeed: "Moderate",
+    outputquality: "High",
+    compatibility: ["MP4", "AVI", "MOV"],
     image: "https://www.shutterstock.com/image-photo/doctor-appointment-online-on-screen-260nw-2366001551.jpg",
+    icon: Wand2,
   },
 ];
 
@@ -96,15 +113,18 @@ const VideoProcessing = () => {
 
         {viewMode === "tabs" ? (
           <Tabs value={activeTab || "video-generation"} onValueChange={setActiveTab} className="w-full">
-  
+            <TabsList className="inline-flex mb-6">
+              <TabsTrigger value="video-generation" className="flex items-center gap-2">
+                <Wand2 className="h-4 w-4" />
+                <span>Video Generation</span>
+              </TabsTrigger>
+            </TabsList>
             <TabsContent value="video-generation" className="space-y-6">
               <VideoGeneration state={state} isLocked={lockedTabs["video-generation"]} />
             </TabsContent>
           </Tabs>
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container overflow-hidden">
-          {/* <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container h-screen overflow-hidden"> */}
-
             {/* Left: Model Cards */}
             <div className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-1 gap-1 flex-grow">
@@ -112,20 +132,35 @@ const VideoProcessing = () => {
                   <ModelCard
                     key={model.key}
                     title={model.title}
+                    titletagline={model.titletagline}
                     description={model.description}
-                    icon={model.icon}
+                    modelName={model.modelName}
+                    modelkeywords={model.modelkeywords}
+                    liveornot={model.liveornot}
+                    totalruns={model.totalruns}
+                    sucessrate={model.sucessrate}
+                    processingspeed={model.processingspeed}
+                    outputquality={model.outputquality}
+                    compatibility={model.compatibility}
                     image={model.image}
+                    icon={model.icon}
                     onTryNow={() => handleTryNow(model.key)}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Right: Selected Model Content */}
-              <div className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
+            <div className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
               <VideoGeneration state={state} isLocked={lockedTabs["video-generation"]} />
                
               </div>
+
+            {/* Right: Selected Model Content */}
+            {/* {activeTab && (
+              <div className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
+                {renderModelContent()}
+              </div>
+            )} */}
           </div>
         )}
       </main>
