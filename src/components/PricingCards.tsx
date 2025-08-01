@@ -243,7 +243,7 @@ export const PricingCards = () => {
 
         {/* Trust indicators */}
         <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-green-500" />
               <span>7-day free trial</span>
@@ -257,7 +257,7 @@ export const PricingCards = () => {
               <span>Cancel anytime</span>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground px-4">
             All plans include core AI features. Additional credits can be purchased separately.
           </p>
         </div>
