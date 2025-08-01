@@ -44,7 +44,7 @@ export const Hero = () => {
           </p>
 
           {/* Stats */}
-          <div className="mx-auto mt-12 flex flex-wrap justify-center items-center gap-8 text-sm text-muted-foreground">
+          <div className="mx-auto mt-8 lg:mt-12 flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 sm:gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" />
               <span>10,000+ users</span>
@@ -60,19 +60,19 @@ export const Hero = () => {
           </div>
 
           {/* CTA buttons */}
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/app">
-              <Button size="lg" className="h-14 px-8 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
+          <div className="mt-8 lg:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
+            <Link to="/app" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto h-12 lg:h-14 px-6 lg:px-8 text-base lg:text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="h-14 px-8 text-lg font-semibold rounded-xl bg-card/50 backdrop-blur-sm border-primary/20 hover:bg-primary/5"
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto h-12 lg:h-14 px-6 lg:px-8 text-base lg:text-lg font-semibold rounded-xl bg-card/50 backdrop-blur-sm border-primary/20 hover:bg-primary/5"
             >
-              <Play className="mr-2 h-5 w-5" />
+              <Play className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
               Watch Demo
             </Button>
           </div>
