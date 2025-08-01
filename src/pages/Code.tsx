@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { 
   Send, 
   Code2, 
@@ -23,7 +24,9 @@ import {
   Zap,
   Lightbulb,
   ChevronDown,
-  ArrowUp
+  ArrowUp,
+  Menu,
+  Settings
 } from "lucide-react";
 
 interface Message {
@@ -35,27 +38,21 @@ interface Message {
 }
 
 const categories = [
-  { id: "general", name: "General Chat", icon: MessageSquare, color: "bg-gradient-to-r from-blue-500 to-blue-600", description: "General programming questions and discussions" },
-  { id: "code", name: "Code Generation", icon: Code2, color: "bg-gradient-to-r from-green-500 to-green-600", description: "Generate code snippets and functions" },
-  { id: "docs", name: "Documentation", icon: FileText, color: "bg-gradient-to-r from-purple-500 to-purple-600", description: "Create technical documentation and guides" },
-  { id: "analysis", name: "Code Analysis", icon: Braces, color: "bg-gradient-to-r from-orange-500 to-orange-600", description: "Review and analyze existing code" },
-  { id: "database", name: "Database Queries", icon: Database, color: "bg-gradient-to-r from-red-500 to-red-600", description: "SQL queries and database design" },
-  { id: "calculation", name: "Calculations", icon: Calculator, color: "bg-gradient-to-r from-indigo-500 to-indigo-600", description: "Mathematical computations and algorithms" },
+  { id: "general", name: "General Chat", icon: MessageSquare, color: "bg-blue-500", description: "General programming questions and discussions" },
+  { id: "code", name: "Code Generation", icon: Code2, color: "bg-green-500", description: "Generate code snippets and functions" },
+  { id: "docs", name: "Documentation", icon: FileText, color: "bg-purple-500", description: "Create technical documentation and guides" },
+  { id: "analysis", name: "Code Analysis", icon: Braces, color: "bg-orange-500", description: "Review and analyze existing code" },
+  { id: "database", name: "Database Queries", icon: Database, color: "bg-red-500", description: "SQL queries and database design" },
+  { id: "calculation", name: "Calculations", icon: Calculator, color: "bg-indigo-500", description: "Mathematical computations and algorithms" },
 ];
 
 const suggestedPrompts = [
-  { text: "Create a React component for a login form", category: "code", icon: Code2 },
-  { text: "Write a Python function to sort an array", category: "code", icon: Code2 },
-  { text: "Generate SQL query to join two tables", category: "database", icon: Database },
-  { text: "Explain how JavaScript closures work", category: "docs", icon: FileText },
-  { text: "Create a responsive CSS grid layout", category: "code", icon: Code2 },
-  { text: "Review this code for best practices", category: "analysis", icon: Braces },
-];
-
-const quickActions = [
-  { id: "debug", name: "Debug Code", icon: Zap, color: "text-yellow-500" },
-  { id: "optimize", name: "Optimize", icon: ArrowUp, color: "text-green-500" },
-  { id: "explain", name: "Explain", icon: Lightbulb, color: "text-blue-500" },
+  "Create a React component for a login form",
+  "Write a Python function to sort an array",
+  "Generate SQL query to join two tables",
+  "Explain how JavaScript closures work",
+  "Create a responsive CSS grid layout",
+  "Write TypeScript interfaces for a user system"
 ];
 
 export default function Code() {
@@ -64,13 +61,7 @@ export default function Code() {
   const [selectedCategory, setSelectedCategory] = useState("general");
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -87,7 +78,7 @@ export default function Code() {
     setInput("");
     setIsLoading(true);
 
-    // Simulate AI response with more realistic delay
+    // Simulate AI response
     setTimeout(() => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -98,7 +89,7 @@ export default function Code() {
       };
       setMessages(prev => [...prev, aiMessage]);
       setIsLoading(false);
-    }, Math.random() * 2000 + 1000);
+    }, 1500);
   };
 
   const generateMockResponse = (query: string, category: string): string => {
@@ -124,140 +115,170 @@ export default function Code() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handlePromptClick = (prompt: { text: string; category: string }) => {
-    setSelectedCategory(prompt.category);
-    setInput(prompt.text);
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt);
   };
 
-  const scrollToTop = () => {
-    scrollAreaRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  // Mobile category selector component
+  const CategorySelector = ({ onClose }: { onClose?: () => void }) => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 rounded-xl bg-gradient-to-r from-primary to-primary/80">
+          <Sparkles className="h-6 w-6 text-primary-foreground" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold">AI Assistant</h2>
+          <p className="text-sm text-muted-foreground">Choose your category</p>
+        </div>
+      </div>
+      
+      <div className="space-y-3">
+        {categories.map((category) => {
+          const Icon = category.icon;
+          return (
+            <Card 
+              key={category.id}
+              className={`transition-all duration-200 cursor-pointer hover:shadow-md ${
+                selectedCategory === category.id
+                  ? "ring-2 ring-primary shadow-lg scale-[1.02]"
+                  : "hover:shadow-sm"
+              }`}
+              onClick={() => {
+                setSelectedCategory(category.id);
+                onClose?.();
+              }}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className={`p-2 rounded-lg ${category.color} text-white shadow-sm`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-sm">{category.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                      {category.description}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <Separator className="my-6" />
+
+      <div>
+        <h3 className="text-sm font-semibold mb-3 text-muted-foreground flex items-center gap-2">
+          <Lightbulb className="h-4 w-4" />
+          Suggested Prompts
+        </h3>
+        <div className="space-y-2">
+          {suggestedPrompts.map((prompt, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                handlePromptClick(prompt);
+                onClose?.();
+              }}
+              className="w-full text-left p-3 text-xs rounded-lg border border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-colors"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <Navbar />
-      <div className="flex h-[calc(100vh-64px)]">
-        {/* Enhanced Sidebar */}
+      <div className="flex h-[calc(100vh-64px)] relative">
+        {/* Desktop Sidebar */}
         <div className="w-80 border-r bg-card/50 backdrop-blur-sm p-6 hidden lg:block overflow-y-auto">
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-primary to-primary/80">
-                <Sparkles className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">AI Assistant</h2>
-                <p className="text-sm text-muted-foreground">Choose your category</p>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              {categories.map((category) => {
-                const Icon = category.icon;
-                return (
-                  <Card 
-                    key={category.id}
-                    className={`transition-all duration-200 cursor-pointer hover:shadow-md ${
-                      selectedCategory === category.id
-                        ? "ring-2 ring-primary shadow-lg scale-[1.02]"
-                        : "hover:shadow-sm"
-                    }`}
-                    onClick={() => setSelectedCategory(category.id)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-lg ${category.color} text-white shadow-sm`}>
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-sm">{category.name}</h3>
-                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                            {category.description}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-
-          <Separator className="my-6" />
-
-          {/* Quick Actions */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold mb-3 text-muted-foreground flex items-center gap-2">
-              <Zap className="h-4 w-4" />
-              Quick Actions
-            </h3>
-            <div className="flex gap-2">
-              {quickActions.map((action) => {
-                const Icon = action.icon;
-                return (
-                  <Button
-                    key={action.id}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 h-auto p-2 flex-col gap-1"
-                  >
-                    <Icon className={`h-4 w-4 ${action.color}`} />
-                    <span className="text-xs">{action.name}</span>
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Enhanced Suggested Prompts */}
-          <div>
-            <h3 className="text-sm font-semibold mb-4 text-muted-foreground flex items-center gap-2">
-              <Lightbulb className="h-4 w-4" />
-              Suggested Prompts
-            </h3>
-            <div className="space-y-2">
-              {suggestedPrompts.map((prompt, index) => {
-                const Icon = prompt.icon;
-                return (
-                  <Card
-                    key={index}
-                    className="cursor-pointer hover:shadow-sm transition-all duration-200 hover:scale-[1.01]"
-                    onClick={() => handlePromptClick(prompt)}
-                  >
-                    <CardContent className="p-3">
-                      <div className="flex items-start gap-2">
-                        <Icon className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
-                        <p className="text-xs leading-relaxed">{prompt.text}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
+          <CategorySelector />
         </div>
 
-        {/* Enhanced Main Chat Area */}
-        <div className="flex-1 flex flex-col relative">
+        {/* Mobile Sidebar */}
+        <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+          <SheetContent side="left" className="w-full sm:w-80 p-6 overflow-y-auto">
+            <SheetHeader className="mb-6">
+              <SheetTitle className="sr-only">AI Assistant Settings</SheetTitle>
+            </SheetHeader>
+            <CategorySelector onClose={() => setIsMobileSidebarOpen(false)} />
+          </SheetContent>
+        </Sheet>
+
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Mobile Header */}
+          <div className="lg:hidden border-b bg-card/50 backdrop-blur-sm p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="font-semibold text-lg">AI Code Assistant</h1>
+                <p className="text-xs text-muted-foreground">
+                  {categories.find(c => c.id === selectedCategory)?.name}
+                </p>
+              </div>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              {categories.find(c => c.id === selectedCategory)?.name}
+            </Badge>
+          </div>
+
           {/* Chat Messages */}
-          <ScrollArea className="flex-1 p-6" ref={scrollAreaRef}>
+          <ScrollArea className="flex-1 p-4 lg:p-6">
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <div className="max-w-2xl mx-auto">
+              <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                <div className="max-w-md lg:max-w-2xl mx-auto">
                   <div className="relative mb-8">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-3xl"></div>
                     <div className="relative p-6 rounded-2xl bg-card border shadow-lg">
-                      <Sparkles className="h-16 w-16 text-primary mx-auto mb-4" />
-                      <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                      <Sparkles className="h-12 lg:h-16 w-12 lg:w-16 text-primary mx-auto mb-4" />
+                      <h1 className="text-2xl lg:text-3xl font-bold mb-3 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                         AI Code Assistant
                       </h1>
-                      <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
+                      <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
                         Your intelligent coding companion for generating code, creating documentation, 
                         analyzing projects, and solving complex programming challenges.
                       </p>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                  {/* Mobile Quick Categories */}
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6 lg:hidden">
+                    {categories.slice(0, 6).map((category) => {
+                      const Icon = category.icon;
+                      return (
+                        <Card
+                          key={category.id}
+                          className={`cursor-pointer transition-all duration-300 hover:scale-105 group ${
+                            selectedCategory === category.id ? 'ring-2 ring-primary' : ''
+                          }`}
+                          onClick={() => setSelectedCategory(category.id)}
+                        >
+                          <CardContent className="p-3 text-center">
+                            <div className={`inline-flex p-2 rounded-xl ${category.color} text-white mb-2 group-hover:scale-110 transition-transform`}>
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            <h3 className="font-semibold text-xs">{category.name}</h3>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+
+                  {/* Desktop Categories */}
+                  <div className="hidden lg:grid lg:grid-cols-3 gap-4 mb-8">
                     {categories.slice(0, 6).map((category) => {
                       const Icon = category.icon;
                       return (
@@ -279,31 +300,30 @@ export default function Code() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-8 max-w-5xl mx-auto">
-                {messages.map((message, index) => (
+              <div className="space-y-6 lg:space-y-8 max-w-4xl mx-auto">
+                {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex gap-4 ${message.isUser ? "justify-end" : "justify-start"} animate-in slide-in-from-bottom-2 duration-500`}
-                    style={{ animationDelay: `${index * 100}ms` }}
+                    className={`flex gap-3 lg:gap-4 ${message.isUser ? "justify-end" : "justify-start"}`}
                   >
                     {!message.isUser && (
-                      <Avatar className="h-10 w-10 mt-1 ring-2 ring-primary/20 shadow-md">
+                      <Avatar className="h-8 w-8 mt-1 ring-2 ring-primary/20 shadow-md flex-shrink-0">
                         <AvatarFallback className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold">
                           <Bot className="h-4 w-4" />
                         </AvatarFallback>
                       </Avatar>
                     )}
                     <Card
-                      className={`max-w-[85%] group relative ${
+                      className={`max-w-[85%] lg:max-w-[80%] group relative ${
                         message.isUser
                           ? "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-lg"
                           : "bg-card shadow-md hover:shadow-lg transition-shadow"
                       }`}
                     >
-                      <CardContent className="p-5">
+                      <CardContent className="p-4 lg:p-5">
                         {message.category && (
-                          <div className="flex items-center gap-2 mb-3">
-                            <Badge variant="secondary" className="text-xs font-medium">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+                            <Badge variant="secondary" className="text-xs font-medium w-fit">
                               {categories.find(c => c.id === message.category)?.name}
                             </Badge>
                             <div className="text-xs text-muted-foreground">
@@ -312,26 +332,26 @@ export default function Code() {
                           </div>
                         )}
                         <div className="prose prose-sm dark:prose-invert max-w-none">
-                          <pre className="whitespace-pre-wrap font-sans leading-relaxed">{message.content}</pre>
+                          <pre className="whitespace-pre-wrap font-sans leading-relaxed text-sm lg:text-base overflow-x-auto">{message.content}</pre>
                         </div>
                         {!message.isUser && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-muted"
+                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-muted h-8 w-8 p-0"
                             onClick={() => copyToClipboard(message.content, message.id)}
                           >
                             {copiedId === message.id ? (
-                              <Check className="h-4 w-4 text-green-500" />
+                              <Check className="h-3 w-3 text-green-500" />
                             ) : (
-                              <Copy className="h-4 w-4" />
+                              <Copy className="h-3 w-3" />
                             )}
                           </Button>
                         )}
                       </CardContent>
                     </Card>
                     {message.isUser && (
-                      <Avatar className="h-10 w-10 mt-1 ring-2 ring-muted shadow-md">
+                      <Avatar className="h-8 w-8 mt-1 ring-2 ring-muted shadow-md flex-shrink-0">
                         <AvatarFallback className="bg-muted text-foreground text-sm font-semibold">
                           <User className="h-4 w-4" />
                         </AvatarFallback>
@@ -340,14 +360,14 @@ export default function Code() {
                   </div>
                 ))}
                 {isLoading && (
-                  <div className="flex gap-4 justify-start animate-in slide-in-from-bottom-2">
-                    <Avatar className="h-10 w-10 mt-1 ring-2 ring-primary/20 shadow-md">
+                  <div className="flex gap-3 lg:gap-4 justify-start animate-in slide-in-from-bottom-2">
+                    <Avatar className="h-8 w-8 mt-1 ring-2 ring-primary/20 shadow-md">
                       <AvatarFallback className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm">
                         <Bot className="h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
                     <Card className="bg-card shadow-md">
-                      <CardContent className="p-5">
+                      <CardContent className="p-4 lg:p-5">
                         <div className="flex items-center gap-3">
                           <div className="flex gap-1">
                             <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
@@ -360,26 +380,13 @@ export default function Code() {
                     </Card>
                   </div>
                 )}
-                <div ref={messagesEndRef} />
               </div>
             )}
           </ScrollArea>
 
-          {/* Scroll to top button */}
-          {showScrollTop && (
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-4 right-4 rounded-full shadow-lg"
-              onClick={scrollToTop}
-            >
-              <ChevronDown className="h-4 w-4 rotate-180" />
-            </Button>
-          )}
-
-          {/* Enhanced Input Area */}
-          <div className="border-t bg-card/50 backdrop-blur-sm p-6">
-            <div className="max-w-5xl mx-auto">
+          {/* Input Area */}
+          <div className="border-t bg-card/50 backdrop-blur-sm p-4 lg:p-6">
+            <div className="max-w-4xl mx-auto">
               {/* Mobile category selector */}
               <div className="flex gap-2 mb-4 lg:hidden overflow-x-auto pb-2">
                 {categories.map((category) => {
@@ -390,10 +397,10 @@ export default function Code() {
                       variant={selectedCategory === category.id ? "default" : "outline"}
                       size="sm"
                       onClick={() => setSelectedCategory(category.id)}
-                      className="flex items-center gap-2 whitespace-nowrap flex-shrink-0"
+                      className="flex items-center gap-2 whitespace-nowrap flex-shrink-0 text-xs"
                     >
                       <Icon className="h-3 w-3" />
-                      <span className="text-xs">{category.name}</span>
+                      <span className="sm:inline">{category.name}</span>
                     </Button>
                   );
                 })}
@@ -401,14 +408,14 @@ export default function Code() {
 
               {/* Input with enhanced styling */}
               <Card className="shadow-lg border-2 border-muted hover:border-primary/50 transition-colors">
-                <CardContent className="p-4">
-                  <div className="flex gap-3">
+                <CardContent className="p-3 lg:p-4">
+                  <div className="flex gap-2 lg:gap-3">
                     <div className="flex-1 space-y-2">
                       <Input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder={`Ask me anything about ${categories.find(c => c.id === selectedCategory)?.name.toLowerCase()}...`}
-                        className="border-0 bg-transparent text-base placeholder:text-muted-foreground focus-visible:ring-0 resize-none"
+                        className="border-0 bg-transparent text-sm lg:text-base placeholder:text-muted-foreground focus-visible:ring-0 resize-none"
                         onKeyPress={(e) => {
                           if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
@@ -419,7 +426,7 @@ export default function Code() {
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>Press Enter to send, Shift+Enter for new line</span>
                         <div className="flex items-center gap-2">
-                          <span>Category:</span>
+                          <span className="hidden sm:inline">Category:</span>
                           <Badge variant="outline" className="text-xs">
                             {categories.find(c => c.id === selectedCategory)?.name}
                           </Badge>
@@ -430,9 +437,9 @@ export default function Code() {
                       onClick={handleSendMessage} 
                       disabled={!input.trim() || isLoading}
                       size="icon"
-                      className="h-12 w-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
+                      className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 flex-shrink-0"
                     >
-                      <Send className="h-5 w-5" />
+                      <Send className="h-4 w-4 lg:h-5 lg:w-5" />
                     </Button>
                   </div>
                 </CardContent>
