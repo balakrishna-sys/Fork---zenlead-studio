@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { ModelModal } from "@/components/ModelModal";
 import { Wand2, LucideIcon, Sparkles, Grid3X3, List, Play, Clock, Star, TrendingUp, Video, Zap } from "lucide-react";
 import VideoGeneration from "@/components/video-processing/video-generation";
 import ModelCard from "@/components/ui/model-card";
@@ -75,6 +76,8 @@ const VideoProcessing = () => {
   const [viewMode, setViewMode] = useState<"tabs" | "grid">("grid");
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const state: VideoProcessingState = {
     prompt,
@@ -90,17 +93,30 @@ const VideoProcessing = () => {
   useEffect(() => {
     if (viewMode === "grid") {
       setActiveTab(null);
+      setIsModalOpen(false);
     }
   }, [viewMode]);
 
   const handleTryNow = (tabKey: string) => {
     setActiveTab(tabKey);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setActiveTab(null);
+    setIsFullscreen(false);
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
   };
 
   const handlePromptSelect = (selectedPrompt: string) => {
     setPrompt(selectedPrompt);
     setSelectedPrompt(selectedPrompt);
     setActiveTab("video-generation");
+    setIsModalOpen(true);
   };
 
   const renderModelContent = () => {
@@ -113,6 +129,8 @@ const VideoProcessing = () => {
         return null;
     }
   };
+
+  const activeModel = activeTab ? videoProcessingModels.find(m => m.key === activeTab) : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -289,114 +307,78 @@ const VideoProcessing = () => {
             </TabsContent>
           </Tabs>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Model Cards Grid */}
-            <div className="flex-1">
-              <div className="grid grid-cols-1 gap-6">
-                {videoProcessingModels.map((model) => (
-                  <Card 
-                    key={model.key}
-                    className={`group cursor-pointer bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:scale-105 ${model.bgColor}`}
-                    onClick={() => handleTryNow(model.key)}
-                  >
-                    <CardContent className="p-8">
-                      <div className="flex flex-col md:flex-row items-start gap-6">
-                        {/* Left side - Icon and basic info */}
-                        <div className="flex-shrink-0">
-                          <div className={`p-4 rounded-2xl bg-gradient-to-r ${model.color} shadow-lg mb-4`}>
-                            <model.icon className="h-8 w-8 text-white" />
-                          </div>
-                          <div className="space-y-2">
-                            <Badge variant="secondary" className="text-xs">
-                              {model.badge}
-                            </Badge>
-                            <p className="text-sm text-primary font-medium">{model.sucessrate}% Success Rate</p>
-                          </div>
-                        </div>
-                        
-                        {/* Right side - Content */}
-                        <div className="flex-1">
-                          <h3 className="font-bold text-2xl mb-2">{model.title}</h3>
-                          <p className="text-lg text-primary mb-4">{model.titletagline}</p>
-                          <p className="text-muted-foreground mb-6 leading-relaxed">
-                            {model.description}
-                          </p>
-                          
-                          {/* Model stats */}
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <div>
-                              <p className="text-xs text-muted-foreground">Total Runs</p>
-                              <p className="font-semibold">{model.totalruns}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground">Speed</p>
-                              <p className="font-semibold">{model.processingspeed}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground">Quality</p>
-                              <p className="font-semibold">{model.outputquality}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-muted-foreground">Formats</p>
-                              <p className="font-semibold">{model.compatibility.length} types</p>
-                            </div>
-                          </div>
-                          
-                          {/* Keywords and action */}
-                          <div className="flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex flex-wrap gap-2">
-                              {model.modelkeywords.map((keyword, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
-                                  {keyword}
-                                </Badge>
-                              ))}
-                            </div>
-                            <Button 
-                              size="lg" 
-                              className="group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200 px-6"
-                            >
-                              Start Creating
-                              <Play className="ml-2 h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
+          <div className="grid grid-cols-1 gap-6">
+            {videoProcessingModels.map((model) => (
+              <Card 
+                key={model.key}
+                className={`group cursor-pointer bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:scale-105 ${model.bgColor}`}
+                onClick={() => handleTryNow(model.key)}
+              >
+                <CardContent className="p-8">
+                  <div className="flex flex-col md:flex-row items-start gap-6">
+                    {/* Left side - Icon and basic info */}
+                    <div className="flex-shrink-0">
+                      <div className={`p-4 rounded-2xl bg-gradient-to-r ${model.color} shadow-lg mb-4`}>
+                        <model.icon className="h-8 w-8 text-white" />
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Selected Model Content */}
-            {activeTab && (
-              <div className="lg:w-1/2">
-                <Card className="sticky top-8 bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-                          <Wand2 className="h-5 w-5" />
+                      <div className="space-y-2">
+                        <Badge variant="secondary" className="text-xs">
+                          {model.badge}
+                        </Badge>
+                        <p className="text-sm text-primary font-medium">{model.sucessrate}% Success Rate</p>
+                      </div>
+                    </div>
+                    
+                    {/* Right side - Content */}
+                    <div className="flex-1">
+                      <h3 className="font-bold text-2xl mb-2">{model.title}</h3>
+                      <p className="text-lg text-primary mb-4">{model.titletagline}</p>
+                      <p className="text-muted-foreground mb-6 leading-relaxed">
+                        {model.description}
+                      </p>
+                      
+                      {/* Model stats */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Total Runs</p>
+                          <p className="font-semibold">{model.totalruns}</p>
                         </div>
                         <div>
-                          <CardTitle className="text-lg">Video Generation</CardTitle>
-                          <p className="text-sm text-muted-foreground">Create your animated video</p>
+                          <p className="text-xs text-muted-foreground">Speed</p>
+                          <p className="font-semibold">{model.processingspeed}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Quality</p>
+                          <p className="font-semibold">{model.outputquality}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Formats</p>
+                          <p className="font-semibold">{model.compatibility.length} types</p>
                         </div>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setActiveTab(null)}
-                      >
-                        Close
-                      </Button>
+                      
+                      {/* Keywords and action */}
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex flex-wrap gap-2">
+                          {model.modelkeywords.map((keyword, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {keyword}
+                            </Badge>
+                          ))}
+                        </div>
+                        <Button 
+                          size="lg" 
+                          className="group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200 px-6"
+                        >
+                          Start Creating
+                          <Play className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="max-h-[70vh] overflow-y-auto">
-                    {renderModelContent()}
-                  </CardContent>
-                </Card>
-              </div>
-            )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
 
@@ -425,6 +407,17 @@ const VideoProcessing = () => {
             </Card>
           </div>
         )}
+
+        {/* Enhanced Modal */}
+        <ModelModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          model={activeModel}
+          isFullscreen={isFullscreen}
+          onToggleFullscreen={toggleFullscreen}
+        >
+          {renderModelContent()}
+        </ModelModal>
       </main>
     </div>
   );
