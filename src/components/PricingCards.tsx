@@ -189,21 +189,21 @@ export const PricingCards = () => {
                   </div>
                 )}
                 
-                <CardHeader className="text-center pb-8">
-                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${plan.color} text-white mx-auto mb-4`}>
-                    <Icon className="h-6 w-6" />
+                <CardHeader className="text-center pb-6 lg:pb-8">
+                  <div className={`inline-flex p-2 lg:p-3 rounded-xl bg-gradient-to-r ${plan.color} text-white mx-auto mb-3 lg:mb-4`}>
+                    <Icon className="h-5 w-5 lg:h-6 lg:w-6" />
                   </div>
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">
+                  <CardTitle className="text-xl lg:text-2xl font-bold">{plan.name}</CardTitle>
+                  <CardDescription className="text-muted-foreground text-sm lg:text-base">{plan.description}</CardDescription>
+                  <div className="mt-3 lg:mt-4">
+                    <span className="text-3xl lg:text-4xl font-bold">
                       {formatPrice(currentPrice, currency)}
                     </span>
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground text-sm lg:text-base">
                       /{billingPeriod === "monthly" ? "month" : "year"}
                     </span>
                     {billingPeriod === "yearly" && savings > 0 && (
-                      <div className="text-sm text-green-600 font-medium">
+                      <div className="text-sm text-green-600 font-medium mt-1">
                         Save {formatPrice(savings, currency)} annually
                       </div>
                     )}
