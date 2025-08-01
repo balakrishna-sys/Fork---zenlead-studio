@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import AudioProcessing from "./pages/AudioProcessing";
 import TextProcessing from "./pages/TextProcessing";
 import VideoProcessing from "./pages/VideoProcessing";
+import Code from "./pages/Code";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import Library from "./pages/Library";
