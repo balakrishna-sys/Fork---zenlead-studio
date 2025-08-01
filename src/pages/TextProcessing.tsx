@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Book, FileText, FileSpreadsheet, FileDigit, FileCheck, LucideIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Book, FileText, FileSpreadsheet, FileDigit, FileCheck, LucideIcon, Sparkles, Grid3X3, List, TrendingUp } from "lucide-react";
 import LongBook from "@/components/text-processing/long-book";
 import TextToSpeech from "@/components/text-processing/text-to-speech";
 import ExcelToSpeech from "@/components/text-processing/excel-to-speech";
@@ -50,7 +53,7 @@ export interface TextProcessingState {
 interface TextProcessingModel {
   key: string;
   title: string;
-  titletagline:string,
+  titletagline: string;
   description: string;
   modelName: string;
   modelkeywords: string[];
@@ -62,14 +65,17 @@ interface TextProcessingModel {
   compatibility: string[];
   image: string;
   icon: LucideIcon;
+  color: string;
+  bgColor: string;
+  badge: string;
 }
 
 const textProcessingModels: TextProcessingModel[] = [
   {
     key: "long-book",
-    title: "Long Book", 
-    titletagline : 'Generate papers',
-    description: "Generate a full-length book or research paper based on your prompt.",
+    title: "Long Book",
+    titletagline: 'Generate comprehensive papers',
+    description: "Generate a full-length book or research paper based on your prompt with AI-powered content creation.",
     modelName: "BookGenix",
     modelkeywords: ["Book Generation", "Research Paper", "Content Creation"],
     liveornot: false,
@@ -80,12 +86,15 @@ const textProcessingModels: TextProcessingModel[] = [
     compatibility: ["PDF", "DOCX"],
     image: "https://static.vecteezy.com/system/resources/thumbnails/040/722/713/small/old-man-s-hands-reading-a-book-the-man-runs-his-fingers-through-the-book-free-video.jpg",
     icon: Book,
+    color: "from-purple-500 to-purple-600",
+    bgColor: "bg-purple-500/10",
+    badge: "Content AI"
   },
   {
     key: "text-to-speech",
     title: "Convert texts to voice",
-    titletagline : 'Translate audios',
-    description: "Convert text into natural-sounding speech with customizable voices.",
+    titletagline: 'Natural voice synthesis',
+    description: "Convert text into natural-sounding speech with customizable voices and multilingual support.",
     modelName: "VoiceCraft",
     modelkeywords: ["Text-to-Speech", "Voice Synthesis", "Multilingual"],
     liveornot: false,
@@ -96,12 +105,15 @@ const textProcessingModels: TextProcessingModel[] = [
     compatibility: ["MP3", "WAV", "FLAC"],
     image: "https://t3.ftcdn.net/jpg/02/44/46/32/360_F_244463221_9qvm69ukrh4NSfG4Vi2F8We4ZT5uhtSh.jpg",
     icon: FileText,
+    color: "from-green-500 to-green-600",
+    bgColor: "bg-green-500/10",
+    badge: "Popular"
   },
   {
     key: "excel-to-charts",
     title: "Excel to Charts",
-    titletagline: "Summarize excel sheets",
-    description: "Transform Excel or CSV data into summarized charts.",
+    titletagline: "Visualize spreadsheet data",
+    description: "Transform Excel or CSV data into comprehensive audio summaries and visual charts.",
     modelName: "Excelerate",
     modelkeywords: ["Excel", "CSV", "Audio Conversion"],
     liveornot: false,
@@ -112,12 +124,15 @@ const textProcessingModels: TextProcessingModel[] = [
     compatibility: ["XLSX", "CSV"],
     image: "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2018/07/vba-macros-excel.jpg",
     icon: FileSpreadsheet,
+    color: "from-blue-500 to-blue-600",
+    bgColor: "bg-blue-500/10",
+    badge: "Data Viz"
   },
   {
     key: "summarize",
     title: "Summarize",
-    titletagline: "Summarize texts",
-    description: "Create concise summaries of large text documents.",
+    titletagline: "Intelligent text summarization",
+    description: "Create concise, meaningful summaries of large text documents using advanced NLP technology.",
     modelName: "TextSummarizer",
     modelkeywords: ["Summarization", "Text Analysis", "NLP"],
     liveornot: false,
@@ -128,12 +143,15 @@ const textProcessingModels: TextProcessingModel[] = [
     compatibility: ["TXT", "PDF"],
     image: "https://media.lovemaharashtra.org/sites/8/2016/09/Puzzle21.jpg",
     icon: FileDigit,
+    color: "from-orange-500 to-orange-600",
+    bgColor: "bg-orange-500/10",
+    badge: "AI Powered"
   },
   {
     key: "ats-score",
     title: "ATS Score",
-    titletagline: "Calculates potentiality of resume",
-    description: "Evaluate resumes against job descriptions for ATS compatibility.",
+    titletagline: "Resume optimization scoring",
+    description: "Evaluate resumes against job descriptions for ATS compatibility and provide detailed improvement suggestions.",
     modelName: "ResumeRater",
     modelkeywords: ["ATS", "Resume Analysis", "Job Matching"],
     liveornot: false,
@@ -144,12 +162,15 @@ const textProcessingModels: TextProcessingModel[] = [
     compatibility: ["PDF", "DOCX"],
     image: "https://media.licdn.com/dms/image/v2/D5612AQGCZ6Om1N34NA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1732792994576?e=2147483647&v=beta&t=Dkxf3ohVZ_M1dVCAKnUKVdTg_uLmnveU6745iVVznYk",
     icon: FileCheck,
+    color: "from-red-500 to-red-600",
+    bgColor: "bg-red-500/10",
+    badge: "Career Boost"
   },
   {
     key: "resume-analyser",
     title: "Resume Analyser",
-    titletagline: "Suggests and change resume",
-    description: "Get tailored suggestions to improve your resume.",
+    titletagline: "Professional resume enhancement",
+    description: "Get tailored suggestions to improve your resume with industry-specific recommendations and best practices.",
     modelName: "ResumeOptimizer",
     modelkeywords: ["Resume Enhancement", "Career", "NLP"],
     liveornot: false,
@@ -160,6 +181,9 @@ const textProcessingModels: TextProcessingModel[] = [
     compatibility: ["PDF", "DOCX"],
     image: "https://nluglob.org/wp-content/uploads/2023/11/ResumeProcessing.jpg",
     icon: FileText,
+    color: "from-indigo-500 to-indigo-600",
+    bgColor: "bg-indigo-500/10",
+    badge: "Pro Tools"
   },
 ];
 
@@ -188,38 +212,12 @@ const TextProcessing = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const state: TextProcessingState = {
-    text,
-    setText,
-    excelFile,
-    setExcelFile,
-    targetLanguage,
-    setTargetLanguage,
-    selectedVoice,
-    setSelectedVoice,
-    isProcessing,
-    setIsProcessing,
-    bookPrompt,
-    setBookPrompt,
-    bookContent,
-    setBookContent,
-    isBookLoading,
-    setIsBookLoading,
-    atsFile,
-    setAtsFile,
-    jobDescription,
-    setJobDescription,
-    atsScore,
-    setAtsScore,
-    isAtsLoading,
-    setAtsLoading,
-    resumeFile,
-    setResumeFile,
-    resumeJobDescription,
-    setResumeJobDescription,
-    resumeAnalysis,
-    setResumeAnalysis,
-    isResumeLoading,
-    setIsResumeLoading,
+    text, setText, excelFile, setExcelFile, targetLanguage, setTargetLanguage,
+    selectedVoice, setSelectedVoice, isProcessing, setIsProcessing, bookPrompt, setBookPrompt,
+    bookContent, setBookContent, isBookLoading, setIsBookLoading, atsFile, setAtsFile,
+    jobDescription, setJobDescription, atsScore, setAtsScore, isAtsLoading, setAtsLoading,
+    resumeFile, setResumeFile, resumeJobDescription, setResumeJobDescription,
+    resumeAnalysis, setResumeAnalysis, isResumeLoading, setIsResumeLoading,
   };
 
   const lockedTabs = {
@@ -231,7 +229,6 @@ const TextProcessing = () => {
     "summarize": true,
   };
 
-  // Reset activeTab when mounting or switching to grid view
   useEffect(() => {
     if (viewMode === "grid") {
       setActiveTab(null);
@@ -264,106 +261,226 @@ const TextProcessing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <div className="inline-block rounded-lg bg-lime-500/10 px-3 py-1 text-sm text-lime-500 mb-2">
-              Text Processing Models
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
+          <div className="mb-6 lg:mb-0">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-xl bg-gradient-to-r from-primary to-primary/80">
+                <FileText className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <Badge variant="outline" className="px-3 py-1 bg-card/50 backdrop-blur-sm border-primary/20">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Text Processing Models
+              </Badge>
             </div>
-            <h1 className="text-3xl font-bold mb-2">Text Processing</h1>
-            <p className="text-gray-600">Convert your text to natural-sounding speech, analyze resumes, or generate content</p>
+            <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              Text Processing Studio
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl">
+              Transform your text with AI-powered tools. Convert text to speech, analyze resumes, generate content, and more.
+            </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Label htmlFor="view-toggle">Grid View</Label>
-            <Switch
-              id="view-toggle"
-              checked={viewMode === "grid"}
-              onCheckedChange={() => setViewMode(viewMode === "tabs" ? "grid" : "tabs")}
-            />
-          </div>
+          
+          <Card className="bg-card/50 backdrop-blur-sm border border-border/50 p-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Grid3X3 className="h-4 w-4 text-muted-foreground" />
+                <Label htmlFor="view-toggle" className="text-sm font-medium">Grid View</Label>
+              </div>
+              <Switch
+                id="view-toggle"
+                checked={viewMode === "grid"}
+                onCheckedChange={() => setViewMode(viewMode === "tabs" ? "grid" : "tabs")}
+              />
+              <div className="flex items-center space-x-2">
+                <List className="h-4 w-4 text-muted-foreground" />
+                <Label className="text-sm font-medium">Tab View</Label>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Statistics */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 border-blue-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Models</p>
+                  <p className="text-2xl font-bold text-blue-600">{textProcessingModels.length}</p>
+                </div>
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-r from-green-500/10 to-green-600/10 border-green-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Avg Success Rate</p>
+                  <p className="text-2xl font-bold text-green-600">94.5%</p>
+                </div>
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <FileCheck className="h-5 w-5 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 border-purple-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Processing Speed</p>
+                  <p className="text-2xl font-bold text-purple-600">Fast</p>
+                </div>
+                <div className="p-2 bg-purple-500/20 rounded-lg">
+                  <Sparkles className="h-5 w-5 text-purple-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {viewMode === "tabs" ? (
           <Tabs value={activeTab || "text-to-speech"} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="inline-flex mb-6">
-              <TabsTrigger value="long-book" className="flex items-center gap-2">
-                <Book className="h-4 w-4" />
-                <span>Long Book</span>
-              </TabsTrigger>
-              <TabsTrigger value="ats-score" className="flex items-center gap-2">
-                <FileCheck className="h-4 w-4" />
-                <span>ATS Score</span>
-              </TabsTrigger>
-              <TabsTrigger value="resume-analyser" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                <span>Resume Analyser</span>
-              </TabsTrigger>
-              <TabsTrigger value="text-to-speech" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                <span>Text to Speech</span>
-              </TabsTrigger>
-              <TabsTrigger value="excel-to-charts" className="flex items-center gap-2">
-                <FileSpreadsheet className="h-4 w-4" />
-                <span>Excel to Speech</span>
-              </TabsTrigger>
-              <TabsTrigger value="summarize" className="flex items-center gap-2">
-                <FileDigit className="h-4 w-4" />
-                <span>Summarize</span>
-              </TabsTrigger>
-            </TabsList>
+            <div className="mb-8">
+              <TabsList className="grid grid-cols-2 lg:grid-cols-6 gap-2 bg-card/50 backdrop-blur-sm border border-border/50 p-2">
+                {textProcessingModels.map((model) => {
+                  const Icon = model.icon;
+                  return (
+                    <TabsTrigger 
+                      key={model.key}
+                      value={model.key} 
+                      className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-3 py-2"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="hidden sm:inline text-sm">{model.title}</span>
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+            </div>
 
-            <TabsContent value="long-book" className="space-y-6" id="long-book">
-              <LongBook state={state} isLocked={lockedTabs["long-book"]} />
-            </TabsContent>
-            <TabsContent value="text-to-speech" className="space-y-6">
-              <TextToSpeech state={state} isLocked={lockedTabs["text-to-speech"]} />
-            </TabsContent>
-            <TabsContent value="excel-to-charts" className="space-y-6">
-              <ExcelToSpeech state={state} isLocked={lockedTabs["excel-to-speech"]} />
-            </TabsContent>
-            <TabsContent value="summarize" className="space-y-6">
-              <Summarize state={state} isLocked={lockedTabs["summarize"]} />
-            </TabsContent>
-            <TabsContent value="ats-score" className="space-y-6">
-              <AtsScore state={state} isLocked={lockedTabs["ats-score"]} />
-            </TabsContent>
-            <TabsContent value="resume-analyser" className="space-y-6">
-              <ResumeAnalyser state={state} isLocked={lockedTabs["resume-analyser"]} />
-            </TabsContent>
+            {textProcessingModels.map((model) => (
+              <TabsContent key={model.key} value={model.key} className="space-y-6">
+                <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-gradient-to-r ${model.color} text-white`}>
+                          <model.icon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl">{model.title}</CardTitle>
+                          <p className="text-muted-foreground">{model.titletagline}</p>
+                        </div>
+                      </div>
+                      <Badge className={`${model.bgColor} border-0`}>
+                        {model.badge}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    {renderModelContent()}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            ))}
           </Tabs>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-6 grid-and-content-container h-screen overflow-hidden">
-            {/* Left: Model Cards */}
-            <div className="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 flex-grow">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Model Cards Grid */}
+            <div className="flex-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {textProcessingModels.map((model) => (
-                  <ModelCard
+                  <Card 
                     key={model.key}
-                    title={model.title}
-                    titletagline={model.titletagline}
-                    description={model.description}
-                    modelName={model.modelName}
-                    modelkeywords={model.modelkeywords}
-                    liveornot={model.liveornot}
-                    totalruns={model.totalruns}
-                    sucessrate={model.sucessrate}
-                    processingspeed={model.processingspeed}
-                    outputquality={model.outputquality}
-                    compatibility={model.compatibility}
-                    image={model.image}
-                    icon={model.icon}
-                    onTryNow={() => handleTryNow(model.key)}
-                  />
+                    className={`group cursor-pointer bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:scale-105 ${model.bgColor}`}
+                    onClick={() => handleTryNow(model.key)}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className={`p-3 rounded-xl bg-gradient-to-r ${model.color} shadow-lg`}>
+                          <model.icon className="h-5 w-5 text-white" />
+                        </div>
+                        <div className="text-right">
+                          <Badge variant="secondary" className="text-xs mb-1">
+                            {model.badge}
+                          </Badge>
+                          <p className="text-xs text-primary font-medium">{model.sucessrate}% Success</p>
+                        </div>
+                      </div>
+                      
+                      <h3 className="font-semibold text-lg mb-1">{model.title}</h3>
+                      <p className="text-sm text-primary mb-2">{model.titletagline}</p>
+                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+                        {model.description}
+                      </p>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                        <div className="flex flex-wrap gap-1">
+                          {model.modelkeywords.slice(0, 2).map((keyword, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {keyword}
+                            </Badge>
+                          ))}
+                        </div>
+                        <Button 
+                          size="sm" 
+                          className="group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200"
+                        >
+                          Try Now
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
 
-            {/* Right: Selected Model Content */}
+            {/* Selected Model Content */}
             {activeTab && (
-              <div className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
-                {renderModelContent()}
+              <div className="lg:w-1/2 xl:w-2/5">
+                <Card className="sticky top-8 bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {(() => {
+                          const model = textProcessingModels.find(m => m.key === activeTab);
+                          const Icon = model?.icon || FileText;
+                          return (
+                            <>
+                              <div className={`p-2 rounded-lg bg-gradient-to-r ${model?.color} text-white`}>
+                                <Icon className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <CardTitle className="text-lg">{model?.title}</CardTitle>
+                                <p className="text-sm text-muted-foreground">{model?.titletagline}</p>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setActiveTab(null)}
+                      >
+                        Close
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="max-h-[70vh] overflow-y-auto">
+                    {renderModelContent()}
+                  </CardContent>
+                </Card>
               </div>
             )}
           </div>
