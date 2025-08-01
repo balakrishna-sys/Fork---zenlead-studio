@@ -104,6 +104,9 @@ export const Navbar = () => {
                   <Link to="/video" className="px-3 py-2 text-lg font-medium hover:text-primary">
                     Videos
                   </Link>
+                  <Link to="/code" className="px-3 py-2 text-lg font-medium hover:text-primary">
+                    Code
+                  </Link>
                   <Link to="/pricing" className="px-3 py-2 text-lg font-medium hover:text-primary">
                     Pricing
                   </Link>
