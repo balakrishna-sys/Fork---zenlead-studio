@@ -210,12 +210,12 @@ export const PricingCards = () => {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="space-y-6">
-                  <div className="space-y-3">
+                <CardContent className="space-y-4 lg:space-y-6">
+                  <div className="space-y-2 lg:space-y-3">
                     {plan.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-center gap-3">
-                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+                      <div key={featureIndex} className="flex items-start gap-3">
+                        <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                        <span className="text-sm leading-relaxed">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -223,16 +223,16 @@ export const PricingCards = () => {
 
                 <CardFooter>
                   <Link to="/signup" className="w-full">
-                    <Button 
-                      className={`w-full h-12 ${
-                        plan.popular 
-                          ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90' 
+                    <Button
+                      className={`w-full h-10 lg:h-12 text-sm lg:text-base ${
+                        plan.popular
+                          ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90'
                           : ''
                       }`}
                       variant={plan.popular ? "default" : "outline"}
                     >
                       Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="ml-2 h-3 w-3 lg:h-4 lg:w-4" />
                     </Button>
                   </Link>
                 </CardFooter>
