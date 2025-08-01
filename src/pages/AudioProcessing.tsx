@@ -326,25 +326,7 @@ const AudioProcessing = () => {
                         {model.description}
                       </p>
                       
-                      {/* Model specs */}
-                      <div className="grid grid-cols-2 gap-3 mb-4 text-xs">
-                        <div>
-                          <p className="text-muted-foreground">Speed</p>
-                          <p className="font-medium">{model.processingspeed}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Quality</p>
-                          <p className="font-medium">{model.outputquality}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Runs</p>
-                          <p className="font-medium">{model.totalruns}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Formats</p>
-                          <p className="font-medium">{model.compatibility.length}</p>
-                        </div>
-                      </div>
+
                       
                       <div className="flex items-center justify-between pt-4 border-t border-border/50">
                         <div className="flex flex-wrap gap-1">
