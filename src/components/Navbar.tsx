@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Headphones, Menu, Moon, Sun } from "lucide-react";
@@ -32,6 +31,9 @@ export const Navbar = () => {
                 </Link>
                 <Link to="/video" className="px-3 py-2 text-sm font-medium hover:text-primary">
                   Videos
+                </Link>
+                <Link to="/code" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                  Code
                 </Link>
                 <Link to="/pricing" className="px-3 py-2 text-sm font-medium hover:text-primary">
                   Pricing
