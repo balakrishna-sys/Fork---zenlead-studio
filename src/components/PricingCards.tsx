@@ -130,16 +130,16 @@ export const PricingCards = () => {
         </div>
 
         {/* Currency and Billing Toggle */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12">
           {/* Currency Toggle */}
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">Currency:</span>
             <Tabs value={currency} onValueChange={(value) => setCurrency(value as "USD" | "INR")}>
               <TabsList className="bg-card/50 backdrop-blur-sm border border-border/50">
-                <TabsTrigger value="USD" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <TabsTrigger value="USD" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm px-3">
                   USD $
                 </TabsTrigger>
-                <TabsTrigger value="INR" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <TabsTrigger value="INR" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm px-3">
                   INR ₹
                 </TabsTrigger>
               </TabsList>
@@ -150,12 +150,12 @@ export const PricingCards = () => {
           <div className="flex items-center gap-3">
             <Tabs value={billingPeriod} onValueChange={(value) => setBillingPeriod(value as "monthly" | "yearly")}>
               <TabsList className="bg-card/50 backdrop-blur-sm border border-border/50">
-                <TabsTrigger value="monthly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <TabsTrigger value="monthly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm px-3">
                   Monthly
                 </TabsTrigger>
-                <TabsTrigger value="yearly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative">
+                <TabsTrigger value="yearly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative text-sm px-3">
                   Yearly
-                  <Badge className="absolute -top-8 -right-2 bg-green-500 text-white text-xs">
+                  <Badge className="absolute -top-6 sm:-top-8 -right-1 sm:-right-2 bg-green-500 text-white text-xs scale-75 sm:scale-100">
                     Save 20%
                   </Badge>
                 </TabsTrigger>
