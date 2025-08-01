@@ -78,16 +78,16 @@ export const Hero = () => {
           </div>
 
           {/* Feature cards */}
-          <div className="mx-auto mt-20 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
+          <div className="mx-auto mt-12 lg:mt-20 grid max-w-4xl grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-3 px-4">
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:shadow-lg transition-all duration-300 hover:scale-105">
-              <CardContent className="p-6 text-center">
-                <div className="mx-auto h-12 w-12 rounded-xl bg-gradient-to-r from-green-500 to-green-600 p-3 mb-4">
+              <CardContent className="p-4 lg:p-6 text-center">
+                <div className="mx-auto h-10 w-10 lg:h-12 lg:w-12 rounded-xl bg-gradient-to-r from-green-500 to-green-600 p-2 lg:p-3 mb-3 lg:mb-4">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.59-.79-1.59-1.76V9.51c0-.97.71-1.76 1.59-1.76h2.24z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-foreground">Audio Translation</h3>
-                <p className="mt-2 text-sm text-muted-foreground">Real-time voice translation across 20+ languages</p>
+                <h3 className="font-semibold text-foreground text-sm lg:text-base">Audio Translation</h3>
+                <p className="mt-2 text-xs lg:text-sm text-muted-foreground">Real-time voice translation across 20+ languages</p>
               </CardContent>
             </Card>
 
