@@ -1,26 +1,18 @@
-import { Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Check, Star, Users, Zap, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import React from "react";
-
-const USD_PRICES = [
-  { name: "Basic", price: 9.99 },
-  { name: "Pro", price: 24.99 },
-  { name: "Enterprise", price: 59.99 }
-];
-
-const INR_PRICES = [
-  { name: "Basic", price: 799 },
-  { name: "Pro", price: 1999 },
-  { name: "Enterprise", price: 4999 }
-];
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link } from "react-router-dom";
 
 type ButtonVariant = "default" | "link" | "destructive" | "outline" | "secondary" | "ghost";
 
 export const PricingCards = () => {
-  const [currency, setCurrency] = React.useState<"USD" | "INR">("USD");
+  const [currency, setCurrency] = useState<"USD" | "INR">("USD");
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const lang = navigator.language || "";
       if (lang.startsWith("en-IN") || lang.startsWith("hi") || lang.includes("IN")) {
@@ -29,152 +21,246 @@ export const PricingCards = () => {
     }
   }, []);
 
-  const pricingPlans = [
+  const plans = [
     {
-      name: "Basic",
-      priceUSD: "$9.99",
-      priceINR: "₹799",
-      credits: "150 credits included",
-      description: "Essential voice, text, and video conversion features",
+      name: "Starter",
+      description: "Perfect for individuals and small projects",
+      prices: {
+        USD: { monthly: 9, yearly: 89 },
+        INR: { monthly: 799, yearly: 7990 }
+      },
+      badge: "Most Popular",
       features: [
-        "150 initial credits (5 credits per minute)",
-        "Audio language translation (3 languages)",
-        "Basic voice cloning (2 voices)",
-        "Text-to-speech conversion",
-        "Video description-to-animation",
-        "Standard quality output"
+        "3 languages supported",
+        "2 voice clones",
+        "100 minutes of audio processing",
+        "Basic text-to-speech",
+        "Standard support",
+        "MP3 & WAV export"
       ],
-      buttonText: "Get Started",
-      popular: false,
-      gradient: "from-blue-500/10 via-transparent to-purple-500/10",
-      buttonVariant: "default" as ButtonVariant
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-500/10",
+      icon: Users,
+      popular: false
     },
     {
-      name: "Pro",
-      priceUSD: "$24.99",
-      priceINR: "₹1999",
-      credits: "400 credits included",
-      description: "Advanced features for professionals",
+      name: "Professional",
+      description: "Ideal for content creators and businesses",
+      prices: {
+        USD: { monthly: 29, yearly: 290 },
+        INR: { monthly: 1999, yearly: 19990 }
+      },
+      badge: "Best Value",
       features: [
-        "400 initial credits (5 credits per minute)",
-        "Audio language translation (20+ languages)",
-        "Advanced voice cloning (10 voices)",
-        "Text & Excel to speech conversion",
-        "Text summarization",
-        "Video script-to-animation (HD)",
-        "High quality output"
+        "20+ languages supported",
+        "10 voice clones",
+        "500 minutes of audio processing",
+        "Advanced text-to-speech",
+        "Video generation (10 videos/month)",
+        "Priority support",
+        "All export formats",
+        "API access"
       ],
-      buttonText: "Try Pro",
-      popular: true,
-      gradient: "from-purple-500/10 via-transparent to-pink-500/10",
-      buttonVariant: "default" as ButtonVariant
+      color: "from-purple-500 to-purple-600",
+      bgColor: "bg-purple-500/10",
+      icon: Zap,
+      popular: true
     },
     {
       name: "Enterprise",
-      priceUSD: "$59.99",
-      priceINR: "₹4999",
-      credits: "1000 credits included",
-      description: "Complete solution for businesses",
+      description: "For large teams and organizations",
+      prices: {
+        USD: { monthly: 99, yearly: 990 },
+        INR: { monthly: 4999, yearly: 49990 }
+      },
+      badge: "Advanced",
       features: [
-        "1000 initial credits (5 credits per minute)",
-        "Audio language translation (50+ languages)",
-        "Unlimited voice cloning",
-        "Batch processing of files",
-        "Advanced summarization with customization",
-        "Video generation from description (Full HD)",
-        "Premium quality output",
-        "Priority support"
+        "50+ languages & dialects",
+        "Unlimited voice clones",
+        "Unlimited audio processing",
+        "Premium text-to-speech",
+        "Unlimited video generation",
+        "24/7 dedicated support",
+        "White-label solutions",
+        "SLA guarantee"
       ],
-      buttonText: "Contact Sales",
-      popular: false,
-      gradient: "from-pink-500/10 via-transparent to-orange-500/10",
-      buttonVariant: "default" as ButtonVariant
+      color: "from-orange-500 to-orange-600",
+      bgColor: "bg-orange-500/10",
+      icon: Shield,
+      popular: false
     }
   ];
 
+  const formatPrice = (amount: number, curr: string) => {
+    return curr === "INR" ? `₹${amount.toLocaleString()}` : `$${amount}`;
+  };
+
+  const getSavings = (plan: any, curr: string) => {
+    const monthly = plan.prices[curr].monthly;
+    const yearly = plan.prices[curr].yearly;
+    return (monthly * 12) - yearly;
+  };
+
   return (
-    <div className="mx-auto max-w-7xl px-6 lg:px-8 py-24 bg-background" id="pricing">
-      <div className="mx-auto max-w-2xl text-center mb-16">
-        <h2 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-purple-500 to-secondary bg-clip-text text-transparent sm:text-5xl">
-          Simple, transparent pricing
-        </h2>
-        <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-          Start with 150 credits on us. Choose the plan that works best for you.
-        </p>
-      </div>
-      <div className="flex justify-center items-center mb-8">
-        <span className="text-sm mr-3 text-gray-600 dark:text-gray-300">Currency:</span>
-        <Button
-          variant={currency === "USD" ? "secondary" : "outline"}
-          size="sm"
-          className="mr-2 min-w-[90px]"
-          onClick={() => setCurrency("USD")}
-        >
-          USD <span className="ml-1">$</span>
-        </Button>
-        <Button
-          variant={currency === "INR" ? "secondary" : "outline"}
-          size="sm"
-          className="min-w-[90px]"
-          onClick={() => setCurrency("INR")}
-        >
-          INR <span className="ml-1">₹</span>
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {pricingPlans.map((plan) => (
-          <Card 
-            key={plan.name} 
-            className={`relative flex flex-col border-2 transition-all duration-300 hover:scale-105 ${
-              plan.popular ? 'border-primary shadow-lg' : 'border-border'
-            } overflow-hidden`}
-          >
-            <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-50`} />
-            {plan.popular && (
-              <div className="absolute top-0 right-0 transform translate-x-2 -translate-y-2">
-                <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                  Most Popular
-                </span>
-              </div>
-            )}
-            <CardHeader className="relative z-10">
-              <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-              <div className="mt-2">
-                <span className="text-4xl font-bold tracking-tight">
-                  {currency === "INR" ? plan.priceINR : plan.priceUSD}
-                </span>
-                <span className="text-muted-foreground ml-1">/month</span>
-              </div>
-              <p className="text-sm font-medium text-primary mt-2">{plan.credits}</p>
-              <CardDescription className="mt-3 dark:text-gray-300">{plan.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow relative z-10">
-              <ul className="space-y-4">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start">
-                    <Check className="mr-2 h-5 w-5 shrink-0 text-primary" />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter className="relative z-10">
-              <Button 
-                variant={plan.buttonVariant}
-                className="w-full transition-all duration-300"
+    <div className="relative mx-auto max-w-7xl px-6 lg:px-8 py-24 bg-gradient-to-b from-background to-muted/30 overflow-hidden" id="pricing">
+      {/* Background elements */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-primary/10 rounded-full blur-3xl"></div>
+      
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="mx-auto max-w-3xl text-center mb-16">
+          <Badge variant="outline" className="mb-6 px-4 py-2 bg-card/50 backdrop-blur-sm border-primary/20">
+            <Sparkles className="h-4 w-4 mr-2" />
+            Transparent Pricing
+          </Badge>
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6">
+            <span className="bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              Simple, Transparent
+            </span>
+            <br />
+            <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              Pricing
+            </span>
+          </h2>
+          <p className="text-xl leading-8 text-muted-foreground">
+            Start free, upgrade when you need more. All plans include our core AI features 
+            with no hidden fees.
+          </p>
+        </div>
+
+        {/* Currency and Billing Toggle */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+          {/* Currency Toggle */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">Currency:</span>
+            <Tabs value={currency} onValueChange={(value) => setCurrency(value as "USD" | "INR")}>
+              <TabsList className="bg-card/50 backdrop-blur-sm border border-border/50">
+                <TabsTrigger value="USD" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  USD $
+                </TabsTrigger>
+                <TabsTrigger value="INR" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  INR ₹
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {/* Billing Period Toggle */}
+          <div className="flex items-center gap-3">
+            <Tabs value={billingPeriod} onValueChange={(value) => setBillingPeriod(value as "monthly" | "yearly")}>
+              <TabsList className="bg-card/50 backdrop-blur-sm border border-border/50">
+                <TabsTrigger value="monthly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  Monthly
+                </TabsTrigger>
+                <TabsTrigger value="yearly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative">
+                  Yearly
+                  <Badge className="absolute -top-8 -right-2 bg-green-500 text-white text-xs">
+                    Save 20%
+                  </Badge>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>
+
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          {plans.map((plan, index) => {
+            const Icon = plan.icon;
+            const currentPrice = plan.prices[currency][billingPeriod];
+            const savings = billingPeriod === "yearly" ? getSavings(plan, currency) : 0;
+
+            return (
+              <Card 
+                key={plan.name}
+                className={`relative bg-card/50 backdrop-blur-sm border transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                  plan.popular 
+                    ? 'border-primary/50 shadow-lg ring-2 ring-primary/20' 
+                    : 'border-border/50 hover:border-primary/30'
+                } ${plan.bgColor}`}
               >
-                {plan.buttonText}
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-      <div className="mt-16 text-center">
-        <p className="text-sm text-muted-foreground dark:text-gray-400">
-          All plans include a 7-day free trial with 150 initial credits. 
-          <br />
-          1 credit = 12 seconds of processing. Additional credits can be purchased separately.
-        </p>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-gradient-to-r from-primary to-purple-600 text-primary-foreground px-6 py-1">
+                      <Star className="h-3 w-3 mr-1" />
+                      {plan.badge}
+                    </Badge>
+                  </div>
+                )}
+                
+                <CardHeader className="text-center pb-8">
+                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${plan.color} text-white mx-auto mb-4`}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                  <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
+                  <div className="mt-4">
+                    <span className="text-4xl font-bold">
+                      {formatPrice(currentPrice, currency)}
+                    </span>
+                    <span className="text-muted-foreground">
+                      /{billingPeriod === "monthly" ? "month" : "year"}
+                    </span>
+                    {billingPeriod === "yearly" && savings > 0 && (
+                      <div className="text-sm text-green-600 font-medium">
+                        Save {formatPrice(savings, currency)} annually
+                      </div>
+                    )}
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="space-y-6">
+                  <div className="space-y-3">
+                    {plan.features.map((feature, featureIndex) => (
+                      <div key={featureIndex} className="flex items-center gap-3">
+                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+
+                <CardFooter>
+                  <Link to="/signup" className="w-full">
+                    <Button 
+                      className={`w-full h-12 ${
+                        plan.popular 
+                          ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90' 
+                          : ''
+                      }`}
+                      variant={plan.popular ? "default" : "outline"}
+                    >
+                      Get Started
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Trust indicators */}
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-green-500" />
+              <span>7-day free trial</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-green-500" />
+              <span>No credit card required</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-green-500" />
+              <span>Cancel anytime</span>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            All plans include core AI features. Additional credits can be purchased separately.
+          </p>
+        </div>
       </div>
     </div>
   );
