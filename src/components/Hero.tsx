@@ -27,12 +27,12 @@ export const Hero = () => {
           </div>
 
           {/* Main heading */}
-          <h1 className="text-5xl font-bold tracking-tight sm:text-7xl lg:text-8xl mb-8">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-6 lg:mb-8">
             <span className="block bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent">
               Zenlead Studio
             </span>
-            <span className="block text-foreground mt-4 text-4xl sm:text-5xl lg:text-6xl">
-              AI Technologies as 
+            <span className="block text-foreground mt-2 lg:mt-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+              AI Technologies as
               <span className="bg-gradient-to-r from-purple-600 to-primary bg-clip-text text-transparent"> Magic</span>
             </span>
           </h1>
