@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ModelModal } from "@/components/ModelModal";
 import { Languages, Headphones, Wand2, LucideIcon, Sparkles, Grid3X3, List, TrendingUp, Volume2, Mic, AudioWaveform } from "lucide-react";
 import AudioTranslate from "@/components/audio-processing/audio-translate";
 import VoiceClone from "@/components/audio-processing/voice-clone";
@@ -110,6 +111,8 @@ const AudioProcessing = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [viewMode, setViewMode] = useState<"tabs" | "grid">("grid");
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const state: AudioProcessingState = {
     audioFile, setAudioFile, targetLanguage, setTargetLanguage,
@@ -125,11 +128,23 @@ const AudioProcessing = () => {
   useEffect(() => {
     if (viewMode === "grid") {
       setActiveTab(null);
+      setIsModalOpen(false);
     }
   }, [viewMode]);
 
   const handleTryNow = (tabKey: string) => {
     setActiveTab(tabKey);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setActiveTab(null);
+    setIsFullscreen(false);
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
   };
 
   const renderModelContent = () => {
@@ -146,6 +161,8 @@ const AudioProcessing = () => {
         return null;
     }
   };
+
+  const activeModel = activeTab ? audioProcessingModels.find(m => m.key === activeTab) : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -297,96 +314,50 @@ const AudioProcessing = () => {
             ))}
           </Tabs>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Model Cards Grid */}
-            <div className="flex-1">
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {audioProcessingModels.map((model) => (
-                  <Card 
-                    key={model.key}
-                    className={`group cursor-pointer bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:scale-105 ${model.bgColor}`}
-                    onClick={() => handleTryNow(model.key)}
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className={`p-3 rounded-xl bg-gradient-to-r ${model.color} shadow-lg`}>
-                          <model.icon className="h-6 w-6 text-white" />
-                        </div>
-                        <div className="text-right">
-                          <Badge variant="secondary" className="text-xs mb-1">
-                            {model.badge}
-                          </Badge>
-                          <p className="text-xs text-primary font-medium">{model.sucessrate}% Success</p>
-                        </div>
-                      </div>
-                      
-                      <h3 className="font-semibold text-lg mb-1">{model.title}</h3>
-                      <p className="text-sm text-primary mb-3">{model.titletagline}</p>
-                      <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-                        {model.description}
-                      </p>
-                      
-
-                      
-                      <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                        <div className="flex flex-wrap gap-1">
-                          {model.modelkeywords.slice(0, 2).map((keyword, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
-                        <Button 
-                          size="sm" 
-                          className="group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200"
-                        >
-                          Try Now
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Selected Model Content */}
-            {activeTab && (
-              <div className="lg:w-1/2 xl:w-2/5">
-                <Card className="sticky top-8 bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {(() => {
-                          const model = audioProcessingModels.find(m => m.key === activeTab);
-                          const Icon = model?.icon || Volume2;
-                          return (
-                            <>
-                              <div className={`p-2 rounded-lg bg-gradient-to-r ${model?.color} text-white`}>
-                                <Icon className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <CardTitle className="text-lg">{model?.title}</CardTitle>
-                                <p className="text-sm text-muted-foreground">{model?.titletagline}</p>
-                              </div>
-                            </>
-                          );
-                        })()}
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setActiveTab(null)}
-                      >
-                        Close
-                      </Button>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {audioProcessingModels.map((model) => (
+              <Card 
+                key={model.key}
+                className={`group cursor-pointer bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:scale-105 ${model.bgColor}`}
+                onClick={() => handleTryNow(model.key)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-r ${model.color} shadow-lg`}>
+                      <model.icon className="h-6 w-6 text-white" />
                     </div>
-                  </CardHeader>
-                  <CardContent className="max-h-[70vh] overflow-y-auto">
-                    {renderModelContent()}
-                  </CardContent>
-                </Card>
-              </div>
-            )}
+                    <div className="text-right">
+                      <Badge variant="secondary" className="text-xs mb-1">
+                        {model.badge}
+                      </Badge>
+                      <p className="text-xs text-primary font-medium">{model.sucessrate}% Success</p>
+                    </div>
+                  </div>
+                  
+                  <h3 className="font-semibold text-lg mb-1">{model.title}</h3>
+                  <p className="text-sm text-primary mb-3">{model.titletagline}</p>
+                  <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+                    {model.description}
+                  </p>
+                  
+                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                    <div className="flex flex-wrap gap-1">
+                      {model.modelkeywords.slice(0, 2).map((keyword, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {keyword}
+                        </Badge>
+                      ))}
+                    </div>
+                    <Button 
+                      size="sm" 
+                      className="group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200"
+                    >
+                      Try Now
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
 
@@ -415,6 +386,17 @@ const AudioProcessing = () => {
             </Card>
           </div>
         )}
+
+        {/* Enhanced Modal */}
+        <ModelModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          model={activeModel}
+          isFullscreen={isFullscreen}
+          onToggleFullscreen={toggleFullscreen}
+        >
+          {renderModelContent()}
+        </ModelModal>
       </main>
     </div>
   );
