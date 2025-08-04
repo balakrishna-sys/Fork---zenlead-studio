@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,23 +8,25 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Navbar } from "@/components/Navbar";
-import { 
-  UserPlus, 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  Sparkles, 
+import {
+  UserPlus,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Sparkles,
   ArrowRight,
   Gift,
   Star,
   Check,
-  User
+  User,
+  Loader2
 } from "lucide-react";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -33,8 +36,67 @@ const SignUp = () => {
     subscribeNewsletter: false
   });
 
+  const { register, isLoading } = useAuth();
+  const navigate = useNavigate();
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const validateForm = () => {
+    if (!formData.fullName.trim()) {
+      return "Please enter your full name";
+    }
+    if (!formData.email.trim()) {
+      return "Please enter your email address";
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      return "Please enter a valid email address";
+    }
+    if (formData.password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    if (formData.password !== formData.confirmPassword) {
+      return "Passwords do not match";
+    }
+    if (!formData.agreeToTerms) {
+      return "You must agree to the Terms of Service and Privacy Policy";
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const validationError = validateForm();
+    if (validationError) {
+      // Error will be shown via toast in auth context
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Split full name into first and last name
+      const nameParts = formData.fullName.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      await register({
+        firstName,
+        lastName,
+        email: formData.email,
+        password: formData.password
+      });
+
+      // Redirect to dashboard after successful registration
+      navigate('/dashboard', { replace: true });
+    } catch (error) {
+      // Error is already handled in the auth context
+      console.error('Registration failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const benefits = [
@@ -128,7 +190,7 @@ const SignUp = () => {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
                   <div className="relative">
@@ -240,13 +302,22 @@ const SignUp = () => {
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300"
-                  disabled={!formData.agreeToTerms}
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSubmitting || isLoading || !formData.agreeToTerms || validateForm() !== null}
                 >
-                  Create Account
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  {isSubmitting || isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    <>
+                      Create Account
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </form>
 
