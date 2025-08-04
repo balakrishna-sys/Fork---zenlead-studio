@@ -10,7 +10,7 @@ import {
 import { tokenManager } from './token';
 
 // Configure your API base URL here
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://api.zenlead.ai';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.zenlead.ai';
 
 class ApiService {
   private baseURL: string;
