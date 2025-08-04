@@ -52,42 +52,129 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <div className="min-h-screen bg-background">
-          <div className="w-full bg-amber-100 dark:bg-gray-800/50 text-foreground dark:text-muted-foreground text-center py-2 px-2 sm:px-4 flex items-center justify-center gap-2 text-xs sm:text-sm z-10">
-            <Construction className="h-4 w-4 text-amber-600 dark:text-amber-300" />
-            <p className="font-medium">
-              App under construction: All functionalities are currently disabled. See you soon!
-            </p>
+        <AuthProvider>
+          <div className="min-h-screen bg-background">
+            <div className="w-full bg-amber-100 dark:bg-gray-800/50 text-foreground dark:text-muted-foreground text-center py-2 px-2 sm:px-4 flex items-center justify-center gap-2 text-xs sm:text-sm z-10">
+              <Construction className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+              <p className="font-medium">
+                App under construction: All functionalities are currently disabled. See you soon!
+              </p>
+            </div>
+            <BrowserRouter>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/case-studies" element={<CaseStudies />} />
+                <Route path="/documentation" element={<Documentation />} />
+                <Route path="/company" element={<Company />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/legal" element={<Legal />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/cookie-policy" element={<CookiePolicy />} />
+                <Route path="/gdpr" element={<GDPR />} />
+
+                {/* Authentication routes (redirect to dashboard if already authenticated) */}
+                <Route
+                  path="/signin"
+                  element={
+                    <UnauthenticatedRoute>
+                      <SignIn />
+                    </UnauthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/signup"
+                  element={
+                    <UnauthenticatedRoute>
+                      <SignUp />
+                    </UnauthenticatedRoute>
+                  }
+                />
+
+                {/* Protected routes (require authentication) */}
+                <Route
+                  path="/app"
+                  element={
+                    <AuthenticatedRoute>
+                      <Dashboard />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <AuthenticatedRoute>
+                      <Dashboard />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/audio"
+                  element={
+                    <AuthenticatedRoute>
+                      <AudioProcessing />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/text"
+                  element={
+                    <AuthenticatedRoute>
+                      <TextProcessing />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/text-processing"
+                  element={
+                    <AuthenticatedRoute>
+                      <TextProcessing />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/video"
+                  element={
+                    <AuthenticatedRoute>
+                      <VideoProcessing />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/code"
+                  element={
+                    <AuthenticatedRoute>
+                      <Code />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/library"
+                  element={
+                    <AuthenticatedRoute>
+                      <Library />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <AuthenticatedRoute>
+                      <Profile />
+                    </AuthenticatedRoute>
+                  }
+                />
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
           </div>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/app" element={<Dashboard />} />
-              <Route path="/audio" element={<AudioProcessing />} />
-              <Route path="/text" element={<TextProcessing />} />
-              <Route path="/text-processing" element={<TextProcessing />} />
-              <Route path="/video" element={<VideoProcessing />} />
-              <Route path="/code" element={<Code />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/library" element={<Library />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/case-studies" element={<CaseStudies />} />
-              <Route path="/documentation" element={<Documentation />} />
-              <Route path="/company" element={<Company />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/careers" element={<Careers />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/legal" element={<Legal />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/cookie-policy" element={<CookiePolicy />} />
-              <Route path="/gdpr" element={<GDPR />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </div>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
