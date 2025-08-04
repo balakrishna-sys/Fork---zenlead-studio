@@ -29,6 +29,9 @@ import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import GDPR from "./pages/GDPR";
 import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute, { AuthenticatedRoute, UnauthenticatedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
