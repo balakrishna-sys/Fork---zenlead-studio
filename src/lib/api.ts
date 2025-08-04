@@ -37,7 +37,7 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
-      
+
       // Handle non-JSON responses
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
@@ -56,17 +56,22 @@ class ApiService {
             data.detail?.[0]?.msg || 'Validation error occurred'
           );
         }
-        
+
         // Handle other API errors
         throw new Error(
-          data.message || 
-          data.detail || 
+          data.message ||
+          data.detail ||
           `HTTP ${response.status}: ${response.statusText}`
         );
       }
 
       return data;
     } catch (error) {
+      // Handle network errors specifically
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Network error: Unable to connect to the server. Please check your internet connection or try again later.');
+      }
+
       if (error instanceof Error) {
         throw error;
       }
