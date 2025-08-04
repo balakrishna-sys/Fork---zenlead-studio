@@ -1,28 +1,60 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, FormEvent } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/Navbar";
-import { 
-  LogIn, 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  Sparkles, 
+import {
+  LogIn,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Sparkles,
   ArrowRight,
   Shield,
   Zap,
-  Users
+  Users,
+  Loader2
 } from "lucide-react";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the redirect path from state, default to dashboard
+  const from = location.state?.from || '/dashboard';
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await login({ email, password });
+
+      // Redirect to the originally requested page or dashboard
+      navigate(from, { replace: true });
+    } catch (error) {
+      // Error is already handled in the auth context
+      console.error('Login failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -95,7 +127,7 @@ const SignIn = () => {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
                   <div className="relative">
@@ -140,6 +172,8 @@ const SignIn = () => {
                     <input
                       id="remember"
                       type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
                       className="rounded border-border/50 bg-background/50"
                     />
                     <Label htmlFor="remember" className="text-sm text-muted-foreground">
@@ -151,9 +185,22 @@ const SignIn = () => {
                   </Link>
                 </div>
 
-                <Button type="submit" className="w-full h-12 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300">
-                  Sign In
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || isLoading || !email || !password}
+                  className="w-full h-12 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting || isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing In...
+                    </>
+                  ) : (
+                    <>
+                      Sign In
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </form>
 
