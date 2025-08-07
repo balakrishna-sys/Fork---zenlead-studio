@@ -33,6 +33,7 @@ import Profile from "./pages/Profile";
 import AuthCallback from "./pages/AuthCallback";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute, { AuthenticatedRoute, UnauthenticatedRoute } from "./components/ProtectedRoute";
+import AuthMessage from "./components/AuthMessage";
 
 const queryClient = new QueryClient();
 
