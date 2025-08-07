@@ -4,6 +4,7 @@ export interface User {
   lastName: string;
   email: string;
   credits: number;
+  auth_provider?: string;
 }
 
 export interface AuthData {
