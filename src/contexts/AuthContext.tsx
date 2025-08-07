@@ -122,14 +122,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginWithGoogle = async (): Promise<void> => {
     try {
       setIsLoading(true);
+      // Just initiate the OAuth flow - the actual authentication
+      // will be handled by the AuthCallback component
       await GoogleAuthService.initiateGoogleAuth();
     } catch (error) {
       const errorMessage = handleApiError(error);
       toast.error('Failed to initiate Google authentication: ' + errorMessage);
+      setIsLoading(false); // Reset loading state on error
       throw error;
-    } finally {
-      setIsLoading(false);
     }
+    // Don't set loading to false here as the page will redirect
   };
 
   const logout = (): void => {
