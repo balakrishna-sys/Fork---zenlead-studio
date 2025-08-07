@@ -1,4 +1,4 @@
-import { apiService } from './api';
+import { makeRequest } from './api';
 
 interface GoogleAuthUrlResponse {
   status: number;
