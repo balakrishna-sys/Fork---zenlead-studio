@@ -24,7 +24,7 @@ const LockedFeature = React.forwardRef<HTMLDivElement, LockedFeatureProps>(
               <p className="text-lg font-semibold">Feature Locked</p>
               <p className="text-sm">
                 This feature is not available to use. Please {" "}
-                <Link to="https://www.zenlead.in/#contact" className="underline text-white hover:text-gray-200">
+                <Link to="/contact" className="underline text-white hover:text-gray-200">
                   Contact us!
                 </Link>
               </p>
