@@ -10,11 +10,14 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
     const elements: JSX.Element[] = [];
 
     // Split by code blocks first (```...```)
-    const codeBlockRegex = /```([a-zA-Z]*)?\\n?([\\s\\S]*?)```/g;
+    const codeBlockRegex = /```([a-zA-Z]*)?[\r\n]?([\s\S]*?)```/g;
     const parts: { type: 'text' | 'codeblock'; content: string; language?: string }[] = [];
     
     let lastIndex = 0;
     let match;
+    
+    // Reset regex lastIndex to prevent infinite loops
+    codeBlockRegex.lastIndex = 0;
     
     while ((match = codeBlockRegex.exec(text)) !== null) {
       // Add text before code block
@@ -75,24 +78,29 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
 
   const parseTextContent = (text: string, baseIndex: number): JSX.Element[] => {
     // Split text into paragraphs
-    const paragraphs = text.split(/\\n\\s*\\n/).filter(p => p.trim());
+    const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
     const elements: JSX.Element[] = [];
+    
+    if (paragraphs.length === 0) {
+      paragraphs.push(text);
+    }
     
     paragraphs.forEach((paragraph, paragraphIndex) => {
       const trimmedParagraph = paragraph.trim();
       if (!trimmedParagraph) return;
       
       // Check if it's a list item
-      const listItemMatch = trimmedParagraph.match(/^([*-]|\\d+\\.)\\s+(.*)/);
-      const lines = trimmedParagraph.split('\\n');
+      const lines = trimmedParagraph.split('\n');
+      const hasListItems = lines.some(line => /^([*-]|\d+\.)\s+/.test(line));
       
-      if (listItemMatch || lines.some(line => line.match(/^([*-]|\\d+\\.)\\s+/))) {
+      if (hasListItems) {
         // Process as list
         const listItems: JSX.Element[] = [];
         let currentItem = '';
+        let isNumbered = false;
         
         lines.forEach((line, lineIndex) => {
-          const itemMatch = line.match(/^([*-]|\\d+\\.)\\s+(.*)/);
+          const itemMatch = line.match(/^([*-]|\d+\.)\s+(.*)/);
           if (itemMatch) {
             if (currentItem) {
               listItems.push(
@@ -102,6 +110,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
               );
             }
             currentItem = itemMatch[2];
+            isNumbered = /^\d+\./.test(itemMatch[1]);
           } else if (line.trim()) {
             currentItem += ' ' + line.trim();
           }
@@ -115,7 +124,6 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
           );
         }
         
-        const isNumbered = lines[0]?.match(/^\\d+\\./);
         elements.push(
           <div key={`list-${baseIndex}-${paragraphIndex}`} className="my-3">
             {isNumbered ? (
@@ -144,13 +152,14 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
   
   const parseInlineFormatting = (text: string, baseKey: string): JSX.Element[] => {
     const elements: JSX.Element[] = [];
-    let currentText = text;
-    let elementIndex = 0;
     
     // Process inline code first (`code`)
     const inlineCodeRegex = /`([^`]+)`/g;
     const codeParts: { start: number; end: number; content: string }[] = [];
     let match;
+    
+    // Reset regex to prevent infinite loops
+    inlineCodeRegex.lastIndex = 0;
     
     while ((match = inlineCodeRegex.exec(text)) !== null) {
       codeParts.push({
@@ -200,10 +209,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
   
   const parseBoldInText = (text: string, baseKey: string): JSX.Element[] => {
     const elements: JSX.Element[] = [];
-    const boldRegex = /\\*\\*(.*?)\\*\\*/g;
+    const boldRegex = /\*\*(.*?)\*\*/g;
     let lastIndex = 0;
     let match;
     let elementIndex = 0;
+
+    // Reset regex to prevent infinite loops
+    boldRegex.lastIndex = 0;
 
     while ((match = boldRegex.exec(text)) !== null) {
       // Add text before bold
