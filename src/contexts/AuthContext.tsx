@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { 
-  AuthContextType, 
-  User, 
-  LoginRequest, 
-  RegisterRequest, 
-  UserUpdateRequest 
+import {
+  AuthContextType,
+  User,
+  LoginRequest,
+  RegisterRequest,
+  UserUpdateRequest
 } from '@/types/auth';
+import { GoogleAuthService } from '@/lib/googleAuth';
 import { apiService, handleApiError } from '@/lib/api';
 import { tokenManager } from '@/lib/token';
 import { toast } from 'sonner';
