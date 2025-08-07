@@ -130,6 +130,9 @@ class ApiService {
 // Create and export API service instance
 export const apiService = new ApiService(API_BASE_URL);
 
+// Export makeRequest method for external use
+export const makeRequest = apiService.makeRequest.bind(apiService);
+
 // Export error handler helper
 export const handleApiError = (error: unknown): string => {
   if (error instanceof Error) {
