@@ -56,6 +56,14 @@ const SignIn = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      console.error('Google sign in failed:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <Navbar />
