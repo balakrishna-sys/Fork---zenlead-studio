@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Send, 
   Code2, 
@@ -30,12 +31,12 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import {
-  createConversationAPI,
-  ConversationSummary,
-  ConversationDetail,
+import { 
+  createConversationAPI, 
+  ConversationSummary, 
+  ConversationDetail, 
   ConversationMessage,
-  StreamingData
+  StreamingData 
 } from "@/lib/conversationApi";
 
 // Categories matching your backend enum
@@ -90,7 +91,11 @@ const suggestedPrompts = [
   "Generate SQL query to join two tables",
   "Explain how JavaScript closures work",
   "Create a responsive CSS grid layout",
-  "Write TypeScript interfaces for a user system"
+  "Write TypeScript interfaces for a user system",
+  "Debug this JavaScript function",
+  "Optimize this SQL query for performance",
+  "Create a REST API with FastAPI",
+  "Write unit tests for this function"
 ];
 
 export default function Code() {
@@ -107,13 +112,13 @@ export default function Code() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isLoadingConversations, setIsLoadingConversations] = useState(false);
-
+  
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  
   // API instance
   const apiRef = useRef<ReturnType<typeof createConversationAPI> | null>(null);
-
+  
   // Initialize API when token is available
   useEffect(() => {
     if (token) {
@@ -134,7 +139,7 @@ export default function Code() {
   // Load user conversations
   const loadConversations = async () => {
     if (!apiRef.current) return;
-
+    
     setIsLoadingConversations(true);
     try {
       const conversations = await apiRef.current.getConversations(20, 0);
@@ -221,7 +226,7 @@ export default function Code() {
         }
       };
 
-      await apiRef.current.continueConversation(currentConversation.uid, {
+      await apiRef.current.continueConversation(currentConversation.uid || currentConversation._id, {
         message: message.trim(),
         category: selectedCategory
       }, handleStream);
@@ -272,8 +277,8 @@ export default function Code() {
     try {
       const success = await apiRef.current.deleteConversation(conversationId);
       if (success) {
-        setConversations(prev => prev.filter(c => c.uid !== conversationId));
-        if (currentConversation?.uid === conversationId) {
+        setConversations(prev => prev.filter(c => (c.uid || c._id) !== conversationId));
+        if ((currentConversation?.uid || currentConversation?._id) === conversationId) {
           setCurrentConversation(null);
         }
       }
@@ -319,7 +324,7 @@ export default function Code() {
     setStreamingMessage("");
   };
 
-  // Sidebar Component
+  // Simplified Sidebar Component
   const Sidebar = ({ onClose }: { onClose?: () => void }) => (
     <div className="space-y-4 h-full flex flex-col">
       {/* Header */}
@@ -329,7 +334,7 @@ export default function Code() {
         </div>
         <div>
           <h2 className="text-xl font-bold">AI Assistant</h2>
-          <p className="text-sm text-muted-foreground">Powered by AI</p>
+          <p className="text-sm text-muted-foreground">Code Companion</p>
         </div>
       </div>
 
@@ -345,7 +350,7 @@ export default function Code() {
         New Conversation
       </Button>
 
-      {/* Conversations List */}
+      {/* Recent Conversations */}
       <div className="flex-1 min-h-0">
         <div className="flex items-center gap-2 mb-3">
           <History className="h-4 w-4 text-muted-foreground" />
@@ -372,101 +377,59 @@ export default function Code() {
                 No conversations yet
               </p>
             ) : (
-              conversations.map((conversation) => (
-                <Card
-                  key={conversation.uid}
-                  className={`cursor-pointer transition-all duration-200 hover:shadow-md group ${
-                    currentConversation?.uid === conversation.uid
-                      ? "ring-2 ring-primary shadow-lg"
-                      : "hover:shadow-sm"
-                  }`}
-                  onClick={() => {
-                    loadConversation(conversation.uid);
-                    onClose?.();
-                  }}
-                >
-                  <CardContent className="p-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">
-                          {conversation.title || "New Conversation"}
-                        </h4>
-                        <p className="text-xs text-muted-foreground truncate mt-1">
-                          {conversation.last_message || "No messages"}
-                        </p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Badge variant="outline" className="text-xs">
-                            {categories.find(c => c.id === conversation.category)?.name || conversation.category}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {conversation.message_count} msgs
-                          </span>
+              conversations.map((conversation) => {
+                const convId = conversation.uid || conversation._id;
+                const currentId = currentConversation?.uid || currentConversation?._id;
+                return (
+                  <Card
+                    key={convId}
+                    className={`cursor-pointer transition-all duration-200 hover:shadow-md group ${
+                      currentId === convId
+                        ? "ring-2 ring-primary shadow-lg"
+                        : "hover:shadow-sm"
+                    }`}
+                    onClick={() => {
+                      loadConversation(convId);
+                      onClose?.();
+                    }}
+                  >
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm truncate">
+                            {conversation.title || "New Conversation"}
+                          </h4>
+                          <p className="text-xs text-muted-foreground truncate mt-1">
+                            {conversation.last_message || "No messages"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Badge variant="outline" className="text-xs">
+                              {categories.find(c => c.id === conversation.category)?.name || conversation.category}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {conversation.message_count} msgs
+                            </span>
+                          </div>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteConversation(convId);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteConversation(conversation.uid);
-                        }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardContent>
+                  </Card>
+                );
+              })
             )}
           </div>
         </ScrollArea>
-      </div>
-
-      <Separator className="my-4" />
-
-      {/* Categories */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Categories</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {categories.map((category) => {
-            const Icon = category.icon;
-            return (
-              <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSelectedCategory(category.id);
-                  onClose?.();
-                }}
-                className="justify-start gap-2 text-xs h-8"
-              >
-                <Icon className="h-3 w-3" />
-                <span className="truncate">{category.name}</span>
-              </Button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Suggested Prompts */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Quick Start</h3>
-        <div className="space-y-2">
-          {suggestedPrompts.slice(0, 3).map((prompt, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                handlePromptClick(prompt);
-                onClose?.();
-              }}
-              className="w-full text-left p-2 text-xs rounded-lg border border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-colors truncate"
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -535,33 +498,27 @@ export default function Code() {
                       <h1 className="text-2xl lg:text-3xl font-bold mb-3 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                         AI Code Assistant
                       </h1>
-                      <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
+                      <p className="text-muted-foreground text-base lg:text-lg leading-relaxed mb-6">
                         Your intelligent coding companion for generating code, creating documentation, 
                         analyzing projects, and solving complex programming challenges.
                       </p>
+                      
+                      {/* Quick Start Prompts */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4 text-foreground">Quick Start</h3>
+                        <div className="grid gap-3 text-left">
+                          {suggestedPrompts.slice(0, 6).map((prompt, index) => (
+                            <button
+                              key={index}
+                              onClick={() => handlePromptClick(prompt)}
+                              className="p-3 text-sm rounded-lg border border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-colors text-left"
+                            >
+                              {prompt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Quick Categories */}
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                    {categories.map((category) => {
-                      const Icon = category.icon;
-                      return (
-                        <Card
-                          key={category.id}
-                          className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 group"
-                          onClick={() => setSelectedCategory(category.id)}
-                        >
-                          <CardContent className="p-4 text-center">
-                            <div className={`inline-flex p-3 rounded-xl ${category.color} text-white mb-3 group-hover:scale-110 transition-transform`}>
-                              <Icon className="h-5 w-5" />
-                            </div>
-                            <h3 className="font-semibold text-sm">{category.name}</h3>
-                            <p className="text-xs text-muted-foreground mt-1">{category.description}</p>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
                   </div>
                 </div>
               </div>
@@ -570,7 +527,7 @@ export default function Code() {
                 {/* Render conversation messages */}
                 {currentConversation?.messages.map((message, index) => (
                   <div
-                    key={`${currentConversation.uid}-${index}`}
+                    key={`${currentConversation._id || currentConversation.uid}-${index}`}
                     className={`flex gap-3 lg:gap-4 ${message.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     {message.role === "assistant" && (
@@ -601,9 +558,9 @@ export default function Code() {
                             variant="ghost"
                             size="sm"
                             className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-muted h-8 w-8 p-0"
-                            onClick={() => copyToClipboard(message.content, `${currentConversation.uid}-${index}`)}
+                            onClick={() => copyToClipboard(message.content, `${currentConversation._id || currentConversation.uid}-${index}`)}
                           >
-                            {copiedId === `${currentConversation.uid}-${index}` ? (
+                            {copiedId === `${currentConversation._id || currentConversation.uid}-${index}` ? (
                               <Check className="h-3 w-3 text-green-500" />
                             ) : (
                               <Copy className="h-3 w-3" />
@@ -662,25 +619,6 @@ export default function Code() {
           {/* Input Area */}
           <div className="border-t bg-card/50 backdrop-blur-sm p-4 lg:p-6">
             <div className="max-w-4xl mx-auto">
-              {/* Mobile category selector */}
-              <div className="flex gap-2 mb-4 lg:hidden overflow-x-auto pb-2">
-                {categories.map((category) => {
-                  const Icon = category.icon;
-                  return (
-                    <Button
-                      key={category.id}
-                      variant={selectedCategory === category.id ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(category.id)}
-                      className="flex items-center gap-2 whitespace-nowrap flex-shrink-0 text-xs"
-                    >
-                      <Icon className="h-3 w-3" />
-                      <span className="sm:inline">{category.name}</span>
-                    </Button>
-                  );
-                })}
-              </div>
-
               {/* Input with enhanced styling */}
               <Card className="shadow-lg border-2 border-muted hover:border-primary/50 transition-colors">
                 <CardContent className="p-3 lg:p-4">
@@ -703,9 +641,24 @@ export default function Code() {
                         <span>Press Enter to send, Shift+Enter for new line</span>
                         <div className="flex items-center gap-2">
                           <span className="hidden sm:inline">Category:</span>
-                          <Badge variant="outline" className="text-xs">
-                            {categories.find(c => c.id === selectedCategory)?.name}
-                          </Badge>
+                          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                            <SelectTrigger className="w-40 h-6 text-xs border-none bg-transparent">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categories.map((category) => {
+                                const Icon = category.icon;
+                                return (
+                                  <SelectItem key={category.id} value={category.id}>
+                                    <div className="flex items-center gap-2">
+                                      <Icon className="h-3 w-3" />
+                                      <span>{category.name}</span>
+                                    </div>
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     </div>
