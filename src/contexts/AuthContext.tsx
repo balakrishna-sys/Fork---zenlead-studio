@@ -94,18 +94,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await apiService.register(userData);
-      
+
       if (response.success && response.data) {
         const { user: newUser, access_token } = response.data;
-        
+
         // Store auth data
         tokenManager.setToken(access_token);
         tokenManager.setUser(newUser);
-        
+
         // Update state
         setToken(access_token);
         setUser(newUser);
-        
+
         toast.success('Account created successfully! Welcome to Zenlead Studio.');
       } else {
         throw new Error(response.message || 'Registration failed');
@@ -113,6 +113,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       const errorMessage = handleApiError(error);
       toast.error(errorMessage);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      await GoogleAuthService.initiateGoogleAuth();
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      toast.error('Failed to initiate Google authentication: ' + errorMessage);
       throw error;
     } finally {
       setIsLoading(false);
