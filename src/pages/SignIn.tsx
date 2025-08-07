@@ -138,6 +138,11 @@ const SignIn = () => {
             </CardHeader>
 
             <CardContent className="space-y-6">
+              {authMessage && (
+                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
+                  <p className="text-sm text-blue-600 dark:text-blue-400">{authMessage}</p>
+                </div>
+              )}
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
