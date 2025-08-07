@@ -99,6 +99,14 @@ const SignUp = () => {
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      console.error('Google sign up failed:', error);
+    }
+  };
+
   const benefits = [
     "7-day free trial with full access",
     "20+ languages supported",
