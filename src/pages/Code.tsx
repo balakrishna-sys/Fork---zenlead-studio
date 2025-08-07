@@ -31,13 +31,14 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { 
-  createConversationAPI, 
-  ConversationSummary, 
-  ConversationDetail, 
+import {
+  createConversationAPI,
+  ConversationSummary,
+  ConversationDetail,
   ConversationMessage,
-  StreamingData 
+  StreamingData
 } from "@/lib/conversationApi";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 // Categories matching your backend enum
 const categories = [
@@ -550,9 +551,13 @@ export default function Code() {
                             {formatTimestamp(message.timestamp)}
                           </div>
                         </div>
-                        <div className="prose prose-sm dark:prose-invert max-w-none">
-                          <pre className="whitespace-pre-wrap font-sans leading-relaxed text-sm lg:text-base overflow-x-auto">{message.content}</pre>
-                        </div>
+                        {message.role === "assistant" ? (
+                          <MarkdownRenderer content={message.content} />
+                        ) : (
+                          <div className="prose prose-sm dark:prose-invert max-w-none">
+                            <pre className="whitespace-pre-wrap font-sans leading-relaxed text-sm lg:text-base overflow-x-auto">{message.content}</pre>
+                          </div>
+                        )}
                         {message.role === "assistant" && (
                           <Button
                             variant="ghost"
@@ -590,11 +595,9 @@ export default function Code() {
                     <Card className="bg-card shadow-md max-w-[85%] lg:max-w-[80%]">
                       <CardContent className="p-4 lg:p-5">
                         {streamingMessage ? (
-                          <div className="prose prose-sm dark:prose-invert max-w-none">
-                            <pre className="whitespace-pre-wrap font-sans leading-relaxed text-sm lg:text-base overflow-x-auto">
-                              {streamingMessage}
-                              <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse" />
-                            </pre>
+                          <div className="relative">
+                            <MarkdownRenderer content={streamingMessage} />
+                            <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse" />
                           </div>
                         ) : (
                           <div className="flex items-center gap-3">
