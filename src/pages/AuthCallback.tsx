@@ -20,8 +20,8 @@ const AuthCallback = () => {
 
   const handleAuthCallback = async () => {
     try {
-      const { token, error, success } = GoogleAuthService.extractTokenFromUrl();
-      
+      const { auth_data, token, error, success } = GoogleAuthService.extractTokenFromUrl();
+
       if (error || success === 'false') {
         setStatus('error');
         setErrorMessage(error || 'Authentication failed');
@@ -29,10 +29,60 @@ const AuthCallback = () => {
         return;
       }
 
-      if (token) {
+      // Handle new auth_data format (base64 encoded complete auth response)
+      if (auth_data) {
+        try {
+          // Decode base64 auth data
+          const authDataJson = atob(auth_data);
+          const authResponse = JSON.parse(authDataJson);
+
+          console.log('Received auth data:', authResponse);
+
+          if (authResponse.access_token && authResponse.user) {
+            // Store the token
+            tokenManager.setToken(authResponse.access_token);
+
+            // Map the user data to expected format
+            const userInfo = {
+              _id: authResponse.user.uid,
+              firstName: authResponse.user.firstName,
+              lastName: authResponse.user.lastName,
+              email: authResponse.user.email,
+              credits: authResponse.user.credits,
+              auth_provider: authResponse.user.auth_provider
+            };
+
+            tokenManager.setUser(userInfo);
+
+            // Update auth context state directly since we have complete user data
+            const { refreshUserData } = useAuth();
+            await refreshUserData();
+
+            setStatus('success');
+            toast.success('Successfully signed in with Google!');
+
+            // Clean URL and redirect after a short delay
+            setTimeout(() => {
+              GoogleAuthService.cleanUrlParams();
+              navigate('/dashboard', { replace: true });
+            }, 2000);
+
+          } else {
+            throw new Error('Invalid auth data structure');
+          }
+
+        } catch (decodeError) {
+          console.error('Auth data decode error:', decodeError);
+          setStatus('error');
+          setErrorMessage('Invalid authentication data received');
+          toast.error('Authentication failed: Invalid data format');
+        }
+      }
+      // Fallback to old token format for backward compatibility
+      else if (token) {
         // Store the token
         tokenManager.setToken(token);
-        
+
         // Decode token to get user info (basic validation)
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
@@ -43,21 +93,21 @@ const AuthCallback = () => {
             lastName: '',
             credits: 0
           };
-          
+
           tokenManager.setUser(userInfo);
-          
+
           // Refresh user data from backend
           await refreshUserData();
-          
+
           setStatus('success');
           toast.success('Successfully signed in with Google!');
-          
+
           // Clean URL and redirect after a short delay
           setTimeout(() => {
             GoogleAuthService.cleanUrlParams();
             navigate('/dashboard', { replace: true });
           }, 2000);
-          
+
         } catch (decodeError) {
           console.error('Token decode error:', decodeError);
           setStatus('error');
@@ -66,8 +116,8 @@ const AuthCallback = () => {
         }
       } else {
         setStatus('error');
-        setErrorMessage('No token received from Google');
-        toast.error('Authentication failed: No token received');
+        setErrorMessage('No authentication data received from Google');
+        toast.error('Authentication failed: No data received');
       }
     } catch (error) {
       console.error('Auth callback error:', error);
