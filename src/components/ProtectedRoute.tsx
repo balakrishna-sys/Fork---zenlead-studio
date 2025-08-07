@@ -32,11 +32,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // If authentication is required but user is not authenticated
   if (requireAuth && !isAuthenticated) {
     // Save the attempted location for redirect after login
+    const redirectUrl = `${redirectTo}?redirect=${encodeURIComponent(location.pathname)}`;
     return (
-      <Navigate 
-        to={redirectTo} 
-        state={{ from: location.pathname }} 
-        replace 
+      <Navigate
+        to={redirectUrl}
+        state={{ from: location.pathname, message: "You must be logged in to access this page." }}
+        replace
       />
     );
   }
