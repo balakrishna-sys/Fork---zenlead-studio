@@ -12,7 +12,7 @@ const AuthCallback = () => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
-  const { refreshUserData } = useAuth();
+  const auth = useAuth();
 
   useEffect(() => {
     handleAuthCallback();
