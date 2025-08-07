@@ -13,6 +13,7 @@ export interface ConversationMessage {
 }
 
 export interface ConversationSummary {
+  _id: string;
   uid: string;
   user_id: string;
   title?: string;
@@ -24,6 +25,7 @@ export interface ConversationSummary {
 }
 
 export interface ConversationDetail {
+  _id: string;
   uid: string;
   user_id: string;
   title?: string;
@@ -203,7 +205,8 @@ export class ConversationAPI {
       } else if (Array.isArray(data)) {
         return data;
       } else {
-        throw new Error('Invalid response format');
+        console.error('Unexpected response format:', data);
+        return [];
       }
     } catch (error) {
       console.error('Failed to get conversations:', error);
@@ -234,10 +237,11 @@ export class ConversationAPI {
       // Handle different response formats
       if (data.success && data.data) {
         return data.data;
-      } else if (data.uid) {
+      } else if (data.uid || data._id) {
         return data;
       } else {
-        throw new Error('Invalid response format');
+        console.error('Unexpected response format:', data);
+        return null;
       }
     } catch (error) {
       console.error('Failed to get conversation:', error);
