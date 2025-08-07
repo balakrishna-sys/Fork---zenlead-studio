@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/contexts/AuthContext";
+import SmartNavLink from "@/components/SmartNavLink";
 
 export const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
@@ -34,27 +35,27 @@ export const Navbar = () => {
             </Link>
             <div className="hidden md:block ml-10">
               <div className="flex items-center space-x-4">
-                <Link to="/app" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                <SmartNavLink to="/app" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Studio Dashboard
-                </Link>
-                <Link to="/audio" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                </SmartNavLink>
+                <SmartNavLink to="/audio" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Audios
-                </Link>
-                <Link to="/text" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                </SmartNavLink>
+                <SmartNavLink to="/text" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Texts
-                </Link>
-                <Link to="/video" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                </SmartNavLink>
+                <SmartNavLink to="/video" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Videos
-                </Link>
-                <Link to="/code" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                </SmartNavLink>
+                <SmartNavLink to="/code" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Code
-                </Link>
+                </SmartNavLink>
                 <Link to="/pricing" className="px-3 py-2 text-sm font-medium hover:text-primary">
                   Pricing
                 </Link>
-                <Link to="/library" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                <SmartNavLink to="/library" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Library
-                </Link>
+                </SmartNavLink>
               </div>
             </div>
           </div>
@@ -155,27 +156,27 @@ export const Navbar = () => {
                   <Link to="/" className="px-3 py-2 text-lg font-medium hover:text-primary">
                     Home
                   </Link>
-                  <Link to="/app" className="px-3 py-2 text-lg font-medium hover:text-primary">
+                  <SmartNavLink to="/app" className="px-3 py-2 text-lg font-medium hover:text-primary" requireAuth>
                     Studio Dashboard
-                  </Link>
-                  <Link to="/audio" className="px-3 py-2 text-lg font-medium hover:text-primary">
+                  </SmartNavLink>
+                  <SmartNavLink to="/audio" className="px-3 py-2 text-lg font-medium hover:text-primary" requireAuth>
                     Audios
-                  </Link>
-                  <Link to="/text" className="px-3 py-2 text-lg font-medium hover:text-primary">
+                  </SmartNavLink>
+                  <SmartNavLink to="/text" className="px-3 py-2 text-lg font-medium hover:text-primary" requireAuth>
                     Texts
-                  </Link>
-                  <Link to="/video" className="px-3 py-2 text-lg font-medium hover:text-primary">
+                  </SmartNavLink>
+                  <SmartNavLink to="/video" className="px-3 py-2 text-lg font-medium hover:text-primary" requireAuth>
                     Videos
-                  </Link>
-                  <Link to="/code" className="px-3 py-2 text-lg font-medium hover:text-primary">
+                  </SmartNavLink>
+                  <SmartNavLink to="/code" className="px-3 py-2 text-lg font-medium hover:text-primary" requireAuth>
                     Code
-                  </Link>
+                  </SmartNavLink>
                   <Link to="/pricing" className="px-3 py-2 text-lg font-medium hover:text-primary">
                     Pricing
                   </Link>
-                  <Link to="/library" className="px-3 py-2 text-lg font-medium hover:text-primary">
+                  <SmartNavLink to="/library" className="px-3 py-2 text-lg font-medium hover:text-primary" requireAuth>
                     Library
-                  </Link>
+                  </SmartNavLink>
                   <div className="pt-4 border-t border-border">
                     {isAuthenticated && user ? (
                       <>
