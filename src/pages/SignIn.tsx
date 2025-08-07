@@ -32,8 +32,11 @@ const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get the redirect path from state, default to dashboard
-  const from = location.state?.from || '/dashboard';
+  // Get the redirect path from URL params or state, default to dashboard
+  const urlParams = new URLSearchParams(location.search);
+  const redirectParam = urlParams.get('redirect');
+  const from = redirectParam || location.state?.from || '/dashboard';
+  const authMessage = location.state?.message;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
