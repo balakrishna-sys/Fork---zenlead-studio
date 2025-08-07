@@ -55,8 +55,7 @@ const AuthCallback = () => {
             tokenManager.setUser(userInfo);
 
             // Update auth context state directly since we have complete user data
-            const { refreshUserData } = useAuth();
-            await refreshUserData();
+            await auth.refreshUserData();
 
             setStatus('success');
             toast.success('Successfully signed in with Google!');
