@@ -62,6 +62,7 @@ export interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => void;
   updateUser: (userData: UserUpdateRequest) => Promise<void>;
   refreshUserData: () => Promise<void>;
