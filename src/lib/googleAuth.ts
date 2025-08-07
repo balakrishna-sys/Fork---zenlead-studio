@@ -13,7 +13,7 @@ export class GoogleAuthService {
    */
   static async getGoogleAuthUrl(): Promise<string> {
     try {
-      const response = await apiService.makeRequest<GoogleAuthUrlResponse>('/auth/google');
+      const response = await makeRequest<GoogleAuthUrlResponse>('/auth/google');
       
       if (response.success && response.auth_url) {
         return response.auth_url;
