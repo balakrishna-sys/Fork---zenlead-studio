@@ -88,7 +88,9 @@ const App = () => {
                   path="/signin"
                   element={
                     <UnauthenticatedRoute>
-                      <SignIn />
+                      <AuthMessage>
+                        <SignIn />
+                      </AuthMessage>
                     </UnauthenticatedRoute>
                   }
                 />
@@ -96,7 +98,9 @@ const App = () => {
                   path="/signup"
                   element={
                     <UnauthenticatedRoute>
-                      <SignUp />
+                      <AuthMessage>
+                        <SignUp />
+                      </AuthMessage>
                     </UnauthenticatedRoute>
                   }
                 />
