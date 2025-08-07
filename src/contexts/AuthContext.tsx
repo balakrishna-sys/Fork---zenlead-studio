@@ -209,6 +209,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     login,
     register,
+    loginWithGoogle,
     logout,
     updateUser,
     refreshUserData,
