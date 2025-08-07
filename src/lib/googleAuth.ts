@@ -42,12 +42,18 @@ export class GoogleAuthService {
   }
 
   /**
-   * Extract token from URL params (for callback handling)
+   * Extract auth data from URL params (for callback handling)
    */
-  static extractTokenFromUrl(): { token?: string; error?: string; success?: string } {
+  static extractTokenFromUrl(): {
+    auth_data?: string;
+    token?: string;
+    error?: string;
+    success?: string
+  } {
     const urlParams = new URLSearchParams(window.location.search);
-    
+
     return {
+      auth_data: urlParams.get('auth_data') || undefined,
       token: urlParams.get('token') || undefined,
       error: urlParams.get('error') || undefined,
       success: urlParams.get('success') || undefined,
