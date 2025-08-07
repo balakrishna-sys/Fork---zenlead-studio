@@ -79,6 +79,9 @@ const App = () => {
                 <Route path="/cookie-policy" element={<CookiePolicy />} />
                 <Route path="/gdpr" element={<GDPR />} />
 
+                {/* Auth callback route */}
+                <Route path="/auth/callback" element={<AuthCallback />} />
+
                 {/* Authentication routes (redirect to dashboard if already authenticated) */}
                 <Route
                   path="/signin"
