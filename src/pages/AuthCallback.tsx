@@ -96,7 +96,7 @@ const AuthCallback = () => {
           tokenManager.setUser(userInfo);
 
           // Refresh user data from backend
-          await refreshUserData();
+          await auth.refreshUserData();
 
           setStatus('success');
           toast.success('Successfully signed in with Google!');
