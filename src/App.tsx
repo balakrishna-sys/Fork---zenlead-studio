@@ -30,6 +30,7 @@ import CookiePolicy from "./pages/CookiePolicy";
 import GDPR from "./pages/GDPR";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import AuthCallback from "./pages/AuthCallback";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute, { AuthenticatedRoute, UnauthenticatedRoute } from "./components/ProtectedRoute";
 
