@@ -36,7 +36,7 @@ const SignUp = () => {
     subscribeNewsletter: false
   });
 
-  const { register, isLoading } = useAuth();
+  const { register, loginWithGoogle, isLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleInputChange = (field: string, value: string | boolean) => {
