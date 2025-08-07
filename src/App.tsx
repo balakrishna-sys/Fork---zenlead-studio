@@ -174,6 +174,7 @@ const App = () => {
                   }
                 />
 
+                {/* Catch-all route - redirect internal routes to dashboard, others to 404 */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
