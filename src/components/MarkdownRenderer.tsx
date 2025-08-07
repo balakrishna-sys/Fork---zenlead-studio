@@ -1,4 +1,7 @@
 import React from "react";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTheme } from "next-themes";
 
 interface MarkdownRendererProps {
   content: string;
@@ -6,6 +9,29 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = "" }) => {
+  const { theme } = useTheme();
+
+  // Language detection and mapping
+  const detectLanguage = (lang?: string): string => {
+    if (!lang) return 'text';
+
+    // Common language mappings
+    const langMap: { [key: string]: string } = {
+      'js': 'javascript',
+      'ts': 'typescript',
+      'py': 'python',
+      'rb': 'ruby',
+      'sh': 'bash',
+      'yml': 'yaml',
+      'md': 'markdown',
+      'html': 'markup',
+      'jsx': 'jsx',
+      'tsx': 'tsx'
+    };
+
+    return langMap[lang.toLowerCase()] || lang.toLowerCase();
+  };
+
   const parseMarkdown = (text: string): JSX.Element[] => {
     const elements: JSX.Element[] = [];
 
@@ -48,22 +74,40 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
     // Process each part
     parts.forEach((part, partIndex) => {
       if (part.type === 'codeblock') {
-        // Render code block
+        // Render code block with syntax highlighting
+        const detectedLanguage = detectLanguage(part.language);
+        const isDark = theme === 'dark';
+
         elements.push(
-          <div key={`code-${partIndex}`} className="my-4 rounded-lg bg-muted/80 border border-border/50 overflow-hidden shadow-sm">
+          <div key={`code-${partIndex}`} className="my-4 rounded-lg overflow-hidden shadow-sm border border-border/50">
             <div className="px-4 py-2 bg-muted border-b border-border/30 text-xs text-muted-foreground font-mono flex items-center justify-between">
-              <span>{part.language || 'Code'}</span>
+              <span className="capitalize">{part.language || detectedLanguage}</span>
               <div className="flex gap-1">
                 <div className="w-2 h-2 rounded-full bg-red-500/60"></div>
                 <div className="w-2 h-2 rounded-full bg-yellow-500/60"></div>
                 <div className="w-2 h-2 rounded-full bg-green-500/60"></div>
               </div>
             </div>
-            <pre className="p-4 overflow-x-auto text-sm">
-              <code className="font-mono text-foreground/90 leading-relaxed block">
+            <div className="relative">
+              <SyntaxHighlighter
+                language={detectedLanguage}
+                style={isDark ? vscDarkPlus : vs}
+                customStyle={{
+                  margin: 0,
+                  padding: '16px',
+                  background: 'transparent',
+                  fontSize: '14px',
+                  lineHeight: '1.5'
+                }}
+                codeTagProps={{
+                  style: {
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+                  }
+                }}
+              >
                 {part.content}
-              </code>
-            </pre>
+              </SyntaxHighlighter>
+            </div>
           </div>
         );
       } else {
