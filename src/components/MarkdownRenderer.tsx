@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import { Copy, Check } from "lucide-react";
 
 interface MarkdownRendererProps {
   content: string;
@@ -10,6 +12,23 @@ interface MarkdownRendererProps {
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = "" }) => {
   const { theme } = useTheme();
+  const [copiedBlocks, setCopiedBlocks] = useState<Set<number>>(new Set());
+
+  const copyToClipboard = async (text: string, blockIndex: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedBlocks(prev => new Set(prev).add(blockIndex));
+      setTimeout(() => {
+        setCopiedBlocks(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(blockIndex);
+          return newSet;
+        });
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
 
   // Language detection and mapping
   const detectLanguage = (lang?: string): string => {
@@ -81,12 +100,26 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
         elements.push(
           <div key={`code-${partIndex}`} className="my-4 rounded-lg overflow-hidden shadow-sm border border-border/50">
             <div className="px-4 py-2 bg-muted border-b border-border/30 text-xs text-muted-foreground font-mono flex items-center justify-between">
-              <span className="capitalize">{part.language || detectedLanguage}</span>
-              <div className="flex gap-1">
-                <div className="w-2 h-2 rounded-full bg-red-500/60"></div>
-                <div className="w-2 h-2 rounded-full bg-yellow-500/60"></div>
-                <div className="w-2 h-2 rounded-full bg-green-500/60"></div>
+              <div className="flex items-center gap-3">
+                <span className="capitalize">{part.language || detectedLanguage}</span>
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 rounded-full bg-red-500/60"></div>
+                  <div className="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+                  <div className="w-2 h-2 rounded-full bg-green-500/60"></div>
+                </div>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => copyToClipboard(part.content, partIndex)}
+                className="h-6 w-6 p-0 hover:bg-muted-foreground/10"
+              >
+                {copiedBlocks.has(partIndex) ? (
+                  <Check className="h-3 w-3 text-green-500" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
+              </Button>
             </div>
             <div className="relative">
               <SyntaxHighlighter
