@@ -30,34 +30,13 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-
-// Types based on your backend models
-interface ConversationMessage {
-  role: "user" | "assistant";
-  content: string;
-  timestamp: string;
-}
-
-interface Conversation {
-  uid: string;
-  user_id: string;
-  title?: string;
-  category: string;
-  message_count: number;
-  last_message?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface ConversationDetail {
-  uid: string;
-  user_id: string;
-  title?: string;
-  messages: ConversationMessage[];
-  category: string;
-  created_at: string;
-  updated_at: string;
-}
+import {
+  createConversationAPI,
+  ConversationSummary,
+  ConversationDetail,
+  ConversationMessage,
+  StreamingData
+} from "@/lib/conversationApi";
 
 // Categories matching your backend enum
 const categories = [
@@ -119,7 +98,7 @@ export default function Code() {
   const { user, token } = useAuth();
   
   // UI State
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [currentConversation, setCurrentConversation] = useState<ConversationDetail | null>(null);
   const [input, setInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("general_chat");
@@ -128,10 +107,19 @@ export default function Code() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isLoadingConversations, setIsLoadingConversations] = useState(false);
-  
+
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const eventSourceRef = useRef<EventSource | null>(null);
+
+  // API instance
+  const apiRef = useRef<ReturnType<typeof createConversationAPI> | null>(null);
+
+  // Initialize API when token is available
+  useEffect(() => {
+    if (token) {
+      apiRef.current = createConversationAPI(token);
+    }
+  }, [token]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -143,31 +131,16 @@ export default function Code() {
     loadConversations();
   }, []);
 
-  // API Base URL
-  const API_BASE = import.meta.env.VITE_API_URL || 'https://api.zenlead.ai';
-
   // Load user conversations
   const loadConversations = async () => {
-    if (!token) return;
-    
+    if (!apiRef.current) return;
+
     setIsLoadingConversations(true);
     try {
-      const response = await fetch(`${API_BASE}/api/conversation/`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          setConversations(data.data);
-        }
-      }
+      const conversations = await apiRef.current.getConversations(20, 0);
+      setConversations(conversations);
     } catch (error) {
       console.error('Failed to load conversations:', error);
-      toast.error('Failed to load conversations');
     } finally {
       setIsLoadingConversations(false);
     }
@@ -175,76 +148,40 @@ export default function Code() {
 
   // Start a new conversation
   const startNewConversation = async (message: string) => {
-    if (!token || !message.trim()) return;
+    if (!apiRef.current || !message.trim()) return;
 
     setIsStreaming(true);
     setStreamingMessage("");
 
     try {
-      const response = await fetch(`${API_BASE}/api/conversation/new`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message.trim(),
-          category: selectedCategory
-        }),
-      });
+      let conversationId: string | null = null;
+      let fullResponse = '';
 
-      if (!response.ok) {
-        throw new Error('Failed to start conversation');
-      }
-
-      // Handle streaming response
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (reader) {
-        let conversationId = '';
-        let fullResponse = '';
-        let conversationTitle = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.substring(6));
-                
-                if (data.type === 'metadata') {
-                  conversationId = data.conversation_id;
-                } else if (data.type === 'content') {
-                  fullResponse += data.content;
-                  setStreamingMessage(fullResponse);
-                } else if (data.type === 'complete') {
-                  conversationTitle = data.title;
-                  break;
-                } else if (data.type === 'error') {
-                  throw new Error(data.error);
-                }
-              } catch (e) {
-                console.error('Error parsing SSE data:', e);
-              }
-            }
-          }
+      const handleStream = (data: StreamingData) => {
+        if (data.type === 'metadata' && data.conversation_id) {
+          conversationId = data.conversation_id;
+        } else if (data.type === 'content' && data.content) {
+          fullResponse += data.content;
+          setStreamingMessage(fullResponse);
+        } else if (data.type === 'complete') {
+          // Stream completed
+        } else if (data.type === 'error' && data.error) {
+          throw new Error(data.error);
         }
+      };
 
-        // Load the complete conversation
-        if (conversationId) {
-          await loadConversation(conversationId);
-          loadConversations(); // Refresh conversation list
-        }
+      await apiRef.current.createConversation({
+        message: message.trim(),
+        category: selectedCategory
+      }, handleStream);
+
+      // Load the complete conversation and refresh list
+      if (conversationId) {
+        await loadConversation(conversationId);
+        loadConversations();
       }
     } catch (error) {
       console.error('Failed to start conversation:', error);
-      toast.error('Failed to start conversation');
     } finally {
       setIsStreaming(false);
       setStreamingMessage("");
@@ -253,7 +190,7 @@ export default function Code() {
 
   // Continue existing conversation
   const continueConversation = async (message: string) => {
-    if (!token || !message.trim() || !currentConversation) return;
+    if (!apiRef.current || !message.trim() || !currentConversation) return;
 
     setIsStreaming(true);
     setStreamingMessage("");
@@ -271,73 +208,39 @@ export default function Code() {
     } : null);
 
     try {
-      const response = await fetch(`${API_BASE}/api/conversation/${currentConversation.uid}/message`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message.trim(),
-          category: selectedCategory
-        }),
-      });
+      let fullResponse = '';
 
-      if (!response.ok) {
-        throw new Error('Failed to continue conversation');
-      }
-
-      // Handle streaming response
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (reader) {
-        let fullResponse = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.substring(6));
-                
-                if (data.type === 'content') {
-                  fullResponse += data.content;
-                  setStreamingMessage(fullResponse);
-                } else if (data.type === 'complete') {
-                  break;
-                } else if (data.type === 'error') {
-                  throw new Error(data.error);
-                }
-              } catch (e) {
-                console.error('Error parsing SSE data:', e);
-              }
-            }
-          }
+      const handleStream = (data: StreamingData) => {
+        if (data.type === 'content' && data.content) {
+          fullResponse += data.content;
+          setStreamingMessage(fullResponse);
+        } else if (data.type === 'complete') {
+          // Stream completed
+        } else if (data.type === 'error' && data.error) {
+          throw new Error(data.error);
         }
+      };
 
-        // Add AI response to conversation
-        const aiMessage: ConversationMessage = {
-          role: "assistant",
-          content: fullResponse,
-          timestamp: new Date().toISOString()
-        };
+      await apiRef.current.continueConversation(currentConversation.uid, {
+        message: message.trim(),
+        category: selectedCategory
+      }, handleStream);
 
-        setCurrentConversation(prev => prev ? {
-          ...prev,
-          messages: [...prev.messages, aiMessage]
-        } : null);
+      // Add AI response to conversation
+      const aiMessage: ConversationMessage = {
+        role: "assistant",
+        content: fullResponse,
+        timestamp: new Date().toISOString()
+      };
 
-        loadConversations(); // Refresh conversation list
-      }
+      setCurrentConversation(prev => prev ? {
+        ...prev,
+        messages: [...prev.messages, aiMessage]
+      } : null);
+
+      loadConversations(); // Refresh conversation list
     } catch (error) {
       console.error('Failed to continue conversation:', error);
-      toast.error('Failed to send message');
     } finally {
       setIsStreaming(false);
       setStreamingMessage("");
@@ -346,55 +249,36 @@ export default function Code() {
 
   // Load specific conversation
   const loadConversation = async (conversationId: string) => {
-    if (!token) return;
+    if (!apiRef.current) return;
 
     try {
-      const response = await fetch(`${API_BASE}/api/conversation/${conversationId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          setCurrentConversation(data.data);
-          // Set category based on conversation
-          if (data.data.category) {
-            setSelectedCategory(data.data.category);
-          }
+      const conversation = await apiRef.current.getConversation(conversationId);
+      if (conversation) {
+        setCurrentConversation(conversation);
+        // Set category based on conversation
+        if (conversation.category) {
+          setSelectedCategory(conversation.category);
         }
       }
     } catch (error) {
       console.error('Failed to load conversation:', error);
-      toast.error('Failed to load conversation');
     }
   };
 
   // Delete conversation
   const deleteConversation = async (conversationId: string) => {
-    if (!token) return;
+    if (!apiRef.current) return;
 
     try {
-      const response = await fetch(`${API_BASE}/api/conversation/${conversationId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
+      const success = await apiRef.current.deleteConversation(conversationId);
+      if (success) {
         setConversations(prev => prev.filter(c => c.uid !== conversationId));
         if (currentConversation?.uid === conversationId) {
           setCurrentConversation(null);
         }
-        toast.success('Conversation deleted');
       }
     } catch (error) {
       console.error('Failed to delete conversation:', error);
-      toast.error('Failed to delete conversation');
     }
   };
 
