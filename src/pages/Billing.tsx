@@ -105,6 +105,14 @@ const Billing = () => {
     } catch (error: any) {
       console.error('Failed to load billing data:', error);
       const errorMessage = error.message || 'Failed to load billing information';
+
+      // Check if it's a network connectivity issue
+      if (errorMessage.includes('fetch') || errorMessage.includes('network') || errorMessage.includes('connection')) {
+        setConnectionError('Unable to connect to the server. Please check your internet connection and try again.');
+      } else {
+        setConnectionError(errorMessage);
+      }
+
       toast.error(errorMessage);
       // Set empty arrays on error to prevent loading state stuck
       setTransactions([]);
