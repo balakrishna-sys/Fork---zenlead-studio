@@ -58,10 +58,11 @@ const Billing = () => {
   }, [token, debouncedLoadBillingData]);
 
   const loadBillingData = async () => {
-    if (!token) return;
+    if (!token || loadingRef.current) return;
 
     try {
       setIsLoading(true);
+      console.log('Loading billing data...');
 
       // Create API instance locally to avoid dependency issues
       const api = createPaymentAPI(token);
