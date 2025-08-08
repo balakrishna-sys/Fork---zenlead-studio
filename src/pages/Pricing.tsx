@@ -404,27 +404,27 @@ const Pricing = () => {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
               {plans.map((plan, index) => {
                 const planColor = getPlanColor(index);
                 const PlanIcon = getPlanIcon(plan.name);
                 const features = formatPlanFeatures(plan);
                 const isPopular = plan.features?.best_value || index === 1;
                 const isProcessing = processingPayment === plan._id;
-                
+
                 return (
                   <Card
                     key={plan._id}
-                    className={`relative ${planColor.bg} ${planColor.border} border-2 transition-all duration-500 hover:shadow-2xl hover:scale-105 overflow-hidden group ${
-                      isPopular 
-                        ? 'shadow-2xl scale-105 ring-4 ring-purple-500/20' 
+                    className={`relative ${planColor.bg} ${planColor.border} border-2 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] overflow-hidden group min-h-[800px] flex flex-col ${
+                      isPopular
+                        ? 'shadow-2xl lg:scale-105 ring-4 ring-purple-500/20 lg:-mt-8'
                         : 'shadow-xl hover:shadow-2xl'
                     }`}
                   >
                     {/* Popular badge */}
                     {isPopular && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                        <Badge className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white px-6 py-2 text-sm font-bold shadow-lg">
+                      <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-10">
+                        <Badge className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white px-6 py-2.5 text-sm font-bold shadow-lg whitespace-nowrap">
                           <Crown className="h-4 w-4 mr-2" />
                           Most Popular
                         </Badge>
@@ -433,27 +433,27 @@ const Pricing = () => {
 
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent dark:from-gray-900/50 dark:to-transparent pointer-events-none"></div>
-                    
-                    <CardHeader className="text-center pb-8 relative z-10">
+
+                    <CardHeader className={`text-center relative z-10 flex-shrink-0 ${isPopular ? 'pt-12' : 'pt-8'} pb-6`}>
                       <div className={`inline-flex p-4 rounded-2xl ${planColor.icon} text-white mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                         <PlanIcon className="h-8 w-8" />
                       </div>
-                      <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{plan.name}</CardTitle>
-                      <p className="text-gray-600 dark:text-gray-300 text-lg">{plan.description}</p>
-                      
-                      <div className="mt-8">
-                        <div className="flex items-center justify-center">
-                          <span className="text-5xl font-bold text-gray-900 dark:text-white">
+                      <CardTitle className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-3 leading-tight">{plan.name}</CardTitle>
+                      <p className="text-gray-600 dark:text-gray-300 text-base lg:text-lg leading-relaxed px-2">{plan.description}</p>
+
+                      <div className="mt-6">
+                        <div className="flex items-baseline justify-center gap-1">
+                          <span className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-none">
                             {formatCurrency(plan.price, plan.currency)}
                           </span>
-                          <span className="text-xl text-gray-600 dark:text-gray-400 ml-2">
+                          <span className="text-lg text-gray-600 dark:text-gray-400">
                             /{plan.billing_cycle}
                           </span>
                         </div>
-                        
+
                         {user && checkEducationalDiscount(user.email) && (
                           <div className="mt-4">
-                            <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1">
+                            <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1.5 text-sm">
                               🎓 Educational Discount Available!
                             </Badge>
                           </div>
