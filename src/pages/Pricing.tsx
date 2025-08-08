@@ -344,8 +344,8 @@ const Pricing = () => {
                 const isProcessing = processingPayment === plan._id;
                 
                 return (
-                  <Card 
-                    key={plan.uid}
+                  <Card
+                    key={plan._id}
                     className={`relative bg-card/50 backdrop-blur-sm border transition-all duration-300 hover:shadow-xl hover:scale-105 ${
                       isPopular 
                         ? 'border-primary/50 shadow-lg ring-2 ring-primary/20' 
