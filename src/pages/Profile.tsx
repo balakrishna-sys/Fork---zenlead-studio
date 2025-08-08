@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -8,28 +8,74 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-  User, 
-  Mail, 
-  CreditCard, 
-  Shield, 
-  Save, 
+import { createUserAPI, UserResponse } from "@/lib/userApi";
+import { toast } from "sonner";
+import {
+  User,
+  Mail,
+  CreditCard,
+  Shield,
+  Save,
   Loader2,
   Edit,
   Eye,
   Calendar,
-  Award
+  Award,
+  RefreshCw
 } from "lucide-react";
 
 const Profile = () => {
-  const { user, updateUser, isLoading } = useAuth();
+  const { user, updateUser, isLoading, token } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRefreshingCredits, setIsRefreshingCredits] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserResponse | null>(user);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     email: user?.email || ""
   });
+
+  const userAPI = token ? createUserAPI(token) : null;
+
+  // Update local state when auth user changes
+  useEffect(() => {
+    if (user) {
+      setCurrentUser(user);
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || ""
+      });
+    }
+  }, [user]);
+
+  // Function to refresh user credits from backend
+  const refreshCredits = async () => {
+    if (!userAPI || !user) return;
+
+    try {
+      setIsRefreshingCredits(true);
+      const credits = await userAPI.getUserCredits(user._id);
+
+      // Update the current user state with new credits
+      setCurrentUser(prev => prev ? { ...prev, credits } : null);
+
+      toast.success('Credits refreshed successfully');
+    } catch (error: any) {
+      console.error('Failed to refresh credits:', error);
+      toast.error('Failed to refresh credits');
+    } finally {
+      setIsRefreshingCredits(false);
+    }
+  };
+
+  // Auto-refresh credits when component mounts or when returning from payment
+  useEffect(() => {
+    if (userAPI && user) {
+      refreshCredits();
+    }
+  }, [userAPI, user?._id]);
 
   const getUserInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
