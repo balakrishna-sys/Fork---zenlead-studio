@@ -351,29 +351,32 @@ const Pricing = () => {
           </p>
           
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center mb-16">
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-2 border border-gray-200 dark:border-gray-700 shadow-xl">
-              <Tabs value={billingPeriod} onValueChange={(value) => {
-                setBillingPeriod(value as "monthly" | "yearly");
-              }}>
-                <TabsList className="bg-transparent border-0 p-1">
-                  <TabsTrigger 
-                    value="monthly" 
-                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl px-8 py-3 text-lg font-medium transition-all duration-300"
-                  >
-                    Monthly
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="yearly" 
-                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl px-8 py-3 text-lg font-medium relative transition-all duration-300"
-                  >
-                    Yearly
-                    <Badge className="absolute -top-3 -right-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs px-2 py-1 rounded-full animate-pulse">
-                      Save 25%
-                    </Badge>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+          <div className="flex items-center justify-center mb-20">
+            <div className="relative">
+              <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-3 border border-gray-200 dark:border-gray-700 shadow-xl">
+                <Tabs value={billingPeriod} onValueChange={(value) => {
+                  setBillingPeriod(value as "monthly" | "yearly");
+                }}>
+                  <TabsList className="bg-transparent border-0 p-0 h-auto space-x-2">
+                    <TabsTrigger
+                      value="monthly"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=inactive]:text-gray-600 dark:data-[state=inactive]:text-gray-300 rounded-xl px-8 py-4 text-lg font-semibold transition-all duration-300 min-w-[140px]"
+                    >
+                      Monthly
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="yearly"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=inactive]:text-gray-600 dark:data-[state=inactive]:text-gray-300 rounded-xl px-8 py-4 text-lg font-semibold transition-all duration-300 min-w-[140px] relative"
+                    >
+                      Yearly
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+              {/* Savings badge positioned outside the toggle */}
+              <Badge className="absolute -top-3 -right-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm px-3 py-1.5 rounded-full shadow-lg animate-pulse font-medium">
+                Save 25%
+              </Badge>
             </div>
           </div>
         </div>
