@@ -225,8 +225,9 @@ export const PricingCards = () => {
                 </CardContent>
 
                 <CardFooter>
-                  <Link to="/signup" className="w-full">
+                  {isAuthenticated && user ? (
                     <Button
+                      onClick={() => navigate('/pricing')}
                       className={`w-full h-10 lg:h-12 text-sm lg:text-base ${
                         plan.popular
                           ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90'
@@ -234,10 +235,25 @@ export const PricingCards = () => {
                       }`}
                       variant={plan.popular ? "default" : "outline"}
                     >
-                      Get Started
+                      <CreditCard className="mr-2 h-3 w-3 lg:h-4 lg:w-4" />
+                      Subscribe Now
                       <ArrowRight className="ml-2 h-3 w-3 lg:h-4 lg:w-4" />
                     </Button>
-                  </Link>
+                  ) : (
+                    <Link to="/signup" className="w-full">
+                      <Button
+                        className={`w-full h-10 lg:h-12 text-sm lg:text-base ${
+                          plan.popular
+                            ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90'
+                            : ''
+                        }`}
+                        variant={plan.popular ? "default" : "outline"}
+                      >
+                        Get Started
+                        <ArrowRight className="ml-2 h-3 w-3 lg:h-4 lg:w-4" />
+                      </Button>
+                    </Link>
+                  )}
                 </CardFooter>
               </Card>
             );
