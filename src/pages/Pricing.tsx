@@ -24,7 +24,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { createPaymentAPI, Plan, formatCurrency, loadRazorpay, getPublicFilteredPlans } from "@/lib/paymentApi";
+import { createPaymentAPI, Plan, formatCurrency, loadRazorpay, getPublicFilteredPlans, checkEducationalDiscount, formatDiscount } from "@/lib/paymentApi";
 import { toast } from "sonner";
 
 const Pricing = () => {
@@ -354,6 +354,13 @@ const Pricing = () => {
                         <span className="text-muted-foreground">
                           /{plan.billing_cycle}
                         </span>
+                        {user && checkEducationalDiscount(user.email) && (
+                          <div className="mt-2">
+                            <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                              🎓 Educational discount available!
+                            </Badge>
+                          </div>
+                        )}
                       </div>
                     </CardHeader>
                     
@@ -406,9 +413,13 @@ const Pricing = () => {
                         </Link>
                       )}
                       
-                      <p className="text-xs text-center text-muted-foreground">
-                        {plan.features.free_trial_days}-day free trial • {plan.features.no_credit_card_required ? 'No credit card required' : 'Credit card required'}
-                      </p>
+                      <div className="text-xs text-center text-muted-foreground space-y-1">
+                        <p>{plan.features.free_trial_days}-day free trial • {plan.features.no_credit_card_required ? 'No credit card required' : 'Credit card required'}</p>
+                        <p>{plan.credits.toLocaleString()} credits included</p>
+                        {user && checkEducationalDiscount(user.email) && (
+                          <p className="text-green-600 font-medium">Educational discount applies at checkout</p>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 );
