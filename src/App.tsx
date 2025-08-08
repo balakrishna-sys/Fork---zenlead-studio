@@ -58,12 +58,12 @@ const App = () => {
         <BrowserRouter>
           <AuthProvider>
             <div className="min-h-screen bg-background">
-              <div className="w-full bg-amber-100 dark:bg-gray-800/50 text-foreground dark:text-muted-foreground text-center py-2 px-2 sm:px-4 flex items-center justify-center gap-2 text-xs sm:text-sm z-10">
+              {/* <div className="w-full bg-amber-100 dark:bg-gray-800/50 text-foreground dark:text-muted-foreground text-center py-2 px-2 sm:px-4 flex items-center justify-center gap-2 text-xs sm:text-sm z-10">
                 <Construction className="h-4 w-4 text-amber-600 dark:text-amber-300" />
                 <p className="font-medium">
                   App under construction: All functionalities are currently disabled. See you soon!
                 </p>
-              </div>
+              </div> */}
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />
