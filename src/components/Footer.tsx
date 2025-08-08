@@ -4,7 +4,7 @@ export const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white py-12">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
@@ -54,13 +54,20 @@ export const Footer = () => {
             </ul>
           </div>
           <div>
+            <h3 className="text-lg font-semibold mb-4">Support</h3>
+            <ul className="space-y-3">
+              <li><Link to="/contact-us" className="text-gray-400 hover:text-white">Contact Us</Link></li>
+              <li><Link to="/documentation" className="text-gray-400 hover:text-white">Help Center</Link></li>
+              <li><Link to="/billing" className="text-gray-400 hover:text-white">Billing</Link></li>
+            </ul>
+          </div>
+          <div>
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-3">
               <li><Link to="/privacy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
               <li><Link to="/terms-conditions" className="text-gray-400 hover:text-white">Terms & Conditions</Link></li>
               <li><Link to="/cancellation-refunds" className="text-gray-400 hover:text-white">Cancellation & Refunds</Link></li>
               <li><Link to="/shipping-policy" className="text-gray-400 hover:text-white">Shipping Policy</Link></li>
-              <li><Link to="/contact-us" className="text-gray-400 hover:text-white">Contact Us</Link></li>
             </ul>
           </div>
         </div>
