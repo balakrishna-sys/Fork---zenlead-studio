@@ -94,8 +94,8 @@ const Pricing = () => {
       });
 
       // Initiate payment with the backend
-      console.log('Calling initiatePayment with plan.uid:', plan.uid);
-      const paymentData = await paymentAPI.initiatePayment(plan.uid);
+      console.log('Calling initiatePayment with plan._id:', plan._id);
+      const paymentData = await paymentAPI.initiatePayment(plan._id);
       console.log('Payment initiation successful:', paymentData);
 
       // Show discount information if applicable
