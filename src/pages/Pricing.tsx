@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
-import { PricingCards } from "@/components/PricingCards";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,76 +18,163 @@ import {
   ArrowRight,
   Calculator,
   Globe,
-  Headphones
+  Headphones,
+  CreditCard,
+  Loader2,
+  AlertCircle
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { createPaymentAPI, Plan, formatCurrency, loadRazorpay } from "@/lib/paymentApi";
+import { toast } from "sonner";
 
 const Pricing = () => {
+  const { user, token } = useAuth();
+  const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [processingPayment, setProcessingPayment] = useState<string | null>(null);
+  
+  const paymentAPI = token ? createPaymentAPI(token) : null;
 
-  const plans = [
-    {
-      name: "Starter",
-      description: "Perfect for individuals and small projects",
-      price: { monthly: 9, yearly: 89 },
-      badge: "Most Popular",
-      features: [
-        "3 languages supported",
-        "2 voice clones",
-        "100 minutes of audio processing",
-        "Basic text-to-speech",
-        "Standard support",
-        "MP3 & WAV export"
-      ],
-      limitations: [
-        "No video generation",
-        "No priority processing"
-      ],
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-500/10"
-    },
-    {
-      name: "Professional",
-      description: "Ideal for content creators and businesses",
-      price: { monthly: 29, yearly: 290 },
-      badge: "Best Value",
-      features: [
-        "20+ languages supported",
-        "10 voice clones",
-        "500 minutes of audio processing",
-        "Advanced text-to-speech",
-        "Video generation (10 videos/month)",
-        "Priority support",
-        "All export formats",
-        "Custom voice training",
-        "API access"
-      ],
-      limitations: [],
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-500/10",
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      description: "For large teams and organizations",
-      price: { monthly: 99, yearly: 990 },
-      badge: "Advanced",
-      features: [
-        "50+ languages & dialects",
-        "Unlimited voice clones",
-        "Unlimited audio processing",
-        "Premium text-to-speech",
-        "Unlimited video generation",
-        "24/7 dedicated support",
-        "White-label solutions",
-        "Custom integrations",
-        "Advanced analytics",
-        "SLA guarantee"
-      ],
-      limitations: [],
-      color: "from-gold-500 to-orange-600",
-      bgColor: "bg-orange-500/10"
+  // Load plans from API
+  useEffect(() => {
+    loadPlans();
+  }, [paymentAPI, billingPeriod]);
+
+  const loadPlans = async () => {
+    if (!paymentAPI) {
+      setIsLoading(false);
+      return;
     }
-  ];
+
+    try {
+      const filteredData = await paymentAPI.getFilteredPlans({
+        currency: 'INR',
+        billing_cycle: billingPeriod,
+        status: 'active'
+      });
+      setPlans(filteredData.plans);
+    } catch (error) {
+      console.error('Failed to load plans:', error);
+      toast.error('Failed to load pricing plans');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePurchase = async (plan: Plan) => {
+    if (!user) {
+      toast.error('Please sign in to purchase a plan');
+      navigate('/signin');
+      return;
+    }
+
+    if (!paymentAPI) {
+      toast.error('Payment service not available');
+      return;
+    }
+
+    try {
+      setProcessingPayment(plan.uid);
+      
+      // Initiate payment
+      const paymentData = await paymentAPI.initiatePayment(plan.uid);
+      
+      // Load Razorpay
+      const Razorpay = await loadRazorpay();
+      
+      const options = {
+        key: paymentData.razorpay_key,
+        amount: Math.round(paymentData.amount * 100), // Convert to paise
+        currency: paymentData.currency,
+        name: 'Zenlead Studio',
+        description: `${plan.name} Plan Subscription`,
+        order_id: paymentData.razorpay_order_id,
+        handler: async (response: any) => {
+          try {
+            await paymentAPI.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            
+            toast.success('Payment successful! Welcome to ' + plan.name + ' plan!');
+            navigate('/billing');
+          } catch (error) {
+            console.error('Payment verification failed:', error);
+            toast.error('Payment verification failed. Please contact support.');
+          }
+        },
+        prefill: {
+          name: user.name || user.email,
+          email: user.email,
+        },
+        theme: {
+          color: '#6366f1',
+        },
+        modal: {
+          ondismiss: () => {
+            setProcessingPayment(null);
+          }
+        }
+      };
+      
+      const razorpay = new Razorpay(options);
+      razorpay.open();
+      
+    } catch (error) {
+      console.error('Payment initiation failed:', error);
+      toast.error('Failed to initiate payment. Please try again.');
+      setProcessingPayment(null);
+    }
+  };
+
+  const getPlanIcon = (planName: string) => {
+    const name = planName.toLowerCase();
+    if (name.includes('starter')) return Users;
+    if (name.includes('professional')) return Zap;
+    if (name.includes('enterprise')) return Shield;
+    return Star;
+  };
+
+  const getPlanColor = (index: number) => {
+    const colors = [
+      { gradient: "from-blue-500 to-blue-600", bg: "bg-blue-500/10" },
+      { gradient: "from-purple-500 to-purple-600", bg: "bg-purple-500/10" },
+      { gradient: "from-orange-500 to-orange-600", bg: "bg-orange-500/10" }
+    ];
+    return colors[index % colors.length];
+  };
+
+  const formatPlanFeatures = (plan: Plan): string[] => {
+    const features = [];
+    if (plan.features.languages_supported) {
+      features.push(`${plan.features.languages_supported} languages supported`);
+    }
+    if (plan.features.voice_clones) {
+      features.push(`${plan.features.voice_clones} voice clones`);
+    }
+    if (plan.features.audio_processing_minutes) {
+      features.push(`${plan.features.audio_processing_minutes} minutes of audio processing`);
+    }
+    if (plan.features.text_to_speech) {
+      features.push(`${plan.features.text_to_speech} text-to-speech`);
+    }
+    if (plan.features.video_generation) {
+      features.push(`Video generation (${plan.features.video_generation})`);
+    }
+    if (plan.features.support) {
+      features.push(`${plan.features.support} support`);
+    }
+    if (plan.features.export_formats?.length) {
+      features.push(`${plan.features.export_formats.join(', ')} export`);
+    }
+    if (plan.features.api_access) {
+      features.push('API access');
+    }
+    return features;
+  };
 
   const faqs = [
     {
@@ -177,7 +263,9 @@ const Pricing = () => {
           
           {/* Billing Toggle */}
           <div className="flex items-center justify-center mb-12">
-            <Tabs value={billingPeriod} onValueChange={(value) => setBillingPeriod(value as "monthly" | "yearly")} className="relative">
+            <Tabs value={billingPeriod} onValueChange={(value) => {
+              setBillingPeriod(value as "monthly" | "yearly");
+            }} className="relative">
               <TabsList className="bg-card/50 backdrop-blur-sm border border-border/50">
                 <TabsTrigger value="monthly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   Monthly
@@ -197,79 +285,117 @@ const Pricing = () => {
       {/* Pricing Cards */}
       <div className="relative py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {plans.map((plan, index) => (
-              <Card 
-                key={plan.name}
-                className={`relative bg-card/50 backdrop-blur-sm border transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-                  plan.popular 
-                    ? 'border-primary/50 shadow-lg ring-2 ring-primary/20' 
-                    : 'border-border/50 hover:border-primary/30'
-                } ${plan.bgColor}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-gradient-to-r from-primary to-purple-600 text-primary-foreground px-6 py-1">
-                      <Star className="h-3 w-3 mr-1" />
-                      {plan.badge}
-                    </Badge>
-                  </div>
-                )}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Loading pricing plans...</span>
+            </div>
+          ) : plans.length === 0 ? (
+            <div className="text-center py-12">
+              <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No pricing plans available at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {plans.map((plan, index) => {
+                const planColor = getPlanColor(index);
+                const PlanIcon = getPlanIcon(plan.name);
+                const features = formatPlanFeatures(plan);
+                const isPopular = plan.features.best_value;
+                const isProcessing = processingPayment === plan.uid;
                 
-                <CardHeader className="text-center pb-8">
-                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${plan.color} text-white mx-auto mb-4`}>
-                    {index === 0 && <Users className="h-6 w-6" />}
-                    {index === 1 && <Zap className="h-6 w-6" />}
-                    {index === 2 && <Shield className="h-6 w-6" />}
-                  </div>
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <p className="text-muted-foreground">{plan.description}</p>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">
-                      ${billingPeriod === "monthly" ? plan.price.monthly : plan.price.yearly}
-                    </span>
-                    <span className="text-muted-foreground">
-                      /{billingPeriod === "monthly" ? "month" : "year"}
-                    </span>
-                    {billingPeriod === "yearly" && (
-                      <div className="text-sm text-green-600 font-medium">
-                        Save ${(plan.price.monthly * 12) - plan.price.yearly} annually
+                return (
+                  <Card 
+                    key={plan.uid}
+                    className={`relative bg-card/50 backdrop-blur-sm border transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                      isPopular 
+                        ? 'border-primary/50 shadow-lg ring-2 ring-primary/20' 
+                        : 'border-border/50 hover:border-primary/30'
+                    } ${planColor.bg}`}
+                  >
+                    {isPopular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <Badge className="bg-gradient-to-r from-primary to-purple-600 text-primary-foreground px-6 py-1">
+                          <Star className="h-3 w-3 mr-1" />
+                          Best Value
+                        </Badge>
                       </div>
                     )}
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-6">
-                  <div className="space-y-3">
-                    {plan.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-center gap-3">
-                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+                    
+                    <CardHeader className="text-center pb-8">
+                      <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${planColor.gradient} text-white mx-auto mb-4`}>
+                        <PlanIcon className="h-6 w-6" />
                       </div>
-                    ))}
-                  </div>
-                  
-                  <Link to="/signup">
-                    <Button 
-                      className={`w-full h-12 ${
-                        plan.popular 
-                          ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90' 
-                          : ''
-                      }`}
-                      variant={plan.popular ? "default" : "outline"}
-                    >
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  
-                  <p className="text-xs text-center text-muted-foreground">
-                    7-day free trial • No credit card required
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                      <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                      <p className="text-muted-foreground">{plan.description}</p>
+                      <div className="mt-4">
+                        <span className="text-4xl font-bold">
+                          {formatCurrency(plan.price, plan.currency)}
+                        </span>
+                        <span className="text-muted-foreground">
+                          /{plan.billing_cycle}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-6">
+                      <div className="space-y-3">
+                        {features.map((feature, featureIndex) => (
+                          <div key={featureIndex} className="flex items-center gap-3">
+                            <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                            <span className="text-sm">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {user ? (
+                        <Button 
+                          onClick={() => handlePurchase(plan)}
+                          disabled={isProcessing}
+                          className={`w-full h-12 ${
+                            isPopular 
+                              ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90' 
+                              : ''
+                          }`}
+                          variant={isPopular ? "default" : "outline"}
+                        >
+                          {isProcessing ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <CreditCard className="mr-2 h-4 w-4" />
+                              Subscribe Now
+                            </>
+                          )}
+                        </Button>
+                      ) : (
+                        <Link to="/signin">
+                          <Button 
+                            className={`w-full h-12 ${
+                              isPopular 
+                                ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90' 
+                                : ''
+                            }`}
+                            variant={isPopular ? "default" : "outline"}
+                          >
+                            Sign In to Subscribe
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      )}
+                      
+                      <p className="text-xs text-center text-muted-foreground">
+                        {plan.features.free_trial_days}-day free trial • {plan.features.no_credit_card_required ? 'No credit card required' : 'Credit card required'}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -368,16 +494,23 @@ const Pricing = () => {
             for their AI-powered content needs. Start your free trial today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Link to="/signup">
+            {user ? (
               <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg hover:shadow-xl transition-all duration-300">
-                Start Free Trial
+                View Plans Above
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-            </Link>
-            <Link to="/app">
+            ) : (
+              <Link to="/signup">
+                <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg hover:shadow-xl transition-all duration-300">
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            )}
+            <Link to="/billing">
               <Button variant="outline" size="lg" className="h-12 px-8 bg-card/50 backdrop-blur-sm border-primary/20">
-                View Demo
-                <Globe className="ml-2 h-5 w-5" />
+                View Billing
+                <CreditCard className="ml-2 h-5 w-5" />
               </Button>
             </Link>
           </div>
