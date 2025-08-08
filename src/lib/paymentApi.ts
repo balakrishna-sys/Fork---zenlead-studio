@@ -182,6 +182,54 @@ export const createPaymentAPI = (token: string): PaymentAPI => {
   return new PaymentAPI(token);
 };
 
+// Public API functions that don't require authentication
+export const getPublicPlans = async (status?: 'active' | 'inactive' | 'deprecated'): Promise<Plan[]> => {
+  const params = status ? `?status=${status}` : '';
+  const url = `${API_BASE_URL}/api/payments/plans${params}`;
+
+  const response = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || `HTTP error! status: ${response.status}`);
+  }
+
+  return data.data;
+};
+
+export const getPublicFilteredPlans = async (filters?: {
+  currency?: 'USD' | 'INR';
+  billing_cycle?: 'monthly' | 'yearly' | 'lifetime';
+  status?: 'active' | 'inactive' | 'deprecated';
+}): Promise<{ plans: Plan[]; grouped_plans: Record<string, Plan[]> }> => {
+  const params = new URLSearchParams();
+  if (filters?.currency) params.append('currency', filters.currency);
+  if (filters?.billing_cycle) params.append('billing_cycle', filters.billing_cycle);
+  if (filters?.status) params.append('status', filters.status);
+
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/api/payments/plans/filtered${queryString ? `?${queryString}` : ''}`;
+
+  const response = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || `HTTP error! status: ${response.status}`);
+  }
+
+  return data.data;
+};
+
 // Razorpay integration helper
 export const loadRazorpay = (): Promise<any> => {
   return new Promise((resolve) => {
