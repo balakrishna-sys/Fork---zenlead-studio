@@ -70,12 +70,24 @@ const Profile = () => {
     }
   };
 
-  // Auto-refresh credits when component mounts or when returning from payment
+  // Listen for payment success events to refresh credits
   useEffect(() => {
-    if (userAPI && user) {
-      refreshCredits();
+    if (user && userAPI) {
+      // Import events
+      const { eventEmitter, EVENTS } = require('@/lib/events');
+
+      const handlePaymentSuccess = () => {
+        console.log('Payment success detected in Profile, refreshing credits...');
+        refreshCredits();
+      };
+
+      eventEmitter.on(EVENTS.PAYMENT_SUCCESS, handlePaymentSuccess);
+
+      return () => {
+        eventEmitter.off(EVENTS.PAYMENT_SUCCESS, handlePaymentSuccess);
+      };
     }
-  }, [userAPI, user?._id]);
+  }, [user, userAPI]);
 
   const getUserInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
