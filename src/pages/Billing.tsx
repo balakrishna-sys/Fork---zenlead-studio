@@ -493,9 +493,15 @@ const Billing = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
                       Payment History
-                      <Button variant="outline" size="sm" className="gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        onClick={() => exportTransactions()}
+                        disabled={transactions.length === 0}
+                      >
                         <Download className="h-4 w-4" />
-                        Export
+                        Export CSV
                       </Button>
                     </CardTitle>
                   </CardHeader>
