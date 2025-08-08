@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/contexts/AuthContext";
 import SmartNavLink from "@/components/SmartNavLink";
-import { PricingDropdown } from "@/components/PricingDropdown";
 
 export const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
