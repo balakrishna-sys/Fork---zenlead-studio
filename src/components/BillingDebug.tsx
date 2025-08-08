@@ -67,7 +67,7 @@ const BillingDebug = () => {
         <CardTitle>API Debug Panel</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button onClick={testAPI} disabled={isLoading || !token}>
             {isLoading ? (
               <>
@@ -77,6 +77,15 @@ const BillingDebug = () => {
             ) : (
               'Test All APIs'
             )}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              emitPaymentSuccess({ test: true });
+              console.log('Payment success event emitted for testing');
+            }}
+          >
+            Simulate Payment Success
           </Button>
           <Badge variant="outline">
             User: {user?.email || 'Not logged in'}
