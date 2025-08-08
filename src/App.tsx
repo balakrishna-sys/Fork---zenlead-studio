@@ -13,6 +13,7 @@ import TextProcessing from "./pages/TextProcessing";
 import VideoProcessing from "./pages/VideoProcessing";
 import Code from "./pages/Code";
 import Pricing from "./pages/Pricing";
+import Billing from "./pages/Billing";
 import NotFound from "./pages/NotFound";
 import Library from "./pages/Library";
 import SignIn from "./pages/SignIn";
@@ -175,6 +176,14 @@ const App = () => {
                   element={
                     <AuthenticatedRoute>
                       <Profile />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/billing"
+                  element={
+                    <AuthenticatedRoute>
+                      <Billing />
                     </AuthenticatedRoute>
                   }
                 />
