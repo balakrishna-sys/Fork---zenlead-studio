@@ -28,14 +28,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, []);
 
-  // Auto-refresh user data periodically
+  // Auto-refresh user data periodically and listen for payment events
   useEffect(() => {
     if (user && token) {
       const interval = setInterval(() => {
         refreshUserData();
       }, 5 * 60 * 1000); // Refresh every 5 minutes
 
-      return () => clearInterval(interval);
+      // Listen for payment success events to refresh user data
+      const handlePaymentSuccess = () => {
+        console.log('Payment success detected, refreshing user data...');
+        setTimeout(() => {
+          refreshUserData();
+        }, 1000); // Small delay to ensure backend has processed the payment
+      };
+
+      eventEmitter.on(EVENTS.PAYMENT_SUCCESS, handlePaymentSuccess);
+
+      return () => {
+        clearInterval(interval);
+        eventEmitter.off(EVENTS.PAYMENT_SUCCESS, handlePaymentSuccess);
+      };
     }
   }, [user, token]);
 
