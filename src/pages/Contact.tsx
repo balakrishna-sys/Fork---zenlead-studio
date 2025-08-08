@@ -37,8 +37,8 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Google Form URL - users will be redirected here
-  const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe9X4qZ8vL7mN3kP2wQ1rT5yU8iO9lK6jH3gF4dS2aX7cV1bW/viewform";
+  // Google Form URL - update this with your actual Google Form URL
+  const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdYOUR_ACTUAL_FORM_ID_HERE/viewform";
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
