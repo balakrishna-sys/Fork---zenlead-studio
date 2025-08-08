@@ -24,7 +24,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { createPaymentAPI, Plan, formatCurrency, loadRazorpay } from "@/lib/paymentApi";
+import { createPaymentAPI, Plan, formatCurrency, loadRazorpay, getPublicFilteredPlans } from "@/lib/paymentApi";
 import { toast } from "sonner";
 
 const Pricing = () => {
@@ -37,19 +37,14 @@ const Pricing = () => {
   
   const paymentAPI = token ? createPaymentAPI(token) : null;
 
-  // Load plans from API
+  // Load plans from API (public, no authentication required)
   useEffect(() => {
     loadPlans();
-  }, [paymentAPI, billingPeriod]);
+  }, [billingPeriod]);
 
   const loadPlans = async () => {
-    if (!paymentAPI) {
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const filteredData = await paymentAPI.getFilteredPlans({
+      const filteredData = await getPublicFilteredPlans({
         currency: 'INR',
         billing_cycle: billingPeriod,
         status: 'active'
