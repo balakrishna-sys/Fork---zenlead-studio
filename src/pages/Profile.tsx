@@ -116,7 +116,7 @@ const Profile = () => {
     setIsEditing(false);
   };
 
-  if (!user) {
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
         <Navbar />
@@ -148,18 +148,18 @@ const Profile = () => {
             <CardHeader className="text-center space-y-4">
               <div className="mx-auto">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={user.avatarUrl} alt={`${user.firstName} ${user.lastName}`} />
+                  <AvatarImage src={currentUser.avatarUrl} alt={`${currentUser.firstName} ${currentUser.lastName}`} />
                   <AvatarFallback className="text-lg">
-                    {getUserInitials(user.firstName, user.lastName)}
+                    {getUserInitials(currentUser.firstName || '', currentUser.lastName || '')}
                   </AvatarFallback>
                 </Avatar>
               </div>
               <div>
                 <CardTitle className="text-xl">
-                  {user.firstName} {user.lastName}
+                  {currentUser.firstName} {currentUser.lastName}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  {user.email}
+                  {currentUser.email}
                 </CardDescription>
               </div>
             </CardHeader>
@@ -167,10 +167,22 @@ const Profile = () => {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Credits</span>
-                <Badge variant="secondary" className="bg-primary/10 text-primary">
-                  <CreditCard className="h-3 w-3 mr-1" />
-                  {user.credits}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="bg-primary/10 text-primary">
+                    <CreditCard className="h-3 w-3 mr-1" />
+                    {currentUser.credits?.toLocaleString() || 0}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={refreshCredits}
+                    disabled={isRefreshingCredits}
+                    className="h-6 w-6 p-0 hover:bg-primary/10"
+                    title="Refresh Credits"
+                  >
+                    <RefreshCw className={`h-3 w-3 ${isRefreshingCredits ? 'animate-spin' : ''}`} />
+                  </Button>
+                </div>
               </div>
 
               <div className="flex items-center justify-between">
