@@ -461,58 +461,67 @@ const Pricing = () => {
                       </div>
                     </CardHeader>
                     
-                    <CardContent className="space-y-6 relative z-10 px-8">
-                      <div className="space-y-4">
-                        {features.map((feature, featureIndex) => (
+                    <CardContent className="relative z-10 px-6 lg:px-8 pb-8 flex-grow flex flex-col">
+                      <div className="space-y-4 flex-grow">
+                        {features.slice(0, 8).map((feature, featureIndex) => (
                           <div key={`${plan._id}-feature-${featureIndex}`} className="flex items-start gap-3">
-                            <div className="flex-shrink-0 mt-1">
+                            <div className="flex-shrink-0 mt-0.5">
                               <CheckCircle2 className="h-5 w-5 text-green-500" />
                             </div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">{feature}</span>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium text-sm lg:text-base leading-relaxed">{feature}</span>
                           </div>
                         ))}
+                        {features.length > 8 && (
+                          <div className="text-center">
+                            <Badge variant="outline" className="text-xs">
+                              +{features.length - 8} more features
+                            </Badge>
+                          </div>
+                        )}
                       </div>
-                      
-                      <div className="pt-8">
+
+                      <div className="mt-8 space-y-4">
                         {user ? (
-                          <Button 
+                          <Button
                             onClick={() => handlePurchase(plan)}
                             disabled={isProcessing}
-                            className={`w-full h-14 text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
-                              isPopular 
-                                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white' 
+                            className={`w-full h-12 lg:h-14 text-base lg:text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
+                              isPopular
+                                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white'
                                 : 'bg-gradient-to-r from-gray-900 to-gray-700 hover:from-gray-800 hover:to-gray-600 text-white dark:from-white dark:to-gray-100 dark:text-gray-900 dark:hover:from-gray-100 dark:hover:to-gray-200'
                             }`}
                           >
                             {isProcessing ? (
-                              <>
-                                <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                                Processing Payment...
-                              </>
+                              <div className="flex items-center justify-center">
+                                <Loader2 className="mr-2 h-4 w-4 lg:h-5 lg:w-5 animate-spin" />
+                                <span className="truncate">Processing...</span>
+                              </div>
                             ) : (
-                              <>
-                                <CreditCard className="mr-3 h-5 w-5" />
-                                Subscribe to {plan.name}
-                                <ArrowRight className="ml-3 h-5 w-5" />
-                              </>
+                              <div className="flex items-center justify-center">
+                                <CreditCard className="mr-2 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
+                                <span className="truncate">Subscribe to {plan.name}</span>
+                                <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
+                              </div>
                             )}
                           </Button>
                         ) : (
-                          <Link to="/signin">
-                            <Button 
-                              className={`w-full h-14 text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
-                                isPopular 
-                                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white' 
+                          <Link to="/signin" className="block">
+                            <Button
+                              className={`w-full h-12 lg:h-14 text-base lg:text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
+                                isPopular
+                                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white'
                                   : 'bg-gradient-to-r from-gray-900 to-gray-700 hover:from-gray-800 hover:to-gray-600 text-white dark:from-white dark:to-gray-100 dark:text-gray-900 dark:hover:from-gray-100 dark:hover:to-gray-200'
                               }`}
                             >
-                              Get Started with {plan.name}
-                              <ArrowRight className="ml-3 h-5 w-5" />
+                              <div className="flex items-center justify-center">
+                                <span className="truncate">Get Started with {plan.name}</span>
+                                <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
+                              </div>
                             </Button>
                           </Link>
                         )}
-                        
-                        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+
+                        <p className="text-center text-xs lg:text-sm text-gray-500 dark:text-gray-400 leading-relaxed px-2">
                           7-day free trial • No credit card required • Cancel anytime
                         </p>
                       </div>
