@@ -42,32 +42,49 @@ const Contact = () => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.email) {
-      toast.error("Please fill in required fields (Name and Email)");
+
+    if (!formData.name || !formData.email || !formData.phone || !formData.designation) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
     setIsSubmitting(true);
-    
-    // Create pre-filled Google Form URL
-    const formUrl = new URL(GOOGLE_FORM_URL);
-    const params = new URLSearchParams();
-    
-    // Add form data as URL parameters (adjust these based on your actual Google Form field IDs)
-    if (formData.name) params.append('entry.123456789', formData.name);
-    if (formData.email) params.append('entry.987654321', formData.email);
-    if (formData.phone) params.append('entry.456789123', formData.phone);
-    if (formData.designation) params.append('entry.789123456', formData.designation);
-    if (formData.college) params.append('entry.321654987', formData.college);
-    if (formData.questions) params.append('entry.654321789', formData.questions);
-    
-    // Open Google Form in new tab
-    const finalUrl = `${formUrl.toString()}?${params.toString()}`;
-    window.open(finalUrl, '_blank');
-    
-    toast.success("Redirecting to contact form...");
-    setIsSubmitting(false);
+
+    try {
+      // Create pre-filled Google Form URL
+      // Note: Replace these entry IDs with your actual Google Form field IDs
+      const params = new URLSearchParams();
+      if (formData.name) params.append('entry.1234567890', formData.name);
+      if (formData.email) params.append('entry.0987654321', formData.email);
+      if (formData.phone) params.append('entry.1122334455', formData.phone);
+      if (formData.designation) params.append('entry.5566778899', formData.designation);
+      if (formData.college) params.append('entry.9988776655', formData.college);
+      if (formData.questions) params.append('entry.1357924680', formData.questions);
+
+      // Open Google Form in new tab with pre-filled data
+      const finalUrl = `${GOOGLE_FORM_URL}?${params.toString()}`;
+      const newWindow = window.open(finalUrl, '_blank', 'noopener,noreferrer');
+
+      if (newWindow) {
+        toast.success("Opening contact form in new window...");
+        // Clear form after successful submission
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          designation: "",
+          college: "",
+          questions: ""
+        });
+      } else {
+        toast.error("Popup blocked. Please allow popups and try again.");
+      }
+    } catch (error) {
+      console.error('Error opening form:', error);
+      toast.error("Failed to open contact form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDirectFormAccess = () => {
