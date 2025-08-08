@@ -98,8 +98,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
         const isDark = theme === 'dark';
 
         elements.push(
-          <div key={`code-${partIndex}`} className="my-4 rounded-lg overflow-hidden shadow-sm border border-border/50">
-            <div className="px-4 py-2 bg-muted border-b border-border/30 text-xs text-muted-foreground font-mono flex items-center justify-between">
+          <div key={`code-${partIndex}`} className={`my-4 rounded-lg overflow-hidden shadow-sm border border-border/50 ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}>
+            <div className={`px-4 py-2 border-b border-border/30 text-xs font-mono flex items-center justify-between ${isDark ? 'bg-[#2d2d30] text-gray-300' : 'bg-muted text-muted-foreground'}`}>
               <div className="flex items-center gap-3">
                 <span className="capitalize">{part.language || detectedLanguage}</span>
                 <div className="flex gap-1">
@@ -121,7 +121,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
                 )}
               </Button>
             </div>
-            <div className="relative">
+            <div className={`relative ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'}`}>
               <SyntaxHighlighter
                 language={detectedLanguage}
                 style={isDark ? vscDarkPlus : vs}
