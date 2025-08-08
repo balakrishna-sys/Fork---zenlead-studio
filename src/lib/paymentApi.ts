@@ -161,18 +161,44 @@ export class PaymentAPI {
 
   // Payment Processing APIs
   async initiatePayment(planId: string): Promise<PaymentInitiation> {
+    // Validate plan_id parameter
+    if (!planId || typeof planId !== 'string' || planId.trim() === '') {
+      throw new Error('Invalid plan ID provided');
+    }
+
     try {
+      console.log('Initiating payment for plan_id:', planId);
+
+      const requestBody = { plan_id: planId.trim() };
+      console.log('Payment initiation request:', requestBody);
+
       const response = await this.request<ApiResponse<PaymentInitiation>>('/api/payments/initiate', {
         method: 'POST',
-        body: JSON.stringify({ plan_id: planId }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log('Payment initiation response:', response);
       return response.data;
     } catch (error: any) {
+      console.error('Payment initiation failed:', error);
+
       // Handle specific error cases from your backend
       if (error.status === 404) {
         throw new Error('User not found. Please sign in again.');
       }
-      throw error;
+      if (error.status === 400) {
+        throw new Error('Invalid plan selected. Please try again.');
+      }
+      if (error.status === 401) {
+        throw new Error('Session expired. Please sign in again.');
+      }
+      if (error.status === 422) {
+        throw new Error('Invalid request data. Please check the plan selection.');
+      }
+
+      // Generic error fallback
+      const errorMessage = error.message || 'Failed to initiate payment. Please try again.';
+      throw new Error(errorMessage);
     }
   }
 
