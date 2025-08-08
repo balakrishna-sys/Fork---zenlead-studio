@@ -464,11 +464,11 @@ const Pricing = () => {
                     <CardContent className="relative z-10 px-6 lg:px-8 pb-8 flex-grow flex flex-col">
                       <div className="space-y-4 flex-grow">
                         {features.slice(0, 8).map((feature, featureIndex) => (
-                          <div key={`${plan._id}-feature-${featureIndex}`} className="flex items-start gap-3">
+                          <div key={`${plan._id}-feature-${featureIndex}`} className="flex items-start gap-2">
                             <div className="flex-shrink-0 mt-0.5">
-                              <CheckCircle2 className="h-5 w-5 text-green-500" />
+                              <CheckCircle2 className="h-4 w-4 text-green-500" />
                             </div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium text-sm lg:text-base leading-relaxed">{feature}</span>
+                            <span className="text-gray-700 dark:text-gray-300 font-normal text-sm leading-relaxed">{feature}</span>
                           </div>
                         ))}
                         {features.length > 8 && (
