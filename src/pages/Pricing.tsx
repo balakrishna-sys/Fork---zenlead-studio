@@ -387,7 +387,7 @@ const Pricing = () => {
                     <CardContent className="space-y-6">
                       <div className="space-y-3">
                         {features.map((feature, featureIndex) => (
-                          <div key={featureIndex} className="flex items-center gap-3">
+                          <div key={`${plan.uid}-feature-${featureIndex}`} className="flex items-center gap-3">
                             <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
                             <span className="text-sm">{feature}</span>
                           </div>
@@ -464,7 +464,7 @@ const Pricing = () => {
               { icon: Headphones, title: "Voice Cloning", description: "Create digital replicas of any voice" },
               { icon: Calculator, title: "Document Analysis", description: "Resume optimization and ATS scoring" }
             ].map((feature, index) => (
-              <Card key={index} className="text-center bg-card/50 backdrop-blur-sm border border-border/50">
+              <Card key={`feature-comparison-${index}-${feature.title}`} className="text-center bg-card/50 backdrop-blur-sm border border-border/50">
                 <CardContent className="p-6">
                   <div className="inline-flex p-3 rounded-xl bg-gradient-to-r from-primary to-purple-600 text-white mb-4">
                     <feature.icon className="h-6 w-6" />
@@ -488,11 +488,11 @@ const Pricing = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-card/50 backdrop-blur-sm border border-border/50">
+              <Card key={`testimonial-${index}-${testimonial.name}`} className="bg-card/50 backdrop-blur-sm border border-border/50">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                      <Star key={`${testimonial.name}-star-${i}`} className="h-4 w-4 text-yellow-400 fill-current" />
                     ))}
                   </div>
                   <p className="text-muted-foreground mb-4">"{testimonial.content}"</p>
@@ -519,7 +519,7 @@ const Pricing = () => {
           
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`} className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg px-6">
+              <AccordionItem key={`faq-${index}-${faq.question.substring(0, 20)}`} value={`item-${index}`} className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold hover:no-underline">
                   {faq.question}
                 </AccordionTrigger>
