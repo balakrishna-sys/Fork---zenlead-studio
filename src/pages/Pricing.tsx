@@ -435,8 +435,8 @@ const Pricing = () => {
                     <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent dark:from-gray-900/50 dark:to-transparent pointer-events-none"></div>
 
                     <CardHeader className={`text-center relative z-10 flex-shrink-0 ${isPopular ? 'pt-10' : 'pt-8'} pb-6`}>
-                      <div className={`inline-flex p-4 rounded-2xl ${planColor.icon} text-white mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                        <PlanIcon className="h-8 w-8" />
+                      <div className={`inline-flex p-3 rounded-xl ${planColor.icon} text-white mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                        <PlanIcon className="h-6 w-6" />
                       </div>
                       <CardTitle className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-2 leading-tight">{plan.name}</CardTitle>
                       <p className="text-gray-600 dark:text-gray-300 text-sm lg:text-base leading-relaxed px-2">{plan.description}</p>
