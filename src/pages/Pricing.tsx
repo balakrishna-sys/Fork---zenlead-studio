@@ -423,9 +423,8 @@ const Pricing = () => {
                     >
                     {/* Popular badge */}
                     {isPopular && (
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                        <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 text-xs font-medium shadow-md">
-                          <Star className="h-3 w-3 mr-1" />
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className="bg-blue-500 text-white px-2 py-1 text-xs font-medium">
                           Popular
                         </Badge>
                       </div>
