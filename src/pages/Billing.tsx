@@ -36,6 +36,7 @@ const Billing = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const loadingRef = useRef(false); // Prevent multiple simultaneous calls
   const hasLoadedRef = useRef(false); // Track if data has been loaded
 
