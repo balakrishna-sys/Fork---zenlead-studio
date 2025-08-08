@@ -550,6 +550,11 @@ const Billing = () => {
               </TabsContent>
             </Tabs>
           )}
+
+          {/* Debug Panel - Remove in production */}
+          {process.env.NODE_ENV === 'development' && (
+            <BillingDebug />
+          )}
         </div>
       </div>
     </ProtectedRoute>
