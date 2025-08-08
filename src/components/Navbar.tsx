@@ -50,7 +50,9 @@ export const Navbar = () => {
                 <SmartNavLink to="/code" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Code
                 </SmartNavLink>
-                <PricingDropdown />
+                <Link to="/pricing" className="px-3 py-2 text-sm font-medium hover:text-primary">
+                  Pricing
+                </Link>
                 <SmartNavLink to="/library" className="px-3 py-2 text-sm font-medium hover:text-primary" requireAuth>
                   Library
                 </SmartNavLink>
