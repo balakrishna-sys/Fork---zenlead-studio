@@ -230,6 +230,34 @@ const Billing = () => {
             </div>
           </div>
 
+          {/* Connection Error */}
+          {connectionError && (
+            <Card className="bg-destructive/5 border-destructive/20 mb-6">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-destructive" />
+                  <div>
+                    <h3 className="font-medium text-destructive mb-1">Connection Error</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{connectionError}</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setConnectionError(null);
+                        hasLoadedRef.current = false;
+                        debouncedLoadBillingData();
+                      }}
+                      className="gap-2"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      Try Again
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Loading State */}
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
