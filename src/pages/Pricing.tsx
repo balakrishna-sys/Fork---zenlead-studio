@@ -85,9 +85,9 @@ const Pricing = () => {
     }
 
     try {
-      setProcessingPayment(plan.uid);
+      setProcessingPayment(plan._id);
       console.log('Starting payment process for plan:', {
-        plan_id: plan.uid,
+        plan_id: plan._id,
         plan_name: plan.name,
         price: plan.price,
         currency: plan.currency
