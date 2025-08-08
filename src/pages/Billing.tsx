@@ -27,7 +27,6 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { createPaymentAPI, Transaction, Subscription, formatCurrency } from "@/lib/paymentApi";
 import { toast } from "sonner";
-import { useRef, useCallback } from "react";
 
 const Billing = () => {
   const { user, token } = useAuth();
@@ -37,89 +36,63 @@ const Billing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const loadingRef = useRef(false); // Prevent multiple simultaneous calls
-  const hasLoadedRef = useRef(false); // Track if data has been loaded
 
-  const paymentAPI = token ? createPaymentAPI(token) : null;
-
-  // Debounced loading function
-  const debouncedLoadBillingData = useCallback(async () => {
-    if (loadingRef.current || !token) return;
-
-    loadingRef.current = true;
-    await loadBillingData();
-    hasLoadedRef.current = true;
-    loadingRef.current = false;
-  }, [token]);
-
+  // Load billing data when component mounts
   useEffect(() => {
-    if (token && !hasLoadedRef.current) {
-      debouncedLoadBillingData();
+    if (token && user) {
+      loadBillingData();
     }
-  }, [token, debouncedLoadBillingData]);
+  }, [token, user]);
 
   const loadBillingData = async () => {
-    if (!token || loadingRef.current) {
-      console.log('Skipping billing data load - no token or already loading');
+    if (!token || !user) {
+      console.log('No token or user available for billing data load');
       return;
     }
 
     try {
       setIsLoading(true);
-      setConnectionError(null); // Reset any previous connection errors
-      console.log('Starting billing data load with token:', token ? 'present' : 'missing');
+      setConnectionError(null);
+      console.log('Loading billing data for user:', user._id);
 
-      // Create API instance locally to avoid dependency issues
       const api = createPaymentAPI(token);
 
-      console.log('Making API calls for transactions and subscriptions...');
-
-      // Load data with proper error handling for each API call
-      const results = await Promise.allSettled([
+      // Make API calls and handle responses
+      const [transactionsResult, subscriptionsResult] = await Promise.allSettled([
         api.getTransactions(50, 0),
         api.getSubscriptions()
       ]);
 
-      console.log('API call results:', results);
-
-      // Handle transactions result
-      if (results[0].status === 'fulfilled') {
-        console.log('Transactions loaded successfully:', results[0].value);
-        setTransactions(results[0].value);
+      // Handle transactions
+      if (transactionsResult.status === 'fulfilled') {
+        console.log('Transactions loaded:', transactionsResult.value);
+        setTransactions(transactionsResult.value || []);
       } else {
-        console.error('Failed to load transactions:', results[0].reason);
-        toast.error('Failed to load transaction history: ' + (results[0].reason?.message || 'Unknown error'));
+        console.error('Failed to load transactions:', transactionsResult.reason);
         setTransactions([]);
+        toast.error('Failed to load transaction history');
       }
 
-      // Handle subscriptions result
-      if (results[1].status === 'fulfilled') {
-        console.log('Subscriptions loaded successfully:', results[1].value);
-        setSubscriptions(results[1].value);
+      // Handle subscriptions  
+      if (subscriptionsResult.status === 'fulfilled') {
+        console.log('Subscriptions loaded:', subscriptionsResult.value);
+        setSubscriptions(subscriptionsResult.value || []);
       } else {
-        console.error('Failed to load subscriptions:', results[1].reason);
-        toast.error('Failed to load subscription information: ' + (results[1].reason?.message || 'Unknown error'));
+        console.error('Failed to load subscriptions:', subscriptionsResult.reason);
         setSubscriptions([]);
+        toast.error('Failed to load subscription information');
       }
 
     } catch (error: any) {
-      console.error('Failed to load billing data:', error);
+      console.error('Billing data load error:', error);
       const errorMessage = error.message || 'Failed to load billing information';
-
-      // Check if it's a network connectivity issue
-      if (errorMessage.includes('fetch') || errorMessage.includes('network') || errorMessage.includes('connection')) {
-        setConnectionError('Unable to connect to the server. Please check your internet connection and try again.');
-      } else {
-        setConnectionError(errorMessage);
-      }
-
+      
+      setConnectionError(errorMessage);
       toast.error(errorMessage);
-      // Set empty arrays on error to prevent loading state stuck
       setTransactions([]);
       setSubscriptions([]);
     } finally {
       setIsLoading(false);
-      console.log('Billing data load completed');
     }
   };
 
@@ -183,13 +156,11 @@ const Billing = () => {
     return <Star className="h-5 w-5" />;
   };
 
+  // Calculate stats
   const activeSubscription = subscriptions.find(sub => sub.status === 'active');
   const totalSpent = transactions
     .filter(t => t.status === 'completed')
     .reduce((sum, t) => sum + (t.amount || 0), 0);
-
-  const completedTransactions = transactions.filter(t => t.status === 'completed').length;
-  const failedTransactions = transactions.filter(t => t.status === 'failed').length;
 
   return (
     <ProtectedRoute>
@@ -209,10 +180,7 @@ const Billing = () => {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    hasLoadedRef.current = false;
-                    debouncedLoadBillingData();
-                  }}
+                  onClick={loadBillingData}
                   className="gap-2"
                   disabled={isLoading}
                 >
@@ -239,13 +207,12 @@ const Billing = () => {
                   <div>
                     <h3 className="font-medium text-destructive mb-1">Connection Error</h3>
                     <p className="text-sm text-muted-foreground mb-3">{connectionError}</p>
-                    <Button
-                      variant="outline"
+                    <Button 
+                      variant="outline" 
                       size="sm"
                       onClick={() => {
                         setConnectionError(null);
-                        hasLoadedRef.current = false;
-                        debouncedLoadBillingData();
+                        loadBillingData();
                       }}
                       className="gap-2"
                     >
@@ -314,7 +281,7 @@ const Billing = () => {
                         <div>
                           <p className="text-sm text-muted-foreground">Next Billing</p>
                           <p className="text-2xl font-bold">
-                            {activeSubscription 
+                            {activeSubscription?.end_date 
                               ? formatDate(activeSubscription.end_date)
                               : 'N/A'
                             }
@@ -482,15 +449,11 @@ const Billing = () => {
                                 <Badge variant="outline">
                                   {subscription.plan.credits.toLocaleString()} Credits
                                 </Badge>
-                                <Badge variant="outline">
-                                  {subscription.plan.features.languages_supported} Languages
-                                </Badge>
-                                <Badge variant="outline">
-                                  {subscription.plan.features.voice_clones} Voice Clones
-                                </Badge>
-                                <Badge variant="outline">
-                                  {subscription.plan.features.audio_processing_minutes} min Audio
-                                </Badge>
+                                {subscription.plan.features && Object.keys(subscription.plan.features).map((key) => (
+                                  <Badge key={key} variant="outline">
+                                    {key}: {subscription.plan.features[key]}
+                                  </Badge>
+                                ))}
                               </div>
                             </CardContent>
                           </Card>
