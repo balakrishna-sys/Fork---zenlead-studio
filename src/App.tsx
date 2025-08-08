@@ -29,6 +29,10 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import GDPR from "./pages/GDPR";
+import CancellationRefunds from "./pages/CancellationRefunds";
+import TermsConditions from "./pages/TermsConditions";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import ContactUs from "./pages/ContactUs";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import AuthCallback from "./pages/AuthCallback";
@@ -80,6 +84,13 @@ const App = () => {
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/cookie-policy" element={<CookiePolicy />} />
                 <Route path="/gdpr" element={<GDPR />} />
+
+                {/* Razorpay Policy Routes */}
+                <Route path="/cancellation-refunds" element={<CancellationRefunds />} />
+                <Route path="/terms-conditions" element={<TermsConditions />} />
+                <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/contact-us" element={<ContactUs />} />
 
                 {/* Auth callback route */}
                 <Route path="/auth/callback" element={<AuthCallback />} />
