@@ -196,13 +196,27 @@ const Billing = () => {
                   Manage your subscriptions, view payment history, and download invoices
                 </p>
               </div>
-              <Button 
-                onClick={() => navigate('/pricing')}
-                className="gap-2"
-              >
-                <CreditCard className="h-4 w-4" />
-                Upgrade Plan
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    hasLoadedRef.current = false;
+                    debouncedLoadBillingData();
+                  }}
+                  className="gap-2"
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+                <Button
+                  onClick={() => navigate('/pricing')}
+                  className="gap-2"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Upgrade Plan
+                </Button>
+              </div>
             </div>
           </div>
 
