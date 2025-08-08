@@ -413,12 +413,12 @@ const Pricing = () => {
                 const isProcessing = processingPayment === plan._id;
 
                 return (
-                  <div className={`${isPopular ? 'lg:-mt-8 lg:mb-8' : ''}`} key={plan._id}>
+                  <div key={plan._id}>
                     <Card
-                      className={`relative ${planColor.bg} ${planColor.border} border-2 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] overflow-hidden group min-h-[750px] lg:min-h-[800px] flex flex-col ${
+                      className={`relative ${planColor.bg} ${planColor.border} border-2 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] overflow-hidden group min-h-[700px] lg:min-h-[750px] flex flex-col ${
                         isPopular
-                          ? 'shadow-2xl lg:scale-105 ring-4 ring-purple-500/20'
-                          : 'shadow-xl hover:shadow-2xl'
+                          ? 'shadow-xl ring-2 ring-blue-500/30'
+                          : 'shadow-lg hover:shadow-xl'
                       }`}
                     >
                     {/* Popular badge */}
