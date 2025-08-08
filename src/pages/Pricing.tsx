@@ -485,37 +485,36 @@ const Pricing = () => {
                           <Button
                             onClick={() => handlePurchase(plan)}
                             disabled={isProcessing}
-                            className={`w-full h-12 lg:h-14 text-base lg:text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
+                            className={`w-full h-11 text-sm lg:text-base font-medium rounded-lg transition-all duration-300 shadow-md hover:shadow-lg ${
                               isPopular
-                                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white'
+                                ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
                                 : 'bg-gradient-to-r from-gray-900 to-gray-700 hover:from-gray-800 hover:to-gray-600 text-white dark:from-white dark:to-gray-100 dark:text-gray-900 dark:hover:from-gray-100 dark:hover:to-gray-200'
                             }`}
                           >
                             {isProcessing ? (
                               <div className="flex items-center justify-center">
-                                <Loader2 className="mr-2 h-4 w-4 lg:h-5 lg:w-5 animate-spin" />
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 <span className="truncate">Processing...</span>
                               </div>
                             ) : (
                               <div className="flex items-center justify-center">
-                                <CreditCard className="mr-2 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
+                                <CreditCard className="mr-2 h-4 w-4 flex-shrink-0" />
                                 <span className="truncate">Subscribe to {plan.name}</span>
-                                <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
                               </div>
                             )}
                           </Button>
                         ) : (
                           <Link to="/signin" className="block">
                             <Button
-                              className={`w-full h-12 lg:h-14 text-base lg:text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
+                              className={`w-full h-11 text-sm lg:text-base font-medium rounded-lg transition-all duration-300 shadow-md hover:shadow-lg ${
                                 isPopular
-                                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white'
+                                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
                                   : 'bg-gradient-to-r from-gray-900 to-gray-700 hover:from-gray-800 hover:to-gray-600 text-white dark:from-white dark:to-gray-100 dark:text-gray-900 dark:hover:from-gray-100 dark:hover:to-gray-200'
                               }`}
                             >
                               <div className="flex items-center justify-center">
                                 <span className="truncate">Get Started with {plan.name}</span>
-                                <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
+                                <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />
                               </div>
                             </Button>
                           </Link>
