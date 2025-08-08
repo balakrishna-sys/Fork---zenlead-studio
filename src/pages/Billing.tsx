@@ -123,6 +123,45 @@ const Billing = () => {
     }
   };
 
+  const exportTransactions = () => {
+    if (transactions.length === 0) {
+      toast.error("No transactions to export");
+      return;
+    }
+
+    try {
+      // Create CSV content
+      const headers = ['Plan Name', 'Amount', 'Status', 'Credits Added', 'Date'];
+      const csvContent = [
+        headers.join(','),
+        ...transactions.map(transaction => [
+          `"${transaction.plan_name}"`,
+          transaction.amount,
+          transaction.status,
+          transaction.credits_added,
+          `"${formatDate(transaction.created_at)}"`
+        ].join(','))
+      ].join('\n');
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `zenlead-transactions-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("Transactions exported successfully!");
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error("Failed to export transactions");
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const variants = {
       completed: "default",
