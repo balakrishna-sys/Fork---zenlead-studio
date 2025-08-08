@@ -8,6 +8,7 @@ import {
 } from '@/types/auth';
 import { GoogleAuthService } from '@/lib/googleAuth';
 import { apiService, handleApiError } from '@/lib/api';
+import { eventEmitter, EVENTS } from '@/lib/events';
 import { tokenManager } from '@/lib/token';
 import { toast } from 'sonner';
 
