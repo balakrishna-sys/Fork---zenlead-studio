@@ -93,6 +93,9 @@ const BillingDebug = () => {
           <Badge variant="outline">
             Token: {token ? 'Available' : 'Missing'}
           </Badge>
+          <Badge variant="outline">
+            API: {import.meta.env.VITE_API_URL || 'https://api.zenlead.ai'}
+          </Badge>
         </div>
 
         {Object.keys(testResults).length > 0 && (
