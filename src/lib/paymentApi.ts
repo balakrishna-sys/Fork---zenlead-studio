@@ -257,6 +257,44 @@ export const getPublicPlans = async (status?: 'active' | 'inactive' | 'deprecate
   return data.data;
 };
 
+export const getPublicFilteredPlans = async (filters?: {
+  currency?: 'USD' | 'INR';
+  billing_cycle?: 'monthly' | 'yearly' | 'lifetime';
+  status?: 'active' | 'inactive' | 'deprecated';
+}): Promise<{ plans: Plan[]; grouped_plans: Record<string, Plan[]> }> => {
+  const params = new URLSearchParams();
+  if (filters?.currency) params.append('currency', filters.currency);
+  if (filters?.billing_cycle) params.append('billing_cycle', filters.billing_cycle);
+  if (filters?.status) params.append('status', filters.status);
+
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/api/payments/plans/filtered${queryString ? `?${queryString}` : ''}`;
+
+  console.log(`Fetching filtered plans from: ${url}`);
+
+  const response = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+  console.log('Filtered plans response:', data);
+
+  if (!response.ok) {
+    if (response.status === 422 && data.detail) {
+      const validationErrors = data.detail.map((err: any) => err.msg).join(', ');
+      throw new Error(`Validation Error: ${validationErrors}`);
+    }
+
+    const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
+    console.error('Failed to fetch filtered plans:', errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  return data.data;
+};
+
 // Razorpay integration helper
 export const loadRazorpay = (): Promise<any> => {
   return new Promise((resolve) => {
