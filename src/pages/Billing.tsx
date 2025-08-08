@@ -307,7 +307,7 @@ const Billing = () => {
                     {transactions.slice(0, 5).length > 0 ? (
                       <div className="space-y-3">
                         {transactions.slice(0, 5).map((transaction) => (
-                          <div key={transaction.uid} className="flex items-center justify-between p-3 rounded-lg border">
+                          <div key={transaction._id} className="flex items-center justify-between p-3 rounded-lg border">
                             <div className="flex items-center gap-3">
                               {getStatusIcon(transaction.status)}
                               <div>
@@ -352,7 +352,7 @@ const Billing = () => {
                     {subscriptions.length > 0 ? (
                       <div className="space-y-4">
                         {subscriptions.map((subscription) => (
-                          <Card key={subscription.uid} className="border">
+                          <Card key={subscription._id} className="border">
                             <CardContent className="p-6">
                               <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
@@ -454,7 +454,7 @@ const Billing = () => {
                           </TableHeader>
                           <TableBody>
                             {transactions.map((transaction) => (
-                              <TableRow key={transaction.uid}>
+                              <TableRow key={transaction._id}>
                                 <TableCell className="font-medium">
                                   {transaction.plan_name}
                                 </TableCell>
