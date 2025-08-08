@@ -116,7 +116,7 @@ const Pricing = () => {
         order_id: paymentData.razorpay_order_id,
         handler: async (response: any) => {
           try {
-            setProcessingPayment(plan.uid); // Keep showing processing state
+            setProcessingPayment(plan._id); // Keep showing processing state
             await paymentAPI.verifyPayment({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
