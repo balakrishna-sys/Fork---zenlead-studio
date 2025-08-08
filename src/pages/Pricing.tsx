@@ -188,30 +188,38 @@ const Pricing = () => {
 
   const formatPlanFeatures = (plan: Plan): string[] => {
     const features = [];
-    if (plan.features.languages_supported) {
-      features.push(`${plan.features.languages_supported} languages supported`);
+
+    // Since backend uses Dict[str, Any] for features, we need to safely access properties
+    const f = plan.features || {};
+
+    if (f.languages_supported) {
+      features.push(`${f.languages_supported} languages supported`);
     }
-    if (plan.features.voice_clones) {
-      features.push(`${plan.features.voice_clones} voice clones`);
+    if (f.voice_clones) {
+      features.push(`${f.voice_clones} voice clones`);
     }
-    if (plan.features.audio_processing_minutes) {
-      features.push(`${plan.features.audio_processing_minutes} minutes of audio processing`);
+    if (f.audio_processing_minutes) {
+      features.push(`${f.audio_processing_minutes} minutes of audio processing`);
     }
-    if (plan.features.text_to_speech) {
-      features.push(`${plan.features.text_to_speech} text-to-speech`);
+    if (f.text_to_speech) {
+      features.push(`${f.text_to_speech} text-to-speech`);
     }
-    if (plan.features.video_generation) {
-      features.push(`Video generation (${plan.features.video_generation})`);
+    if (f.video_generation) {
+      features.push(`Video generation (${f.video_generation})`);
     }
-    if (plan.features.support) {
-      features.push(`${plan.features.support} support`);
+    if (f.support) {
+      features.push(`${f.support} support`);
     }
-    if (plan.features.export_formats?.length) {
-      features.push(`${plan.features.export_formats.join(', ')} export`);
+    if (f.export_formats && Array.isArray(f.export_formats)) {
+      features.push(`${f.export_formats.join(', ')} export`);
     }
-    if (plan.features.api_access) {
+    if (f.api_access) {
       features.push('API access');
     }
+
+    // Add credits info as a feature
+    features.push(`${plan.credits.toLocaleString()} credits included`);
+
     return features;
   };
 
