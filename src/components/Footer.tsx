@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
@@ -57,10 +56,11 @@ export const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-3">
-              <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
-              <li><Link to="/terms-of-service" className="text-gray-400 hover:text-white">Terms of Service</Link></li>
-              <li><Link to="/cookie-policy" className="text-gray-400 hover:text-white">Cookie Policy</Link></li>
-              <li><Link to="/gdpr" className="text-gray-400 hover:text-white">GDPR</Link></li>
+              <li><Link to="/privacy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
+              <li><Link to="/terms-conditions" className="text-gray-400 hover:text-white">Terms & Conditions</Link></li>
+              <li><Link to="/cancellation-refunds" className="text-gray-400 hover:text-white">Cancellation & Refunds</Link></li>
+              <li><Link to="/shipping-policy" className="text-gray-400 hover:text-white">Shipping Policy</Link></li>
+              <li><Link to="/contact-us" className="text-gray-400 hover:text-white">Contact Us</Link></li>
             </ul>
           </div>
         </div>
