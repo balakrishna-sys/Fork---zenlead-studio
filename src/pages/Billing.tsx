@@ -28,7 +28,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createPaymentAPI, Transaction, Subscription, formatCurrency } from "@/lib/paymentApi";
 import { eventEmitter, EVENTS } from "@/lib/events";
 import { toast } from "sonner";
-import BillingDebug from "@/components/BillingDebug";
 
 const Billing = () => {
   const { user, token } = useAuth();
