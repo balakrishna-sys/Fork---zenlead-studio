@@ -74,9 +74,6 @@ const Profile = () => {
   // Listen for payment success events to refresh credits
   useEffect(() => {
     if (user && userAPI) {
-      // Import events
-      const { eventEmitter, EVENTS } = require('@/lib/events');
-
       const handlePaymentSuccess = () => {
         console.log('Payment success detected in Profile, refreshing credits...');
         refreshCredits();
