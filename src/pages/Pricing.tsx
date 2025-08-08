@@ -341,7 +341,7 @@ const Pricing = () => {
                 const PlanIcon = getPlanIcon(plan.name);
                 const features = formatPlanFeatures(plan);
                 const isPopular = plan.features.best_value;
-                const isProcessing = processingPayment === plan.uid;
+                const isProcessing = processingPayment === plan._id;
                 
                 return (
                   <Card 
