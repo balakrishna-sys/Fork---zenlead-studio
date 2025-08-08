@@ -39,21 +39,24 @@ const Billing = () => {
   const paymentAPI = token ? createPaymentAPI(token) : null;
 
   useEffect(() => {
-    if (paymentAPI) {
+    if (token) {
       loadBillingData();
     }
-  }, [paymentAPI]);
+  }, [token]); // Only depend on token, not paymentAPI
 
   const loadBillingData = async () => {
-    if (!paymentAPI) return;
+    if (!token) return;
 
     try {
       setIsLoading(true);
 
+      // Create API instance locally to avoid dependency issues
+      const api = createPaymentAPI(token);
+
       // Load data with proper error handling for each API call
       const results = await Promise.allSettled([
-        paymentAPI.getTransactions(50, 0),
-        paymentAPI.getSubscriptions()
+        api.getTransactions(50, 0),
+        api.getSubscriptions()
       ]);
 
       // Handle transactions result
@@ -78,6 +81,9 @@ const Billing = () => {
       console.error('Failed to load billing data:', error);
       const errorMessage = error.message || 'Failed to load billing information';
       toast.error(errorMessage);
+      // Set empty arrays on error to prevent loading state stuck
+      setTransactions([]);
+      setSubscriptions([]);
     } finally {
       setIsLoading(false);
     }
