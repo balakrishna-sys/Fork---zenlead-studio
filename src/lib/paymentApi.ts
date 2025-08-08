@@ -92,7 +92,7 @@ export class PaymentAPI {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
-    
+
     const headers = {
       'Content-Type': 'application/json',
       ...(this.token && { Authorization: `Bearer ${this.token}` }),
@@ -107,7 +107,12 @@ export class PaymentAPI {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      // Handle specific error cases from your backend
+      const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
+      const error = new Error(errorMessage) as any;
+      error.status = response.status;
+      error.detail = data.detail;
+      throw error;
     }
 
     return data;
@@ -145,11 +150,19 @@ export class PaymentAPI {
 
   // Payment Processing APIs
   async initiatePayment(planId: string): Promise<PaymentInitiation> {
-    const response = await this.request<ApiResponse<PaymentInitiation>>('/api/payments/initiate', {
-      method: 'POST',
-      body: JSON.stringify({ plan_id: planId }),
-    });
-    return response.data;
+    try {
+      const response = await this.request<ApiResponse<PaymentInitiation>>('/api/payments/initiate', {
+        method: 'POST',
+        body: JSON.stringify({ plan_id: planId }),
+      });
+      return response.data;
+    } catch (error: any) {
+      // Handle specific error cases from your backend
+      if (error.status === 404) {
+        throw new Error('User not found. Please sign in again.');
+      }
+      throw error;
+    }
   }
 
   async verifyPayment(paymentData: {
@@ -157,10 +170,21 @@ export class PaymentAPI {
     razorpay_payment_id: string;
     razorpay_signature: string;
   }): Promise<void> {
-    await this.request<ApiResponse<null>>('/api/payments/verify', {
-      method: 'POST',
-      body: JSON.stringify(paymentData),
-    });
+    try {
+      await this.request<ApiResponse<null>>('/api/payments/verify', {
+        method: 'POST',
+        body: JSON.stringify(paymentData),
+      });
+    } catch (error: any) {
+      // Handle specific error cases from your backend
+      if (error.status === 400) {
+        throw new Error('Invalid payment signature. Payment verification failed.');
+      }
+      if (error.status === 404) {
+        throw new Error('Transaction not found. Please contact support.');
+      }
+      throw error;
+    }
   }
 
   // Transaction and Subscription APIs
@@ -196,7 +220,9 @@ export const getPublicPlans = async (status?: 'active' | 'inactive' | 'deprecate
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || `HTTP error! status: ${response.status}`);
+    const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
+    console.error('Failed to fetch public plans:', errorMessage);
+    throw new Error(errorMessage);
   }
 
   return data.data;
@@ -224,7 +250,9 @@ export const getPublicFilteredPlans = async (filters?: {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || `HTTP error! status: ${response.status}`);
+    const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
+    console.error('Failed to fetch filtered plans:', errorMessage);
+    throw new Error(errorMessage);
   }
 
   return data.data;
