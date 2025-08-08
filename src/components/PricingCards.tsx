@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Check, Star, Users, Zap, Shield, Sparkles, ArrowRight } from "lucide-react";
+import { Check, Star, Users, Zap, Shield, Sparkles, ArrowRight, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ButtonVariant = "default" | "link" | "destructive" | "outline" | "secondary" | "ghost";
 
