@@ -413,14 +413,14 @@ const Pricing = () => {
                 const isProcessing = processingPayment === plan._id;
 
                 return (
-                  <Card
-                    key={plan._id}
-                    className={`relative ${planColor.bg} ${planColor.border} border-2 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] overflow-hidden group min-h-[800px] flex flex-col ${
-                      isPopular
-                        ? 'shadow-2xl lg:scale-105 ring-4 ring-purple-500/20 lg:-mt-8'
-                        : 'shadow-xl hover:shadow-2xl'
-                    }`}
-                  >
+                  <div className={`${isPopular ? 'lg:-mt-8 lg:mb-8' : ''}`} key={plan._id}>
+                    <Card
+                      className={`relative ${planColor.bg} ${planColor.border} border-2 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] overflow-hidden group min-h-[750px] lg:min-h-[800px] flex flex-col ${
+                        isPopular
+                          ? 'shadow-2xl lg:scale-105 ring-4 ring-purple-500/20'
+                          : 'shadow-xl hover:shadow-2xl'
+                      }`}
+                    >
                     {/* Popular badge */}
                     {isPopular && (
                       <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-10">
@@ -526,7 +526,8 @@ const Pricing = () => {
                         </p>
                       </div>
                     </CardContent>
-                  </Card>
+                    </Card>
+                  </div>
                 );
               })}
             </div>
