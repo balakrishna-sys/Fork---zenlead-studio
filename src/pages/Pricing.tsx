@@ -73,8 +73,25 @@ const Pricing = () => {
       return;
     }
 
+    // Validate plan data
+    if (!plan || !plan.uid) {
+      toast.error('Invalid plan selected. Please try again.');
+      return;
+    }
+
+    if (!plan.price || plan.price <= 0) {
+      toast.error('Invalid plan pricing. Please contact support.');
+      return;
+    }
+
     try {
       setProcessingPayment(plan.uid);
+      console.log('Starting payment process for plan:', {
+        plan_id: plan.uid,
+        plan_name: plan.name,
+        price: plan.price,
+        currency: plan.currency
+      });
 
       // Initiate payment
       const paymentData = await paymentAPI.initiatePayment(plan.uid);
