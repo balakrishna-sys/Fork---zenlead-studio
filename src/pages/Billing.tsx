@@ -27,6 +27,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { createPaymentAPI, Transaction, Subscription, formatCurrency } from "@/lib/paymentApi";
 import { toast } from "sonner";
+import { useRef, useCallback } from "react";
 
 const Billing = () => {
   const { user, token } = useAuth();
