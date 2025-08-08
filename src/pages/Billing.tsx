@@ -66,6 +66,7 @@ const Billing = () => {
 
     try {
       setIsLoading(true);
+      setConnectionError(null); // Reset any previous connection errors
       console.log('Starting billing data load with token:', token ? 'present' : 'missing');
 
       // Create API instance locally to avoid dependency issues
