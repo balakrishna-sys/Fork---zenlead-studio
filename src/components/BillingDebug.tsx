@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { createPaymentAPI } from "@/lib/paymentApi";
+import { emitPaymentSuccess } from "@/lib/events";
 
 const BillingDebug = () => {
   const { user, token } = useAuth();
