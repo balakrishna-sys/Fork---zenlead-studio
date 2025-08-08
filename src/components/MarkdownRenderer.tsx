@@ -128,9 +128,10 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
                 customStyle={{
                   margin: 0,
                   padding: '16px',
-                  background: 'transparent',
+                  background: isDark ? '#1e1e1e' : '#ffffff',
                   fontSize: '14px',
-                  lineHeight: '1.5'
+                  lineHeight: '1.5',
+                  borderRadius: '0 0 8px 8px'
                 }}
                 codeTagProps={{
                   style: {
