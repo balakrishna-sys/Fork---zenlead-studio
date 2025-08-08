@@ -58,14 +58,19 @@ const Billing = () => {
   }, [token, debouncedLoadBillingData]);
 
   const loadBillingData = async () => {
-    if (!token || loadingRef.current) return;
+    if (!token || loadingRef.current) {
+      console.log('Skipping billing data load - no token or already loading');
+      return;
+    }
 
     try {
       setIsLoading(true);
-      console.log('Loading billing data...');
+      console.log('Starting billing data load with token:', token ? 'present' : 'missing');
 
       // Create API instance locally to avoid dependency issues
       const api = createPaymentAPI(token);
+
+      console.log('Making API calls for transactions and subscriptions...');
 
       // Load data with proper error handling for each API call
       const results = await Promise.allSettled([
@@ -73,21 +78,25 @@ const Billing = () => {
         api.getSubscriptions()
       ]);
 
+      console.log('API call results:', results);
+
       // Handle transactions result
       if (results[0].status === 'fulfilled') {
+        console.log('Transactions loaded successfully:', results[0].value);
         setTransactions(results[0].value);
       } else {
         console.error('Failed to load transactions:', results[0].reason);
-        toast.error('Failed to load transaction history');
+        toast.error('Failed to load transaction history: ' + (results[0].reason?.message || 'Unknown error'));
         setTransactions([]);
       }
 
       // Handle subscriptions result
       if (results[1].status === 'fulfilled') {
+        console.log('Subscriptions loaded successfully:', results[1].value);
         setSubscriptions(results[1].value);
       } else {
         console.error('Failed to load subscriptions:', results[1].reason);
-        toast.error('Failed to load subscription information');
+        toast.error('Failed to load subscription information: ' + (results[1].reason?.message || 'Unknown error'));
         setSubscriptions([]);
       }
 
@@ -100,6 +109,7 @@ const Billing = () => {
       setSubscriptions([]);
     } finally {
       setIsLoading(false);
+      console.log('Billing data load completed');
     }
   };
 
