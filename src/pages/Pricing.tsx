@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { createPaymentAPI, Plan, formatCurrency, loadRazorpay, getPublicFilteredPlans, checkEducationalDiscount, formatDiscount } from "@/lib/paymentApi";
+import { emitPaymentSuccess } from "@/lib/events";
 import { toast } from "sonner";
 
 const Pricing = () => {
@@ -121,6 +122,13 @@ const Pricing = () => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
+            });
+
+            // Emit payment success event to refresh user data globally
+            emitPaymentSuccess({
+              plan_name: plan.name,
+              plan_id: plan._id,
+              amount: paymentData.amount
             });
 
             toast.success(`Payment successful! Welcome to ${plan.name} plan! 🎉`);
