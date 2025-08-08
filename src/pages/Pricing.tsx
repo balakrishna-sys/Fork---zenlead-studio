@@ -75,7 +75,7 @@ const Pricing = () => {
     }
 
     // Validate plan data
-    if (!plan || !plan.uid) {
+    if (!plan || !plan._id) {
       toast.error('Invalid plan selected. Please try again.');
       return;
     }
