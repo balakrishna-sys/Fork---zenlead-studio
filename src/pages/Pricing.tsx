@@ -387,7 +387,7 @@ const Pricing = () => {
                     <CardContent className="space-y-6">
                       <div className="space-y-3">
                         {features.map((feature, featureIndex) => (
-                          <div key={`${plan.uid}-feature-${featureIndex}`} className="flex items-center gap-3">
+                          <div key={`${plan._id}-feature-${featureIndex}`} className="flex items-center gap-3">
                             <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
                             <span className="text-sm">{feature}</span>
                           </div>
