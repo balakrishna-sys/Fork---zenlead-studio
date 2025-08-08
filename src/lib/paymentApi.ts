@@ -1,4 +1,4 @@
-// Payment API service for Zenlead Studio
+// Payment API service for Zenlead Studio - Updated to match backend exactly
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.zenlead.ai';
 
 // Backend Response Types - Matching your FastAPI backend exactly
@@ -17,13 +17,13 @@ export interface ValidationError {
   }>;
 }
 
-// Plan Types - Matching your backend models
+// Plan Types - Matching your backend models exactly
 export interface PlanFeatures {
-  [key: string]: any; // Your backend uses Dict[str, Any]
+  [key: string]: any;
 }
 
 export interface Plan {
-  _id: string; // Backend uses _id, not uid
+  _id: string;
   name: string;
   description: string;
   price: number;
@@ -36,7 +36,7 @@ export interface Plan {
 }
 
 export interface Organization {
-  _id: string; // Backend uses _id
+  _id: string;
   name: string;
   domain: string;
   discount_percentage: number;
@@ -53,8 +53,9 @@ export interface PaymentInitiation {
   discount_applied: number;
 }
 
+// Updated Transaction interface to match backend TransactionResponse
 export interface Transaction {
-  _id: string; // Backend uses _id
+  _id: string;
   plan_name: string;
   amount: number;
   status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
@@ -62,19 +63,14 @@ export interface Transaction {
   created_at: string;
 }
 
+// Updated Subscription interface to match backend SubscriptionResponse
 export interface Subscription {
-  _id: string; // Backend uses _id
+  _id: string;
   plan: Plan;
   status: 'active' | 'expired' | 'cancelled' | 'suspended';
   start_date: string;
   end_date: string;
   auto_renew: boolean;
-}
-
-// Filtered Plans Response
-export interface FilteredPlansResponse {
-  plans: Plan[];
-  grouped_plans: Record<string, Plan[]>;
 }
 
 // Request Types for your backend
@@ -109,7 +105,7 @@ export class PaymentAPI {
     };
 
     console.log(`Making request to: ${url}`);
-    console.log(`Request options:`, { ...options, headers });
+    console.log(`Request headers:`, headers);
 
     const response = await fetch(url, {
       ...options,
@@ -144,23 +140,6 @@ export class PaymentAPI {
     return response.data;
   }
 
-  async getFilteredPlans(filters?: {
-    currency?: 'USD' | 'INR';
-    billing_cycle?: 'monthly' | 'yearly' | 'lifetime';
-    status?: 'active' | 'inactive' | 'deprecated';
-  }): Promise<FilteredPlansResponse> {
-    const params = new URLSearchParams();
-    if (filters?.currency) params.append('currency', filters.currency);
-    if (filters?.billing_cycle) params.append('billing_cycle', filters.billing_cycle);
-    if (filters?.status) params.append('status', filters.status);
-
-    const queryString = params.toString();
-    const response = await this.request<FilteredPlansResponse>(
-      `/api/payments/plans/filtered${queryString ? `?${queryString}` : ''}`
-    );
-    return response.data;
-  }
-
   // Organization APIs
   async getOrganizations(): Promise<Organization[]> {
     const response = await this.request<Organization[]>('/api/payments/organizations');
@@ -169,7 +148,6 @@ export class PaymentAPI {
 
   // Payment Processing APIs
   async initiatePayment(planId: string): Promise<PaymentInitiation> {
-    // Validate plan_id parameter
     if (!planId || typeof planId !== 'string' || planId.trim() === '') {
       throw new Error('Invalid plan ID provided');
     }
@@ -204,7 +182,6 @@ export class PaymentAPI {
         throw new Error('Invalid request data. Please check the plan selection.');
       }
 
-      // Generic error fallback
       const errorMessage = error.message || 'Failed to initiate payment. Please try again.';
       throw new Error(errorMessage);
     }
@@ -217,7 +194,6 @@ export class PaymentAPI {
         body: JSON.stringify(paymentData),
       });
     } catch (error: any) {
-      // Handle specific error cases from your backend
       if (error.status === 400) {
         throw new Error('Invalid payment signature. Payment verification failed.');
       }
@@ -228,16 +204,20 @@ export class PaymentAPI {
     }
   }
 
-  // Transaction and Subscription APIs
+  // Transaction and Subscription APIs - Updated to match your backend exactly
   async getTransactions(limit = 20, offset = 0): Promise<Transaction[]> {
+    console.log(`Fetching transactions with limit=${limit}, offset=${offset}`);
     const response = await this.request<Transaction[]>(
       `/api/payments/transactions?limit=${limit}&offset=${offset}`
     );
+    console.log('Transactions response:', response);
     return response.data;
   }
 
   async getSubscriptions(): Promise<Subscription[]> {
+    console.log('Fetching user subscriptions');
     const response = await this.request<Subscription[]>('/api/payments/subscriptions');
+    console.log('Subscriptions response:', response);
     return response.data;
   }
 }
@@ -264,7 +244,6 @@ export const getPublicPlans = async (status?: 'active' | 'inactive' | 'deprecate
   console.log('Public plans response:', data);
 
   if (!response.ok) {
-    // Handle validation errors (422) specifically
     if (response.status === 422 && data.detail) {
       const validationErrors = data.detail.map((err: any) => err.msg).join(', ');
       throw new Error(`Validation Error: ${validationErrors}`);
@@ -272,45 +251,6 @@ export const getPublicPlans = async (status?: 'active' | 'inactive' | 'deprecate
 
     const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
     console.error('Failed to fetch public plans:', errorMessage);
-    throw new Error(errorMessage);
-  }
-
-  return data.data;
-};
-
-export const getPublicFilteredPlans = async (filters?: {
-  currency?: 'USD' | 'INR';
-  billing_cycle?: 'monthly' | 'yearly' | 'lifetime';
-  status?: 'active' | 'inactive' | 'deprecated';
-}): Promise<FilteredPlansResponse> => {
-  const params = new URLSearchParams();
-  if (filters?.currency) params.append('currency', filters.currency);
-  if (filters?.billing_cycle) params.append('billing_cycle', filters.billing_cycle);
-  if (filters?.status) params.append('status', filters.status);
-
-  const queryString = params.toString();
-  const url = `${API_BASE_URL}/api/payments/plans/filtered${queryString ? `?${queryString}` : ''}`;
-
-  console.log(`Fetching filtered plans from: ${url}`);
-
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const data = await response.json();
-  console.log('Filtered plans response:', data);
-
-  if (!response.ok) {
-    // Handle validation errors (422) specifically
-    if (response.status === 422 && data.detail) {
-      const validationErrors = data.detail.map((err: any) => err.msg).join(', ');
-      throw new Error(`Validation Error: ${validationErrors}`);
-    }
-
-    const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
-    console.error('Failed to fetch filtered plans:', errorMessage);
     throw new Error(errorMessage);
   }
 
@@ -339,7 +279,6 @@ export const formatCurrency = (amount: number, currency: string): string => {
     });
     return formatter.format(amount);
   } catch (error) {
-    // Fallback for invalid currency codes
     return `${currency.toUpperCase()} ${amount.toFixed(2)}`;
   }
 };
