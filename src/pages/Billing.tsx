@@ -45,6 +45,20 @@ const Billing = () => {
     }
   }, [token, user]);
 
+  // Listen for payment success events to refresh billing data
+  useEffect(() => {
+    const handlePaymentSuccess = () => {
+      console.log('Payment success detected in Billing page, refreshing data...');
+      loadBillingData();
+    };
+
+    eventEmitter.on(EVENTS.PAYMENT_SUCCESS, handlePaymentSuccess);
+
+    return () => {
+      eventEmitter.off(EVENTS.PAYMENT_SUCCESS, handlePaymentSuccess);
+    };
+  }, []);
+
   const loadBillingData = async () => {
     if (!token || !user) {
       console.log('No token or user available for billing data load');
