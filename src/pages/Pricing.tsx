@@ -93,12 +93,15 @@ const Pricing = () => {
         currency: plan.currency
       });
 
-      // Initiate payment
+      // Initiate payment with the backend
+      console.log('Calling initiatePayment with plan.uid:', plan.uid);
       const paymentData = await paymentAPI.initiatePayment(plan.uid);
+      console.log('Payment initiation successful:', paymentData);
 
       // Show discount information if applicable
       if (paymentData.discount_applied > 0) {
         toast.success(`Great! You get ${paymentData.discount_applied}% discount!`);
+        console.log('Discount applied:', paymentData.discount_applied + '%');
       }
 
       // Load Razorpay
