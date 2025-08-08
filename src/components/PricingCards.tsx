@@ -10,6 +10,8 @@ import { useAuth } from "@/contexts/AuthContext";
 type ButtonVariant = "default" | "link" | "destructive" | "outline" | "secondary" | "ghost";
 
 export const PricingCards = () => {
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [currency, setCurrency] = useState<"USD" | "INR">("USD");
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
 
