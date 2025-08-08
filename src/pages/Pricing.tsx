@@ -348,7 +348,7 @@ const Pricing = () => {
                 const planColor = getPlanColor(index);
                 const PlanIcon = getPlanIcon(plan.name);
                 const features = formatPlanFeatures(plan);
-                const isPopular = plan.features.best_value;
+                const isPopular = plan.features?.best_value || false;
                 const isProcessing = processingPayment === plan._id;
                 
                 return (
