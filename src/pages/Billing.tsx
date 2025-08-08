@@ -36,14 +36,26 @@ const Billing = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const loadingRef = useRef(false); // Prevent multiple simultaneous calls
+  const hasLoadedRef = useRef(false); // Track if data has been loaded
 
   const paymentAPI = token ? createPaymentAPI(token) : null;
 
+  // Debounced loading function
+  const debouncedLoadBillingData = useCallback(async () => {
+    if (loadingRef.current || !token) return;
+
+    loadingRef.current = true;
+    await loadBillingData();
+    hasLoadedRef.current = true;
+    loadingRef.current = false;
+  }, [token]);
+
   useEffect(() => {
-    if (token) {
-      loadBillingData();
+    if (token && !hasLoadedRef.current) {
+      debouncedLoadBillingData();
     }
-  }, [token]); // Only depend on token, not paymentAPI
+  }, [token, debouncedLoadBillingData]);
 
   const loadBillingData = async () => {
     if (!token) return;
