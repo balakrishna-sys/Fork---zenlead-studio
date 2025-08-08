@@ -1,5 +1,5 @@
 // Payment API service for Zenlead Studio
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.zenlead.ai';
 
 // Backend Response Types - Matching your FastAPI backend exactly
 export interface BackendResponse<T> {
