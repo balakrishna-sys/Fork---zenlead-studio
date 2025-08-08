@@ -49,27 +49,50 @@ const Billing = () => {
 
     try {
       setIsLoading(true);
-      const [transactionsData, subscriptionsData] = await Promise.all([
+
+      // Load data with proper error handling for each API call
+      const results = await Promise.allSettled([
         paymentAPI.getTransactions(50, 0),
         paymentAPI.getSubscriptions()
       ]);
-      
-      setTransactions(transactionsData);
-      setSubscriptions(subscriptionsData);
-    } catch (error) {
+
+      // Handle transactions result
+      if (results[0].status === 'fulfilled') {
+        setTransactions(results[0].value);
+      } else {
+        console.error('Failed to load transactions:', results[0].reason);
+        toast.error('Failed to load transaction history');
+        setTransactions([]);
+      }
+
+      // Handle subscriptions result
+      if (results[1].status === 'fulfilled') {
+        setSubscriptions(results[1].value);
+      } else {
+        console.error('Failed to load subscriptions:', results[1].reason);
+        toast.error('Failed to load subscription information');
+        setSubscriptions([]);
+      }
+
+    } catch (error: any) {
       console.error('Failed to load billing data:', error);
-      toast.error('Failed to load billing information');
+      const errorMessage = error.message || 'Failed to load billing information';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    try {
+      return new Date(dateString).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -123,7 +146,10 @@ const Billing = () => {
   const activeSubscription = subscriptions.find(sub => sub.status === 'active');
   const totalSpent = transactions
     .filter(t => t.status === 'completed')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+  const completedTransactions = transactions.filter(t => t.status === 'completed').length;
+  const failedTransactions = transactions.filter(t => t.status === 'failed').length;
 
   return (
     <ProtectedRoute>
