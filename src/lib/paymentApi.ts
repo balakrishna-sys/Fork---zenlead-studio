@@ -45,6 +45,11 @@ export interface PaymentInitiation {
   currency: string;
   razorpay_key: string;
   discount_applied: number;
+  original_amount?: number;
+  organization_discount?: {
+    organization_name: string;
+    discount_percentage: number;
+  };
 }
 
 export interface Transaction {
@@ -54,6 +59,12 @@ export interface Transaction {
   status: 'completed' | 'failed' | 'pending';
   credits_added: number;
   created_at: string;
+  discount_applied?: number;
+  razorpay_payment_id?: string;
+  metadata?: {
+    original_amount?: number;
+    user_email?: string;
+  };
 }
 
 export interface Subscription {
@@ -272,11 +283,40 @@ export const loadRazorpay = (): Promise<any> => {
 
 // Currency formatting helper
 export const formatCurrency = (amount: number, currency: string): string => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 0,
-  }).format(amount);
+  try {
+    const formatter = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+      minimumFractionDigits: currency.toUpperCase() === 'INR' ? 0 : 2,
+    });
+    return formatter.format(amount);
+  } catch (error) {
+    // Fallback for invalid currency codes
+    return `${currency.toUpperCase()} ${amount.toFixed(2)}`;
+  }
+};
+
+// Check if user is eligible for educational discount
+export const checkEducationalDiscount = (email: string): boolean => {
+  const educationalDomains = [
+    '.edu',
+    '.edu.in',
+    '.ac.in',
+    'vishnu.edu.in',
+    'student.',
+    'students.'
+  ];
+
+  return educationalDomains.some(domain =>
+    email.toLowerCase().includes(domain.toLowerCase())
+  );
+};
+
+// Format discount information
+export const formatDiscount = (originalAmount: number, finalAmount: number, currency: string): string => {
+  const discount = originalAmount - finalAmount;
+  const percentage = ((discount / originalAmount) * 100).toFixed(0);
+  return `Save ${formatCurrency(discount, currency)} (${percentage}% off)`;
 };
 
 // Plan comparison helper
