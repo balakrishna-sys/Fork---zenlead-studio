@@ -383,8 +383,8 @@ const Pricing = () => {
       </div>
 
       {/* Pricing Cards */}
-      <div className="relative pb-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="relative pb-32">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
           {isLoading ? (
             <div className="flex items-center justify-center py-24">
               <div className="text-center">
