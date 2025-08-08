@@ -107,7 +107,7 @@ export const Navbar = () => {
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Dashboard</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/pricing')}>
+                    <DropdownMenuItem onClick={() => navigate('/billing')}>
                       <CreditCard className="mr-2 h-4 w-4" />
                       <span>Billing</span>
                     </DropdownMenuItem>
@@ -206,6 +206,14 @@ export const Navbar = () => {
                         >
                           <Settings className="mr-2 h-4 w-4" />
                           Dashboard
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full mb-2"
+                          onClick={() => navigate('/billing')}
+                        >
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          Billing
                         </Button>
                         <Button
                           variant="destructive"
