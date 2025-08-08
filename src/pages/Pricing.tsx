@@ -21,7 +21,13 @@ import {
   Headphones,
   CreditCard,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Crown,
+  Rocket,
+  Award,
+  TrendingUp,
+  Infinity,
+  CheckCircle2
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { createPaymentAPI, Plan, formatCurrency, loadRazorpay, getPublicFilteredPlans, checkEducationalDiscount, formatDiscount } from "@/lib/paymentApi";
@@ -187,9 +193,24 @@ const Pricing = () => {
 
   const getPlanColor = (index: number) => {
     const colors = [
-      { gradient: "from-blue-500 to-blue-600", bg: "bg-blue-500/10" },
-      { gradient: "from-purple-500 to-purple-600", bg: "bg-purple-500/10" },
-      { gradient: "from-orange-500 to-orange-600", bg: "bg-orange-500/10" }
+      { 
+        gradient: "from-blue-500 via-purple-500 to-indigo-600", 
+        bg: "bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20",
+        border: "border-blue-200 dark:border-blue-800",
+        icon: "bg-gradient-to-r from-blue-500 to-indigo-600"
+      },
+      { 
+        gradient: "from-purple-500 via-pink-500 to-rose-600", 
+        bg: "bg-gradient-to-br from-purple-50 to-rose-50 dark:from-purple-950/20 dark:to-rose-950/20",
+        border: "border-purple-200 dark:border-purple-800",
+        icon: "bg-gradient-to-r from-purple-500 to-rose-600"
+      },
+      { 
+        gradient: "from-orange-500 via-red-500 to-pink-600", 
+        bg: "bg-gradient-to-br from-orange-50 to-pink-50 dark:from-orange-950/20 dark:to-pink-950/20",
+        border: "border-orange-200 dark:border-orange-800",
+        icon: "bg-gradient-to-r from-orange-500 to-pink-600"
+      }
     ];
     return colors[index % colors.length];
   };
@@ -272,189 +293,225 @@ const Pricing = () => {
       role: "Content Creator",
       company: "Digital Marketing Agency",
       content: "Zenlead Studio transformed how we create multilingual content. The voice cloning feature is incredible - it sounds exactly like our brand voice in 15+ languages!",
-      rating: 5
+      rating: 5,
+      avatar: "SC"
     },
     {
       name: "Marcus Rodriguez",
       role: "Product Manager",
       company: "Tech Startup",
       content: "The video generation saved us thousands in production costs. We can now create product demos in minutes instead of weeks.",
-      rating: 5
+      rating: 5,
+      avatar: "MR"
     },
     {
       name: "Dr. Emma Thompson",
       role: "Researcher",
       company: "University",
       content: "Perfect for creating accessible content. The text-to-speech quality is outstanding, and students love the multilingual support.",
-      rating: 5
+      rating: 5,
+      avatar: "ET"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/10">
       <Navbar />
       
-      {/* Header */}
-      <div className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10"></div>
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-400/20 to-pink-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-gradient-to-r from-indigo-400/20 to-blue-600/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
+      {/* Hero Section */}
+      <div className="relative pt-20 pb-16 overflow-hidden">
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
-          <Badge variant="outline" className="mb-6 px-4 py-2 bg-card/50 backdrop-blur-sm border-primary/20">
-            <Sparkles className="h-4 w-4 mr-2" />
-            Transparent Pricing
-          </Badge>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl mb-6">
-            <span className="bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+          <div className="flex items-center justify-center mb-6">
+            <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 text-sm font-medium">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Transparent Pricing • No Hidden Fees
+            </Badge>
+          </div>
+          
+          <h1 className="text-6xl md:text-7xl font-bold tracking-tight mb-8">
+            <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent">
               Choose Your
             </span>
             <br />
-            <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
               AI Journey
             </span>
           </h1>
-          <p className="mx-auto max-w-2xl text-xl leading-8 text-muted-foreground mb-8">
-            Start free, upgrade when you need more. All plans include our core AI features 
-            with transparent pricing and no hidden fees.
+          
+          <p className="mx-auto max-w-3xl text-xl md:text-2xl leading-8 text-gray-600 dark:text-gray-300 mb-12">
+            Transform your content with cutting-edge AI technology. Start free, scale as you grow, 
+            and unlock the power of multilingual voice synthesis.
           </p>
           
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center mb-12">
-            <Tabs value={billingPeriod} onValueChange={(value) => {
-              setBillingPeriod(value as "monthly" | "yearly");
-            }} className="relative">
-              <TabsList className="bg-card/50 backdrop-blur-sm border border-border/50">
-                <TabsTrigger value="monthly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  Monthly
-                </TabsTrigger>
-                <TabsTrigger value="yearly" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative">
-                  Yearly
-                  <Badge className="absolute -top-8 -right-2 bg-green-500 text-white text-xs">
-                    Save 20%
-                  </Badge>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+          <div className="flex items-center justify-center mb-16">
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-2 border border-gray-200 dark:border-gray-700 shadow-xl">
+              <Tabs value={billingPeriod} onValueChange={(value) => {
+                setBillingPeriod(value as "monthly" | "yearly");
+              }}>
+                <TabsList className="bg-transparent border-0 p-1">
+                  <TabsTrigger 
+                    value="monthly" 
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl px-8 py-3 text-lg font-medium transition-all duration-300"
+                  >
+                    Monthly
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="yearly" 
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl px-8 py-3 text-lg font-medium relative transition-all duration-300"
+                  >
+                    Yearly
+                    <Badge className="absolute -top-3 -right-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                      Save 25%
+                    </Badge>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Pricing Cards */}
-      <div className="relative py-16">
+      <div className="relative pb-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2 text-muted-foreground">Loading pricing plans...</span>
+            <div className="flex items-center justify-center py-24">
+              <div className="text-center">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Loading Pricing Plans</h3>
+                <p className="text-gray-600 dark:text-gray-400">Fetching the latest pricing information...</p>
+              </div>
             </div>
           ) : plans.length === 0 ? (
-            <div className="text-center py-12">
-              <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No pricing plans available at the moment.</p>
+            <div className="text-center py-24">
+              <AlertCircle className="h-16 w-16 text-gray-400 mx-auto mb-6" />
+              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No Plans Available</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-8">Pricing plans are currently unavailable. Please try again later.</p>
+              <Button onClick={() => loadPlans()} variant="outline">
+                <ArrowRight className="h-4 w-4 mr-2" />
+                Retry Loading
+              </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-6">
               {plans.map((plan, index) => {
                 const planColor = getPlanColor(index);
                 const PlanIcon = getPlanIcon(plan.name);
                 const features = formatPlanFeatures(plan);
-                const isPopular = plan.features?.best_value || false;
+                const isPopular = plan.features?.best_value || index === 1;
                 const isProcessing = processingPayment === plan._id;
                 
                 return (
                   <Card
                     key={plan._id}
-                    className={`relative bg-card/50 backdrop-blur-sm border transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                    className={`relative ${planColor.bg} ${planColor.border} border-2 transition-all duration-500 hover:shadow-2xl hover:scale-105 overflow-hidden group ${
                       isPopular 
-                        ? 'border-primary/50 shadow-lg ring-2 ring-primary/20' 
-                        : 'border-border/50 hover:border-primary/30'
-                    } ${planColor.bg}`}
+                        ? 'shadow-2xl scale-105 ring-4 ring-purple-500/20' 
+                        : 'shadow-xl hover:shadow-2xl'
+                    }`}
                   >
+                    {/* Popular badge */}
                     {isPopular && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                        <Badge className="bg-gradient-to-r from-primary to-purple-600 text-primary-foreground px-6 py-1">
-                          <Star className="h-3 w-3 mr-1" />
-                          Best Value
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                        <Badge className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white px-6 py-2 text-sm font-bold shadow-lg">
+                          <Crown className="h-4 w-4 mr-2" />
+                          Most Popular
                         </Badge>
                       </div>
                     )}
+
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent dark:from-gray-900/50 dark:to-transparent pointer-events-none"></div>
                     
-                    <CardHeader className="text-center pb-8">
-                      <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${planColor.gradient} text-white mx-auto mb-4`}>
-                        <PlanIcon className="h-6 w-6" />
+                    <CardHeader className="text-center pb-8 relative z-10">
+                      <div className={`inline-flex p-4 rounded-2xl ${planColor.icon} text-white mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <PlanIcon className="h-8 w-8" />
                       </div>
-                      <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                      <p className="text-muted-foreground">{plan.description}</p>
-                      <div className="mt-4">
-                        <span className="text-4xl font-bold">
-                          {formatCurrency(plan.price, plan.currency)}
-                        </span>
-                        <span className="text-muted-foreground">
-                          /{plan.billing_cycle}
-                        </span>
+                      <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{plan.name}</CardTitle>
+                      <p className="text-gray-600 dark:text-gray-300 text-lg">{plan.description}</p>
+                      
+                      <div className="mt-8">
+                        <div className="flex items-center justify-center">
+                          <span className="text-5xl font-bold text-gray-900 dark:text-white">
+                            {formatCurrency(plan.price, plan.currency)}
+                          </span>
+                          <span className="text-xl text-gray-600 dark:text-gray-400 ml-2">
+                            /{plan.billing_cycle}
+                          </span>
+                        </div>
+                        
                         {user && checkEducationalDiscount(user.email) && (
-                          <div className="mt-2">
-                            <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
-                              🎓 Educational discount available!
+                          <div className="mt-4">
+                            <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1">
+                              🎓 Educational Discount Available!
                             </Badge>
                           </div>
                         )}
                       </div>
                     </CardHeader>
                     
-                    <CardContent className="space-y-6">
-                      <div className="space-y-3">
+                    <CardContent className="space-y-6 relative z-10 px-8">
+                      <div className="space-y-4">
                         {features.map((feature, featureIndex) => (
-                          <div key={`${plan._id}-feature-${featureIndex}`} className="flex items-center gap-3">
-                            <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                            <span className="text-sm">{feature}</span>
+                          <div key={`${plan._id}-feature-${featureIndex}`} className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                              <CheckCircle2 className="h-5 w-5 text-green-500" />
+                            </div>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">{feature}</span>
                           </div>
                         ))}
                       </div>
                       
-                      {user ? (
-                        <Button 
-                          onClick={() => handlePurchase(plan)}
-                          disabled={isProcessing}
-                          className={`w-full h-12 ${
-                            isPopular 
-                              ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90' 
-                              : ''
-                          }`}
-                          variant={isPopular ? "default" : "outline"}
-                        >
-                          {isProcessing ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              <CreditCard className="mr-2 h-4 w-4" />
-                              Subscribe Now
-                            </>
-                          )}
-                        </Button>
-                      ) : (
-                        <Link to="/signin">
+                      <div className="pt-8">
+                        {user ? (
                           <Button 
-                            className={`w-full h-12 ${
+                            onClick={() => handlePurchase(plan)}
+                            disabled={isProcessing}
+                            className={`w-full h-14 text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
                               isPopular 
-                                ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90' 
-                                : ''
+                                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white' 
+                                : 'bg-gradient-to-r from-gray-900 to-gray-700 hover:from-gray-800 hover:to-gray-600 text-white dark:from-white dark:to-gray-100 dark:text-gray-900 dark:hover:from-gray-100 dark:hover:to-gray-200'
                             }`}
-                            variant={isPopular ? "default" : "outline"}
                           >
-                            Sign In to Subscribe
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                            {isProcessing ? (
+                              <>
+                                <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                                Processing Payment...
+                              </>
+                            ) : (
+                              <>
+                                <CreditCard className="mr-3 h-5 w-5" />
+                                Subscribe to {plan.name}
+                                <ArrowRight className="ml-3 h-5 w-5" />
+                              </>
+                            )}
                           </Button>
-                        </Link>
-                      )}
-                      
-                      <div className="text-xs text-center text-muted-foreground space-y-1">
-                        <p>{plan.features.free_trial_days}-day free trial • {plan.features.no_credit_card_required ? 'No credit card required' : 'Credit card required'}</p>
-                        <p>{plan.credits.toLocaleString()} credits included</p>
-                        {user && checkEducationalDiscount(user.email) && (
-                          <p className="text-green-600 font-medium">Educational discount applies at checkout</p>
+                        ) : (
+                          <Link to="/signin">
+                            <Button 
+                              className={`w-full h-14 text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl ${
+                                isPopular 
+                                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white' 
+                                  : 'bg-gradient-to-r from-gray-900 to-gray-700 hover:from-gray-800 hover:to-gray-600 text-white dark:from-white dark:to-gray-100 dark:text-gray-900 dark:hover:from-gray-100 dark:hover:to-gray-200'
+                              }`}
+                            >
+                              Get Started with {plan.name}
+                              <ArrowRight className="ml-3 h-5 w-5" />
+                            </Button>
+                          </Link>
                         )}
+                        
+                        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+                          7-day free trial • No credit card required • Cancel anytime
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
@@ -466,27 +523,55 @@ const Pricing = () => {
       </div>
 
       {/* Features Comparison */}
-      <div className="py-16 bg-muted/30">
+      <div className="relative py-24 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900/20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Compare All Features</h2>
-            <p className="text-muted-foreground">See exactly what's included in each plan</p>
+          <div className="text-center mb-16">
+            <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-4 py-2 mb-6">
+              <Award className="h-4 w-4 mr-2" />
+              Feature Comparison
+            </Badge>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Everything You Need to Create Amazing Content
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              See exactly what's included in each plan and choose the perfect fit for your needs
+            </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: HeadphonesIcon, title: "Audio Processing", description: "High-quality voice translation and enhancement" },
-              { icon: MessageSquare, title: "Text-to-Speech", description: "Natural voice synthesis in multiple languages" },
-              { icon: Headphones, title: "Voice Cloning", description: "Create digital replicas of any voice" },
-              { icon: Calculator, title: "Document Analysis", description: "Resume optimization and ATS scoring" }
+              { 
+                icon: HeadphonesIcon, 
+                title: "Voice Translation", 
+                description: "High-quality voice translation with natural pronunciation across multiple languages",
+                color: "from-blue-500 to-cyan-500"
+              },
+              { 
+                icon: MessageSquare, 
+                title: "Text-to-Speech", 
+                description: "Premium neural voice synthesis with emotion and tone control",
+                color: "from-purple-500 to-pink-500"
+              },
+              { 
+                icon: Headphones, 
+                title: "Voice Cloning", 
+                description: "Create perfect digital replicas of any voice with just 30 seconds of audio",
+                color: "from-green-500 to-emerald-500"
+              },
+              { 
+                icon: Calculator, 
+                title: "Smart Analytics", 
+                description: "Advanced analytics, resume optimization, and ATS scoring for better results",
+                color: "from-orange-500 to-red-500"
+              }
             ].map((feature, index) => (
-              <Card key={`feature-comparison-${index}-${feature.title}`} className="text-center bg-card/50 backdrop-blur-sm border border-border/50">
-                <CardContent className="p-6">
-                  <div className="inline-flex p-3 rounded-xl bg-gradient-to-r from-primary to-purple-600 text-white mb-4">
-                    <feature.icon className="h-6 w-6" />
+              <Card key={feature.title} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 group">
+                <CardContent className="p-8 text-center">
+                  <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${feature.color} text-white mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="h-8 w-8" />
                   </div>
-                  <h3 className="font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -495,26 +580,41 @@ const Pricing = () => {
       </div>
 
       {/* Testimonials */}
-      <div className="py-16">
+      <div className="relative py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Loved by creators worldwide</h2>
-            <p className="text-muted-foreground">See what our customers are saying</p>
+          <div className="text-center mb-16">
+            <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 px-4 py-2 mb-6">
+              <Star className="h-4 w-4 mr-2" />
+              Customer Success Stories
+            </Badge>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Trusted by Creators Worldwide
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Join thousands of satisfied customers who are transforming their content with Zenlead Studio
+            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={`testimonial-${index}-${testimonial.name}`} className="bg-card/50 backdrop-blur-sm border border-border/50">
-                <CardContent className="p-6">
-                  <div className="flex items-center mb-4">
+              <Card key={testimonial.name} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="flex items-center mb-6">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={`${testimonial.name}-star-${i}`} className="h-4 w-4 text-yellow-400 fill-current" />
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-muted-foreground mb-4">"{testimonial.content}"</p>
-                  <div>
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role} at {testimonial.company}</p>
+                  <blockquote className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-6">
+                    "{testimonial.content}"
+                  </blockquote>
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+                      {testimonial.avatar}
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-white">{testimonial.name}</p>
+                      <p className="text-gray-600 dark:text-gray-400">{testimonial.role} at {testimonial.company}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -524,22 +624,32 @@ const Pricing = () => {
       </div>
 
       {/* FAQ Section */}
-      <div className="py-16 bg-muted/30">
+      <div className="relative py-24 bg-gradient-to-r from-gray-50 to-purple-50 dark:from-gray-900 dark:to-purple-900/20">
         <div className="mx-auto max-w-4xl px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-            <p className="text-muted-foreground">
-              Find answers to common questions about Zenlead Studio and our services.
+          <div className="text-center mb-16">
+            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-4 py-2 mb-6">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Frequently Asked Questions
+            </Badge>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Everything You Need to Know
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300">
+              Get answers to the most common questions about Zenlead Studio and our pricing
             </p>
           </div>
           
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem key={`faq-${index}-${faq.question.substring(0, 20)}`} value={`item-${index}`} className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem 
+                key={index} 
+                value={`item-${index}`} 
+                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl px-6 shadow-sm hover:shadow-md transition-shadow duration-300"
+              >
+                <AccordionTrigger className="text-left font-semibold text-gray-900 dark:text-white hover:no-underline py-6">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pb-4">
+                <AccordionContent className="text-gray-600 dark:text-gray-300 pb-6 leading-relaxed">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -549,40 +659,71 @@ const Pricing = () => {
       </div>
       
       {/* CTA Section */}
-      <div className="relative py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10"></div>
+      <div className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"></div>
+        <div className={"absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.1\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"4\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"}></div>
+        
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-6">
-            Ready to transform your content with AI?
-          </h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground mb-10">
-            Join thousands of creators, businesses, and professionals who trust Zenlead Studio 
-            for their AI-powered content needs. Start your free trial today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            {user ? (
-              <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg hover:shadow-xl transition-all duration-300">
-                View Plans Above
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            ) : (
-              <Link to="/signup">
-                <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg hover:shadow-xl transition-all duration-300">
-                  Start Free Trial
-                  <ArrowRight className="ml-2 h-5 w-5" />
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-5xl font-bold text-white mb-6">
+              Ready to Transform Your Content?
+            </h2>
+            <p className="text-xl text-blue-100 mb-12 leading-relaxed">
+              Join thousands of creators, businesses, and professionals who trust Zenlead Studio 
+              for their AI-powered content needs. Start your journey today with a free trial.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6 items-center justify-center">
+              {user ? (
+                <Button 
+                  size="lg" 
+                  className="h-16 px-12 text-lg font-semibold bg-white text-blue-600 hover:bg-gray-100 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  <Rocket className="mr-3 h-6 w-6 group-hover:animate-bounce" />
+                  Choose Your Plan Above
+                  <ArrowRight className="ml-3 h-6 w-6" />
+                </Button>
+              ) : (
+                <Link to="/signup">
+                  <Button 
+                    size="lg" 
+                    className="h-16 px-12 text-lg font-semibold bg-white text-blue-600 hover:bg-gray-100 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                  >
+                    <Rocket className="mr-3 h-6 w-6 group-hover:animate-bounce" />
+                    Start Free Trial
+                    <ArrowRight className="ml-3 h-6 w-6" />
+                  </Button>
+                </Link>
+              )}
+              
+              <Link to="/billing">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="h-16 px-12 text-lg font-semibold bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 rounded-xl transition-all duration-300"
+                >
+                  <CreditCard className="mr-3 h-6 w-6" />
+                  View My Billing
                 </Button>
               </Link>
-            )}
-            <Link to="/billing">
-              <Button variant="outline" size="lg" className="h-12 px-8 bg-card/50 backdrop-blur-sm border-primary/20">
-                View Billing
-                <CreditCard className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            </div>
+            
+            <div className="mt-12 flex items-center justify-center space-x-8 text-blue-100">
+              <div className="flex items-center">
+                <CheckCircle2 className="h-5 w-5 mr-2" />
+                <span>No credit card required</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle2 className="h-5 w-5 mr-2" />
+                <span>7-day free trial</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle2 className="h-5 w-5 mr-2" />
+                <span>Cancel anytime</span>
+              </div>
+            </div>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            No credit card required • 7-day free trial • Cancel anytime
-          </p>
         </div>
       </div>
     </div>
