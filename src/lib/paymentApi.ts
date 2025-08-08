@@ -1,27 +1,33 @@
 // Payment API service for Zenlead Studio
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-// Types for Payment APIs
+// Backend Response Types - Matching your FastAPI backend exactly
+export interface BackendResponse<T> {
+  status: number;
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+export interface ValidationError {
+  detail: Array<{
+    loc: (string | number)[];
+    msg: string;
+    type: string;
+  }>;
+}
+
+// Plan Types - Matching your backend models
 export interface PlanFeatures {
-  languages_supported: number;
-  voice_clones: number;
-  audio_processing_minutes: number;
-  text_to_speech: string;
-  video_generation?: string;
-  support: string;
-  export_formats: string[];
-  api_access?: boolean;
-  best_value?: boolean;
-  free_trial_days: number;
-  no_credit_card_required: boolean;
+  [key: string]: any; // Your backend uses Dict[str, Any]
 }
 
 export interface Plan {
-  uid: string;
+  _id: string; // Backend uses _id, not uid
   name: string;
   description: string;
   price: number;
-  currency: string;
+  currency: 'USD' | 'INR';
   billing_cycle: 'monthly' | 'yearly' | 'lifetime';
   credits: number;
   features: PlanFeatures;
@@ -30,7 +36,7 @@ export interface Plan {
 }
 
 export interface Organization {
-  uid: string;
+  _id: string; // Backend uses _id
   name: string;
   domain: string;
   discount_percentage: number;
@@ -45,49 +51,41 @@ export interface PaymentInitiation {
   currency: string;
   razorpay_key: string;
   discount_applied: number;
-  original_amount?: number;
-  organization_discount?: {
-    organization_name: string;
-    discount_percentage: number;
-  };
 }
 
 export interface Transaction {
-  uid: string;
+  _id: string; // Backend uses _id
   plan_name: string;
   amount: number;
-  status: 'completed' | 'failed' | 'pending';
+  status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
   credits_added: number;
   created_at: string;
-  discount_applied?: number;
-  razorpay_payment_id?: string;
-  metadata?: {
-    original_amount?: number;
-    user_email?: string;
-  };
 }
 
 export interface Subscription {
-  uid: string;
+  _id: string; // Backend uses _id
   plan: Plan;
-  status: 'active' | 'expired' | 'cancelled';
+  status: 'active' | 'expired' | 'cancelled' | 'suspended';
   start_date: string;
   end_date: string;
   auto_renew: boolean;
 }
 
-export interface ApiResponse<T> {
-  status: number;
-  success: boolean;
-  message: string;
-  data: T;
+// Filtered Plans Response
+export interface FilteredPlansResponse {
+  plans: Plan[];
+  grouped_plans: Record<string, Plan[]>;
 }
 
-export interface ApiError {
-  status: number;
-  success: false;
-  message: string;
-  detail?: string;
+// Request Types for your backend
+export interface InitiatePaymentRequest {
+  plan_id: string;
+}
+
+export interface PaymentVerificationRequest {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
 }
 
 // Payment API class
@@ -101,7 +99,7 @@ export class PaymentAPI {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
-  ): Promise<T> {
+  ): Promise<BackendResponse<T>> {
     const url = `${API_BASE_URL}${endpoint}`;
 
     const headers = {
@@ -110,15 +108,25 @@ export class PaymentAPI {
       ...options.headers,
     };
 
+    console.log(`Making request to: ${url}`);
+    console.log(`Request options:`, { ...options, headers });
+
     const response = await fetch(url, {
       ...options,
       headers,
     });
 
     const data = await response.json();
+    console.log(`Response from ${endpoint}:`, data);
 
     if (!response.ok) {
-      // Handle specific error cases from your backend
+      // Handle validation errors (422) specifically
+      if (response.status === 422 && data.detail) {
+        const validationErrors = data.detail.map((err: any) => err.msg).join(', ');
+        throw new Error(`Validation Error: ${validationErrors}`);
+      }
+
+      // Handle other errors
       const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
       const error = new Error(errorMessage) as any;
       error.status = response.status;
@@ -126,13 +134,13 @@ export class PaymentAPI {
       throw error;
     }
 
-    return data;
+    return data as BackendResponse<T>;
   }
 
   // Plan Management APIs
   async getPlans(status?: 'active' | 'inactive' | 'deprecated'): Promise<Plan[]> {
     const params = status ? `?status=${status}` : '';
-    const response = await this.request<ApiResponse<Plan[]>>(`/api/payments/plans${params}`);
+    const response = await this.request<Plan[]>(`/api/payments/plans${params}`);
     return response.data;
   }
 
@@ -140,14 +148,14 @@ export class PaymentAPI {
     currency?: 'USD' | 'INR';
     billing_cycle?: 'monthly' | 'yearly' | 'lifetime';
     status?: 'active' | 'inactive' | 'deprecated';
-  }): Promise<{ plans: Plan[]; grouped_plans: Record<string, Plan[]> }> {
+  }): Promise<FilteredPlansResponse> {
     const params = new URLSearchParams();
     if (filters?.currency) params.append('currency', filters.currency);
     if (filters?.billing_cycle) params.append('billing_cycle', filters.billing_cycle);
     if (filters?.status) params.append('status', filters.status);
-    
+
     const queryString = params.toString();
-    const response = await this.request<ApiResponse<{ plans: Plan[]; grouped_plans: Record<string, Plan[]> }>>(
+    const response = await this.request<FilteredPlansResponse>(
       `/api/payments/plans/filtered${queryString ? `?${queryString}` : ''}`
     );
     return response.data;
@@ -155,7 +163,7 @@ export class PaymentAPI {
 
   // Organization APIs
   async getOrganizations(): Promise<Organization[]> {
-    const response = await this.request<ApiResponse<Organization[]>>('/api/payments/organizations');
+    const response = await this.request<Organization[]>('/api/payments/organizations');
     return response.data;
   }
 
@@ -169,10 +177,10 @@ export class PaymentAPI {
     try {
       console.log('Initiating payment for plan_id:', planId);
 
-      const requestBody = { plan_id: planId.trim() };
+      const requestBody: InitiatePaymentRequest = { plan_id: planId.trim() };
       console.log('Payment initiation request:', requestBody);
 
-      const response = await this.request<ApiResponse<PaymentInitiation>>('/api/payments/initiate', {
+      const response = await this.request<PaymentInitiation>('/api/payments/initiate', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -202,13 +210,9 @@ export class PaymentAPI {
     }
   }
 
-  async verifyPayment(paymentData: {
-    razorpay_order_id: string;
-    razorpay_payment_id: string;
-    razorpay_signature: string;
-  }): Promise<void> {
+  async verifyPayment(paymentData: PaymentVerificationRequest): Promise<void> {
     try {
-      await this.request<ApiResponse<null>>('/api/payments/verify', {
+      await this.request<null>('/api/payments/verify', {
         method: 'POST',
         body: JSON.stringify(paymentData),
       });
@@ -226,14 +230,14 @@ export class PaymentAPI {
 
   // Transaction and Subscription APIs
   async getTransactions(limit = 20, offset = 0): Promise<Transaction[]> {
-    const response = await this.request<ApiResponse<Transaction[]>>(
+    const response = await this.request<Transaction[]>(
       `/api/payments/transactions?limit=${limit}&offset=${offset}`
     );
     return response.data;
   }
 
   async getSubscriptions(): Promise<Subscription[]> {
-    const response = await this.request<ApiResponse<Subscription[]>>('/api/payments/subscriptions');
+    const response = await this.request<Subscription[]>('/api/payments/subscriptions');
     return response.data;
   }
 }
@@ -248,6 +252,8 @@ export const getPublicPlans = async (status?: 'active' | 'inactive' | 'deprecate
   const params = status ? `?status=${status}` : '';
   const url = `${API_BASE_URL}/api/payments/plans${params}`;
 
+  console.log(`Fetching public plans from: ${url}`);
+
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -255,8 +261,15 @@ export const getPublicPlans = async (status?: 'active' | 'inactive' | 'deprecate
   });
 
   const data = await response.json();
+  console.log('Public plans response:', data);
 
   if (!response.ok) {
+    // Handle validation errors (422) specifically
+    if (response.status === 422 && data.detail) {
+      const validationErrors = data.detail.map((err: any) => err.msg).join(', ');
+      throw new Error(`Validation Error: ${validationErrors}`);
+    }
+
     const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
     console.error('Failed to fetch public plans:', errorMessage);
     throw new Error(errorMessage);
@@ -269,7 +282,7 @@ export const getPublicFilteredPlans = async (filters?: {
   currency?: 'USD' | 'INR';
   billing_cycle?: 'monthly' | 'yearly' | 'lifetime';
   status?: 'active' | 'inactive' | 'deprecated';
-}): Promise<{ plans: Plan[]; grouped_plans: Record<string, Plan[]> }> => {
+}): Promise<FilteredPlansResponse> => {
   const params = new URLSearchParams();
   if (filters?.currency) params.append('currency', filters.currency);
   if (filters?.billing_cycle) params.append('billing_cycle', filters.billing_cycle);
@@ -278,6 +291,8 @@ export const getPublicFilteredPlans = async (filters?: {
   const queryString = params.toString();
   const url = `${API_BASE_URL}/api/payments/plans/filtered${queryString ? `?${queryString}` : ''}`;
 
+  console.log(`Fetching filtered plans from: ${url}`);
+
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -285,8 +300,15 @@ export const getPublicFilteredPlans = async (filters?: {
   });
 
   const data = await response.json();
+  console.log('Filtered plans response:', data);
 
   if (!response.ok) {
+    // Handle validation errors (422) specifically
+    if (response.status === 422 && data.detail) {
+      const validationErrors = data.detail.map((err: any) => err.msg).join(', ');
+      throw new Error(`Validation Error: ${validationErrors}`);
+    }
+
     const errorMessage = data.message || data.detail || `HTTP error! status: ${response.status}`;
     console.error('Failed to fetch filtered plans:', errorMessage);
     throw new Error(errorMessage);
