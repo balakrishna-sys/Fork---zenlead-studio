@@ -88,8 +88,19 @@ const Contact = () => {
   };
 
   const handleDirectFormAccess = () => {
-    window.open(GOOGLE_FORM_URL, '_blank');
-    toast.success("Opening contact form...");
+    try {
+      const newWindow = window.open(GOOGLE_FORM_URL, '_blank', 'noopener,noreferrer');
+      if (newWindow) {
+        toast.success("Opening contact form...");
+      } else {
+        toast.error("Popup blocked. Please allow popups for this site.");
+        // Fallback: provide the URL for manual access
+        console.log('Google Form URL:', GOOGLE_FORM_URL);
+      }
+    } catch (error) {
+      console.error('Error opening form:', error);
+      toast.error("Unable to open form. Please check your browser settings.");
+    }
   };
 
   return (
