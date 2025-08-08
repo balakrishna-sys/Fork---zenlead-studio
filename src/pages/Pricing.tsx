@@ -50,9 +50,12 @@ const Pricing = () => {
         status: 'active'
       });
       setPlans(filteredData.plans);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load plans:', error);
-      toast.error('Failed to load pricing plans');
+      const errorMessage = error.message || 'Failed to load pricing plans';
+      toast.error(errorMessage);
+      // Provide fallback static plans if API fails
+      setPlans([]);
     } finally {
       setIsLoading(false);
     }
@@ -72,13 +75,18 @@ const Pricing = () => {
 
     try {
       setProcessingPayment(plan.uid);
-      
+
       // Initiate payment
       const paymentData = await paymentAPI.initiatePayment(plan.uid);
-      
+
+      // Show discount information if applicable
+      if (paymentData.discount_applied > 0) {
+        toast.success(`Great! You get ${paymentData.discount_applied}% discount!`);
+      }
+
       // Load Razorpay
       const Razorpay = await loadRazorpay();
-      
+
       const options = {
         key: paymentData.razorpay_key,
         amount: Math.round(paymentData.amount * 100), // Convert to paise
@@ -88,17 +96,23 @@ const Pricing = () => {
         order_id: paymentData.razorpay_order_id,
         handler: async (response: any) => {
           try {
+            setProcessingPayment(plan.uid); // Keep showing processing state
             await paymentAPI.verifyPayment({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
             });
-            
-            toast.success('Payment successful! Welcome to ' + plan.name + ' plan!');
-            navigate('/billing');
-          } catch (error) {
+
+            toast.success(`Payment successful! Welcome to ${plan.name} plan! 🎉`);
+
+            // Wait a moment before redirecting to show the success message
+            setTimeout(() => {
+              navigate('/billing');
+            }, 1500);
+          } catch (error: any) {
             console.error('Payment verification failed:', error);
-            toast.error('Payment verification failed. Please contact support.');
+            toast.error(error.message || 'Payment verification failed. Please contact support.');
+            setProcessingPayment(null);
           }
         },
         prefill: {
@@ -111,16 +125,26 @@ const Pricing = () => {
         modal: {
           ondismiss: () => {
             setProcessingPayment(null);
-          }
-        }
+            toast.info('Payment cancelled');
+          },
+          escape: true,
+          backdropclose: false
+        },
+        retry: {
+          enabled: true,
+          max_count: 3
+        },
+        timeout: 300, // 5 minutes timeout
+        remember_customer: true
       };
-      
+
       const razorpay = new Razorpay(options);
       razorpay.open();
-      
-    } catch (error) {
+
+    } catch (error: any) {
       console.error('Payment initiation failed:', error);
-      toast.error('Failed to initiate payment. Please try again.');
+      const errorMessage = error.message || 'Failed to initiate payment. Please try again.';
+      toast.error(errorMessage);
       setProcessingPayment(null);
     }
   };
