@@ -787,7 +787,10 @@ const TextProcessing = () => {
                   </Button>
                   <div className="flex items-center gap-2">
                     <div className={`p-2 rounded-lg bg-gradient-to-r ${(activeItem as ContentPreset).color}`}>
-                      <(activeItem as ContentPreset).icon className="h-4 w-4 text-white" />
+                      {(() => {
+                        const Icon = (activeItem as ContentPreset).icon;
+                        return <Icon className="h-4 w-4 text-white" />;
+                      })()}
                     </div>
                     <div>
                       <h2 className="font-semibold">{activeItem.title}</h2>
@@ -967,7 +970,10 @@ const TextProcessing = () => {
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <div className={`p-6 rounded-xl bg-gradient-to-r ${(activeItem as ContentPreset).color} text-white mx-auto mb-6 w-fit`}>
-                        <(activeItem as ContentPreset).icon className="h-12 w-12" />
+                        {(() => {
+                          const Icon = (activeItem as ContentPreset).icon;
+                          return <Icon className="h-12 w-12" />;
+                        })()}
                       </div>
                       <h2 className="text-2xl font-bold mb-3">Ready to Generate Your {activeItem.title}</h2>
                       <p className="text-muted-foreground text-lg mb-6 max-w-md">
@@ -1002,7 +1008,10 @@ const TextProcessing = () => {
                   </Button>
                   <div className="flex items-center gap-2">
                     <div className={`p-2 rounded-lg bg-gradient-to-r ${(activeItem as ProcessingModel).color}`}>
-                      <(activeItem as ProcessingModel).icon className="h-4 w-4 text-white" />
+                      {(() => {
+                        const Icon = (activeItem as ProcessingModel).icon;
+                        return <Icon className="h-4 w-4 text-white" />;
+                      })()}
                     </div>
                     <div>
                       <h2 className="font-semibold text-xl">{activeItem.title}</h2>
