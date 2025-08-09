@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { ModelModal } from "@/components/ModelModal";
-import { 
-  Book, 
-  FileText, 
-  Mail, 
+import {
+  Book,
+  FileText,
+  Mail,
   GraduationCap,
   Search,
   Sparkles,
@@ -35,7 +35,9 @@ import {
   LucideIcon,
   Mic,
   BarChart3,
-  Clock
+  Clock,
+  Menu,
+  X
 } from "lucide-react";
 
 // Import existing components
@@ -337,7 +339,10 @@ const TextProcessing = () => {
   // Active item state
   const [activeItem, setActiveItem] = useState<ProcessingModel | ContentPreset | null>(null);
   const [activeType, setActiveType] = useState<'traditional' | 'content-generation' | null>(null);
-  
+
+  // Mobile menu state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   // Project history state
   const [projects, setProjects] = useState<DocumentProject[]>(mockProjects);
   const [searchQuery, setSearchQuery] = useState("");
@@ -488,9 +493,26 @@ const TextProcessing = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)]">
+
+      {/* Mobile Menu Button - Only visible on mobile */}
+      <div className="lg:hidden bg-background border-b px-4 py-3 flex items-center justify-between">
+        <h2 className="font-semibold text-lg">AI Studio</h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
+
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)]">
         {/* Left Sidebar - Project History - Responsive */}
-        <div className="w-full lg:w-80 lg:border-r bg-card/30 backdrop-blur-sm flex flex-col order-2 lg:order-1 max-h-[50vh] lg:max-h-full">
+        <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} lg:block w-full lg:w-80 lg:border-r bg-card/30 backdrop-blur-sm flex flex-col order-2 lg:order-1 max-h-[50vh] lg:max-h-full absolute lg:relative z-50 lg:z-auto`}>
           {/* Sidebar Header */}
           <div className="p-4 lg:p-6 border-b flex-shrink-0">
             <div className="flex items-center gap-3 mb-4">
@@ -503,7 +525,7 @@ const TextProcessing = () => {
               </div>
             </div>
             
-            <Button className="w-full gap-2 text-sm" onClick={() => {setActiveItem(null); setActiveType(null);}}>
+            <Button className="w-full gap-2 text-sm" onClick={() => {setActiveItem(null); setActiveType(null); setIsMobileMenuOpen(false);}}>
               <Plus className="h-4 w-4" />
               New Project
             </Button>
@@ -568,7 +590,11 @@ const TextProcessing = () => {
                 const Icon = item?.icon || FileText;
                 
                 return (
-                  <Card key={project.id} className="cursor-pointer hover:bg-muted/50 transition-colors">
+                  <Card
+                    key={project.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
                     <CardContent className="p-3 lg:p-4">
                       <div className="flex items-start gap-3">
                         <div className={`p-2 rounded-lg bg-gradient-to-r ${item?.color || 'from-gray-500 to-gray-600'} text-white flex-shrink-0`}>
@@ -609,6 +635,14 @@ const TextProcessing = () => {
             </div>
           </div>
         </div>
+
+        {/* Overlay for mobile menu */}
+        {isMobileMenuOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
 
         {/* Main Workspace - Responsive */}
         <div className="flex-1 flex flex-col order-1 lg:order-2">
@@ -659,7 +693,10 @@ const TextProcessing = () => {
                         <Card
                           key={model.key}
                           className={`cursor-pointer group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] ${model.bgColor} border-2 hover:border-primary/50`}
-                          onClick={() => handleItemSelect(model, 'traditional')}
+                          onClick={() => {
+                            handleItemSelect(model, 'traditional');
+                            setIsMobileMenuOpen(false);
+                          }}
                         >
                           <CardContent className="p-4 lg:p-6">
                             <div className="flex items-start justify-between mb-4">
@@ -712,7 +749,10 @@ const TextProcessing = () => {
                         <Card
                           key={preset.id}
                           className={`cursor-pointer group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] ${preset.bgColor} border-2 hover:border-primary/50`}
-                          onClick={() => handleItemSelect(preset, 'content-generation')}
+                          onClick={() => {
+                            handleItemSelect(preset, 'content-generation');
+                            setIsMobileMenuOpen(false);
+                          }}
                         >
                           <CardContent className="p-4 lg:p-6">
                             <div className="flex items-center gap-3 mb-4">
