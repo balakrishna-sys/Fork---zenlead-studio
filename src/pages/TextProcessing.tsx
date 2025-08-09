@@ -43,7 +43,7 @@ import {
 interface DocumentProject {
   id: string;
   title: string;
-  type: 'book' | 'research' | 'course' | 'letter' | 'report' | 'article';
+  type: 'book' | 'research' | 'course' | 'letter' | 'report' | 'article' | 'text-to-speech' | 'excel-charts' | 'summarize' | 'ats-score' | 'resume-analyser';
   timestamp: string;
   status: 'draft' | 'completed' | 'processing';
   model: string;
