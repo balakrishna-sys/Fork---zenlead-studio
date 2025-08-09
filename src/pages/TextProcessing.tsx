@@ -53,23 +53,158 @@ interface DocumentProject {
 
 interface ContentPreset {
   id: string;
-  type: 'book' | 'research' | 'course' | 'letter' | 'report' | 'article';
+  type: 'book' | 'research' | 'course' | 'letter' | 'report' | 'article' | 'text-to-speech' | 'excel-charts' | 'summarize' | 'ats-score' | 'resume-analyser';
   title: string;
+  titletagline: string;
   description: string;
   icon: any;
   color: string;
   bgColor: string;
+  badge: string;
+  successRate: number;
   estimatedTime: string;
   features: string[];
+  keywords: string[];
   settings: {
     tone?: string[];
     style?: string[];
     length?: string[];
     format?: string[];
+    language?: string[];
+    voice?: string[];
+    quality?: string[];
   };
 }
 
 const contentPresets: ContentPreset[] = [
+  // Original Text Processing Models
+  {
+    id: 'long-book',
+    type: 'book',
+    title: 'Long Book',
+    titletagline: 'Generate comprehensive papers',
+    description: 'Generate a full-length book or research paper based on your prompt with AI-powered content creation.',
+    icon: Book,
+    color: 'from-purple-500 to-purple-600',
+    bgColor: 'bg-purple-50 dark:bg-purple-950/20',
+    badge: 'Content AI',
+    successRate: 95,
+    estimatedTime: '15-30 minutes',
+    features: ['Chapter Structure', 'Cover Design', 'Image Integration', 'Bibliography', 'Table of Contents'],
+    keywords: ['Book Generation', 'Research Paper', 'Content Creation'],
+    settings: {
+      tone: ['Academic', 'Casual', 'Professional', 'Creative'],
+      style: ['Narrative', 'Educational', 'Technical', 'Fiction'],
+      length: ['50-100 pages', '100-200 pages', '200+ pages'],
+      format: ['PDF', 'DOCX', 'EPUB']
+    }
+  },
+  {
+    id: 'text-to-speech',
+    type: 'text-to-speech',
+    title: 'Convert texts to voice',
+    titletagline: 'Natural voice synthesis',
+    description: 'Convert text into natural-sounding speech with customizable voices and multilingual support.',
+    icon: FileText,
+    color: 'from-green-500 to-green-600',
+    bgColor: 'bg-green-50 dark:bg-green-950/20',
+    badge: 'Popular',
+    successRate: 94,
+    estimatedTime: '2-5 minutes',
+    features: ['Natural Voice', 'Multiple Languages', 'Custom Speed', 'Voice Cloning', 'High Quality Audio'],
+    keywords: ['Text-to-Speech', 'Voice Synthesis', 'Multilingual'],
+    settings: {
+      language: ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Chinese', 'Japanese'],
+      voice: ['Male Professional', 'Female Professional', 'Male Casual', 'Female Casual', 'Child Voice'],
+      quality: ['Standard', 'High Quality', 'Ultra HD'],
+      format: ['MP3', 'WAV', 'FLAC']
+    }
+  },
+  {
+    id: 'excel-charts',
+    type: 'excel-charts',
+    title: 'Excel to Charts',
+    titletagline: 'Visualize spreadsheet data',
+    description: 'Transform Excel or CSV data into comprehensive audio summaries and visual charts.',
+    icon: TrendingUp,
+    color: 'from-blue-500 to-blue-600',
+    bgColor: 'bg-blue-50 dark:bg-blue-950/20',
+    badge: 'Data Viz',
+    successRate: 92,
+    estimatedTime: '5-10 minutes',
+    features: ['Chart Generation', 'Audio Summary', 'Data Analysis', 'Multiple Formats', 'Interactive Visuals'],
+    keywords: ['Excel', 'CSV', 'Audio Conversion'],
+    settings: {
+      style: ['Bar Charts', 'Line Charts', 'Pie Charts', 'Scatter Plots', 'Mixed Charts'],
+      tone: ['Professional', 'Casual', 'Technical', 'Executive Summary'],
+      format: ['PNG', 'SVG', 'PDF', 'Interactive HTML'],
+      quality: ['Standard', 'High Resolution', 'Print Quality']
+    }
+  },
+  {
+    id: 'summarize',
+    type: 'summarize',
+    title: 'Summarize',
+    titletagline: 'Intelligent text summarization',
+    description: 'Create concise, meaningful summaries of large text documents using advanced NLP technology.',
+    icon: Target,
+    color: 'from-orange-500 to-orange-600',
+    bgColor: 'bg-orange-50 dark:bg-orange-950/20',
+    badge: 'AI Powered',
+    successRate: 97,
+    estimatedTime: '1-3 minutes',
+    features: ['Key Points', 'Executive Summary', 'Bullet Points', 'Custom Length', 'Multiple Formats'],
+    keywords: ['Summarization', 'Text Analysis', 'NLP'],
+    settings: {
+      style: ['Executive Summary', 'Bullet Points', 'Paragraph Form', 'Key Highlights'],
+      length: ['Brief (100 words)', 'Standard (250 words)', 'Detailed (500 words)', 'Custom'],
+      tone: ['Professional', 'Academic', 'Casual', 'Technical'],
+      format: ['Plain Text', 'Markdown', 'PDF', 'HTML']
+    }
+  },
+  {
+    id: 'ats-score',
+    type: 'ats-score',
+    title: 'ATS Score',
+    titletagline: 'Resume optimization scoring',
+    description: 'Evaluate resumes against job descriptions for ATS compatibility and provide detailed improvement suggestions.',
+    icon: FileCheck,
+    color: 'from-red-500 to-red-600',
+    bgColor: 'bg-red-50 dark:bg-red-950/20',
+    badge: 'Career Boost',
+    successRate: 96,
+    estimatedTime: '2-5 minutes',
+    features: ['ATS Compatibility', 'Score Analysis', 'Keyword Matching', 'Improvement Tips', 'Industry Standards'],
+    keywords: ['ATS', 'Resume Analysis', 'Job Matching'],
+    settings: {
+      style: ['Detailed Analysis', 'Quick Score', 'Keyword Focus', 'Format Check'],
+      tone: ['Professional', 'Constructive', 'Detailed', 'Concise'],
+      length: ['Summary Only', 'Detailed Report', 'Full Analysis'],
+      format: ['PDF Report', 'Text Summary', 'Interactive Dashboard']
+    }
+  },
+  {
+    id: 'resume-analyser',
+    type: 'resume-analyser',
+    title: 'Resume Analyser',
+    titletagline: 'Professional resume enhancement',
+    description: 'Get tailored suggestions to improve your resume with industry-specific recommendations and best practices.',
+    icon: Users,
+    color: 'from-indigo-500 to-indigo-600',
+    bgColor: 'bg-indigo-50 dark:bg-indigo-950/20',
+    badge: 'Pro Tools',
+    successRate: 94,
+    estimatedTime: '3-8 minutes',
+    features: ['Industry Analysis', 'Best Practices', 'Tailored Suggestions', 'Format Optimization', 'Content Enhancement'],
+    keywords: ['Resume Enhancement', 'Career', 'NLP'],
+    settings: {
+      style: ['Industry Specific', 'General Best Practices', 'Executive Level', 'Entry Level'],
+      tone: ['Constructive', 'Detailed', 'Encouraging', 'Direct'],
+      length: ['Quick Tips', 'Comprehensive Review', 'Detailed Analysis'],
+      format: ['PDF Report', 'Checklist', 'Action Plan', 'Side-by-side Comparison']
+    }
+  },
+  // New Content Types
   {
     id: 'book',
     type: 'book',
