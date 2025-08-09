@@ -737,6 +737,131 @@ const TextProcessing = () => {
                     </>
                   )}
 
+                  {/* Universal Settings for all models */}
+                  <div>
+                    <Label className="text-sm font-medium mb-3 block">Model Settings</Label>
+                    <div className="space-y-4">
+                      {/* Tone Selection */}
+                      {selectedPreset.settings.tone && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-2 block">Tone</Label>
+                          <Select value={settings.tone || ''} onValueChange={(value) => setSettings(prev => ({...prev, tone: value}))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select tone..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedPreset.settings.tone.map((tone) => (
+                                <SelectItem key={tone} value={tone}>{tone}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Style Selection */}
+                      {selectedPreset.settings.style && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-2 block">Style</Label>
+                          <Select value={settings.style || ''} onValueChange={(value) => setSettings(prev => ({...prev, style: value}))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select style..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedPreset.settings.style.map((style) => (
+                                <SelectItem key={style} value={style}>{style}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Length Selection */}
+                      {selectedPreset.settings.length && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-2 block">Length</Label>
+                          <Select value={settings.length || ''} onValueChange={(value) => setSettings(prev => ({...prev, length: value}))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select length..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedPreset.settings.length.map((length) => (
+                                <SelectItem key={length} value={length}>{length}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Format Selection */}
+                      {selectedPreset.settings.format && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-2 block">Output Format</Label>
+                          <Select value={settings.format || ''} onValueChange={(value) => setSettings(prev => ({...prev, format: value}))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select format..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedPreset.settings.format.map((format) => (
+                                <SelectItem key={format} value={format}>{format}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Language Selection for TTS */}
+                      {selectedPreset.settings.language && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-2 block">Language</Label>
+                          <Select value={settings.language || ''} onValueChange={(value) => setSettings(prev => ({...prev, language: value}))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select language..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedPreset.settings.language.map((language) => (
+                                <SelectItem key={language} value={language}>{language}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Voice Selection for TTS */}
+                      {selectedPreset.settings.voice && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-2 block">Voice</Label>
+                          <Select value={settings.voice || ''} onValueChange={(value) => setSettings(prev => ({...prev, voice: value}))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select voice..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedPreset.settings.voice.map((voice) => (
+                                <SelectItem key={voice} value={voice}>{voice}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Quality Selection */}
+                      {selectedPreset.settings.quality && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-2 block">Quality</Label>
+                          <Select value={settings.quality || ''} onValueChange={(value) => setSettings(prev => ({...prev, quality: value}))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select quality..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedPreset.settings.quality.map((quality) => (
+                                <SelectItem key={quality} value={quality}>{quality}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Generate Button */}
                   <div className="pt-4">
                     <Button
