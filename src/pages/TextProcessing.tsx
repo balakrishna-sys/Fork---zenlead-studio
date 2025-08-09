@@ -560,40 +560,34 @@ const TextProcessing = () => {
                         onClick={() => handlePresetSelect(preset)}
                       >
                         <CardContent className="p-6">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className={`p-3 rounded-xl bg-gradient-to-r ${preset.color} shadow-lg group-hover:scale-110 transition-transform`}>
-                              <Icon className="h-6 w-6 text-white" />
+                          <div className="flex items-start justify-between mb-4">
+                            <div className={`p-3 rounded-xl bg-gradient-to-r ${preset.color} shadow-lg`}>
+                              <Icon className="h-5 w-5 text-white" />
                             </div>
-                            <div>
-                              <h3 className="font-bold text-lg">{preset.title}</h3>
-                              <p className="text-sm text-muted-foreground">{preset.estimatedTime}</p>
+                            <div className="text-right">
+                              <Badge variant="secondary" className="text-xs mb-1">
+                                {preset.badge}
+                              </Badge>
+                              <p className="text-xs text-primary font-medium">{preset.successRate}% Success</p>
                             </div>
                           </div>
-                          
+
+                          <h3 className="font-semibold text-lg mb-1">{preset.title}</h3>
+                          <p className="text-sm text-primary mb-2">{preset.titletagline}</p>
                           <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
                             {preset.description}
                           </p>
-                          
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <Clock className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm font-medium">{preset.estimatedTime}</span>
+
+                          <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                            <div className="flex flex-wrap gap-1">
+                              {preset.keywords.slice(0, 2).map((keyword, index) => (
+                                <Badge key={index} variant="outline" className="text-xs">
+                                  {keyword}
+                                </Badge>
+                              ))}
                             </div>
-                            
-                            <div className="space-y-2">
-                              <p className="text-sm font-medium">Features:</p>
-                              <div className="flex flex-wrap gap-1">
-                                {preset.features.slice(0, 3).map((feature, index) => (
-                                  <Badge key={index} variant="outline" className="text-xs">
-                                    {feature}
-                                  </Badge>
-                                ))}
-                                {preset.features.length > 3 && (
-                                  <Badge variant="outline" className="text-xs">
-                                    +{preset.features.length - 3} more
-                                  </Badge>
-                                )}
-                              </div>
+                            <div className="text-right">
+                              <p className="text-xs text-muted-foreground">{preset.estimatedTime}</p>
                             </div>
                           </div>
                           
