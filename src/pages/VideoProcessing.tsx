@@ -438,7 +438,7 @@ const VideoProcessing = () => {
               onClick={() => setActiveTab(null)}
               size="sm"
               variant="outline"
-              className="gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+              className="gap-2"
             >
               <Plus className="h-4 w-4" />
               New
