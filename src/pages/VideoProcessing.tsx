@@ -386,7 +386,7 @@ const VideoProcessing = () => {
             
             {filteredProjects.length === 0 && (
               <div className="text-center py-8">
-                <Film className="h-8 w-8 lg:h-12 lg:w-12 text-purple-300 mx-auto mb-3" />
+                <Film className="h-8 w-8 lg:h-12 lg:w-12 text-muted-foreground/50 mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground">No videos found</p>
               </div>
             )}
