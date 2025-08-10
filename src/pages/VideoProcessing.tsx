@@ -1,16 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ModelModal } from "@/components/ModelModal";
-import { Wand2, LucideIcon, Sparkles, Grid3X3, List, Play, Clock, Star, TrendingUp, Video, Zap } from "lucide-react";
+import { 
+  Wand2, 
+  LucideIcon, 
+  Sparkles, 
+  Play, 
+  Clock, 
+  Star, 
+  TrendingUp, 
+  Video, 
+  Zap,
+  Menu,
+  Plus,
+  History,
+  Search,
+  ArrowRight,
+  Download,
+  Copy,
+  Edit,
+  CheckCircle2,
+  Loader2,
+  Film,
+  Camera,
+  Clapperboard,
+  Settings,
+  Palette,
+  Volume2,
+  FileVideo,
+  MonitorPlay
+} from "lucide-react";
 import VideoGeneration from "@/components/video-processing/video-generation";
-import ModelCard from "@/components/ui/model-card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export interface VideoProcessingState {
   prompt: string;
@@ -37,47 +65,168 @@ interface VideoProcessingModel {
   color: string;
   bgColor: string;
   badge: string;
+  features: string[];
+  maxDuration: string;
+  resolutions: string[];
 }
 
 const videoProcessingModels: VideoProcessingModel[] = [
   {
     key: "video-generation",
-    title: "Video Generation",
-    titletagline: "Create animated videos from text prompts",
-    description: "Generate stunning animated videos from simple text descriptions using state-of-the-art AI technology. Perfect for content creators, marketers, and educators.",
-    modelName: "VideoGenix",
+    title: "AI Video Creator",
+    titletagline: "Create cinematic videos from text",
+    description: "Generate stunning animated videos from simple text descriptions using state-of-the-art AI technology. Perfect for content creators, marketers, and storytellers who want to bring their ideas to life.",
+    modelName: "VideoGenix Pro",
     modelkeywords: ["Video Generation", "AI Animation", "Text-to-Video", "Content Creation"],
     liveornot: false,
-    totalruns: 7,
+    totalruns: 2847,
     sucessrate: 95,
-    processingspeed: "Moderate",
-    outputquality: "High",
-    compatibility: ["MP4", "AVI", "MOV"],
+    processingspeed: "Fast",
+    outputquality: "4K",
+    compatibility: ["MP4", "AVI", "MOV", "WebM"],
     image: "https://www.shutterstock.com/image-photo/doctor-appointment-online-on-screen-260nw-2366001551.jpg",
-    icon: Wand2,
-    color: "from-purple-500 to-purple-600",
-    bgColor: "bg-purple-500/10",
-    badge: "AI Powered"
+    icon: Video,
+    color: "from-purple-500 to-pink-500",
+    bgColor: "bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20",
+    badge: "AI Powered",
+    features: ["4K Resolution", "60fps Support", "Multiple Styles", "Scene Transitions", "Audio Sync"],
+    maxDuration: "10 minutes",
+    resolutions: ["720p", "1080p", "4K"]
   },
 ];
 
 const examplePrompts = [
-  "A serene sunset over calm ocean waves with seagulls flying",
-  "A bustling city street at night with neon lights reflecting on wet pavement",
-  "A magical forest with glowing fireflies and ancient trees",
-  "A modern office space with people collaborating on innovative projects",
-  "A peaceful countryside with rolling hills and wildflowers swaying in the breeze",
-  "An astronaut exploring a colorful alien planet with multiple moons"
+  {
+    text: "A serene sunset over calm ocean waves with seagulls flying",
+    category: "Nature",
+    icon: "🌅",
+    duration: "15s",
+    style: "Cinematic"
+  },
+  {
+    text: "A bustling city street at night with neon lights reflecting on wet pavement",
+    category: "Urban",
+    icon: "🌃",
+    duration: "20s",
+    style: "Dramatic"
+  },
+  {
+    text: "A magical forest with glowing fireflies and ancient trees",
+    category: "Fantasy",
+    icon: "🧚",
+    duration: "25s",
+    style: "Mystical"
+  },
+  {
+    text: "A modern office space with people collaborating on innovative projects",
+    category: "Business",
+    icon: "💼",
+    duration: "18s",
+    style: "Professional"
+  },
+  {
+    text: "A peaceful countryside with rolling hills and wildflowers swaying in the breeze",
+    category: "Nature",
+    icon: "🌸",
+    duration: "22s",
+    style: "Peaceful"
+  },
+  {
+    text: "An astronaut exploring a colorful alien planet with multiple moons",
+    category: "Sci-Fi",
+    icon: "🚀",
+    duration: "30s",
+    style: "Futuristic"
+  }
+];
+
+interface VideoProject {
+  id: string;
+  title: string;
+  prompt: string;
+  timestamp: string;
+  status: 'draft' | 'completed' | 'processing';
+  duration: string;
+  resolution: string;
+  style: string;
+  thumbnail: string;
+  views: number;
+}
+
+const mockProjects: VideoProject[] = [
+  {
+    id: '1',
+    title: 'Ocean Sunset Masterpiece',
+    prompt: 'A serene sunset over calm ocean waves with seagulls flying',
+    timestamp: '2024-01-15T10:30:00Z',
+    status: 'completed',
+    duration: '0:15',
+    resolution: '4K',
+    style: 'Cinematic',
+    thumbnail: '🌅',
+    views: 1247
+  },
+  {
+    id: '2',
+    title: 'Neon City Nights',
+    prompt: 'A bustling city street at night with neon lights',
+    timestamp: '2024-01-14T14:20:00Z',
+    status: 'completed',
+    duration: '0:20',
+    resolution: '1080p',
+    style: 'Dramatic',
+    thumbnail: '🌃',
+    views: 892
+  },
+  {
+    id: '3',
+    title: 'Magical Forest Journey',
+    prompt: 'A magical forest with glowing fireflies and ancient trees',
+    timestamp: '2024-01-13T09:15:00Z',
+    status: 'processing',
+    duration: '0:25',
+    resolution: '4K',
+    style: 'Mystical',
+    thumbnail: '🧚',
+    views: 0
+  },
+  {
+    id: '4',
+    title: 'Space Explorer',
+    prompt: 'An astronaut exploring a colorful alien planet',
+    timestamp: '2024-01-12T16:30:00Z',
+    status: 'completed',
+    duration: '0:30',
+    resolution: '4K',
+    style: 'Futuristic',
+    thumbnail: '🚀',
+    views: 2156
+  }
 ];
 
 const VideoProcessing = () => {
+  // Video generation state
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [viewMode, setViewMode] = useState<"tabs" | "grid">("grid");
-  const [activeTab, setActiveTab] = useState<string | null>(null);
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  // Mobile sidebar state
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Project history state
+  const [projects, setProjects] = useState<VideoProject[]>(mockProjects);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Advanced settings
+  const [videoSettings, setVideoSettings] = useState({
+    resolution: "4K",
+    duration: "15",
+    style: "Cinematic",
+    aspectRatio: "16:9"
+  });
 
   const state: VideoProcessingState = {
     prompt,
@@ -90,12 +239,17 @@ const VideoProcessing = () => {
     "video-generation": true,
   };
 
-  useEffect(() => {
-    if (viewMode === "grid") {
-      setActiveTab(null);
-      setIsModalOpen(false);
-    }
-  }, [viewMode]);
+  const filteredProjects = projects.filter(project => 
+    project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.prompt.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handlePromptSelect = (selectedPrompt: string) => {
+    setPrompt(selectedPrompt);
+    setSelectedPrompt(selectedPrompt);
+    setActiveTab("video-generation");
+    setIsModalOpen(true);
+  };
 
   const handleTryNow = (tabKey: string) => {
     setActiveTab(tabKey);
@@ -112,16 +266,8 @@ const VideoProcessing = () => {
     setIsFullscreen(!isFullscreen);
   };
 
-  const handlePromptSelect = (selectedPrompt: string) => {
-    setPrompt(selectedPrompt);
-    setSelectedPrompt(selectedPrompt);
-    setActiveTab("video-generation");
-    setIsModalOpen(true);
-  };
-
   const renderModelContent = () => {
     if (!activeTab) return null;
-
     switch (activeTab) {
       case "video-generation":
         return <VideoGeneration state={state} isLocked={lockedTabs["video-generation"]} />;
@@ -132,293 +278,481 @@ const VideoProcessing = () => {
 
   const activeModel = activeTab ? videoProcessingModels.find(m => m.key === activeTab) : null;
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
-          <div className="mb-6 lg:mb-0">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600">
-                <Video className="h-6 w-6 text-white" />
-              </div>
-              <Badge variant="outline" className="px-3 py-1 bg-card/50 backdrop-blur-sm border-primary/20">
-                <Sparkles className="h-3 w-3 mr-1" />
-                Video Processing Models
-              </Badge>
-            </div>
-            <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-              Video Generation Studio
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl">
-              Create stunning animated videos from text descriptions using cutting-edge AI technology. 
-              Transform your ideas into visual stories in minutes.
-            </p>
-          </div>
-          
-          <Card className="bg-card/50 backdrop-blur-sm border border-border/50 p-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Grid3X3 className="h-4 w-4 text-muted-foreground" />
-                <Label htmlFor="view-toggle" className="text-sm font-medium">Grid View</Label>
-              </div>
-              <Switch
-                id="view-toggle"
-                checked={viewMode === "grid"}
-                onCheckedChange={() => setViewMode(viewMode === "tabs" ? "grid" : "tabs")}
-              />
-              <div className="flex items-center space-x-2">
-                <List className="h-4 w-4 text-muted-foreground" />
-                <Label className="text-sm font-medium">Tab View</Label>
-              </div>
-            </div>
-          </Card>
-        </div>
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
-        {/* Statistics */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 border-purple-500/20">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Success Rate</p>
-                  <p className="text-2xl font-bold text-purple-600">95%</p>
-                </div>
-                <div className="p-2 bg-purple-500/20 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-purple-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 border-blue-500/20">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Avg Duration</p>
-                  <p className="text-2xl font-bold text-blue-600">30s</p>
-                </div>
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <Clock className="h-5 w-5 text-blue-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-green-500/10 to-green-600/10 border-green-500/20">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Quality</p>
-                  <p className="text-2xl font-bold text-green-600">HD</p>
-                </div>
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <Star className="h-5 w-5 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-orange-500/10 to-orange-600/10 border-orange-500/20">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Processing</p>
-                  <p className="text-2xl font-bold text-orange-600">Fast</p>
-                </div>
-                <div className="p-2 bg-orange-500/20 rounded-lg">
-                  <Zap className="h-5 w-5 text-orange-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'processing': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+      case 'draft': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
 
-        {/* Example Prompts Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold text-foreground">✨ Try These Example Prompts</h2>
+  // Project History Sidebar Component
+  const ProjectHistorySidebar = ({ onClose }: { onClose?: () => void }) => (
+    <div className="h-full flex flex-col bg-gradient-to-b from-purple-50/50 to-pink-50/50 dark:from-purple-950/10 dark:to-pink-950/10">
+      {/* Sidebar Header */}
+      <div className="p-4 lg:p-6 border-b border-purple-200/30 dark:border-purple-800/30 flex-shrink-0">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
+            <Film className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {examplePrompts.map((promptText, index) => (
+          <div>
+            <h2 className="font-semibold text-base lg:text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Video Studio</h2>
+            <p className="text-xs lg:text-sm text-muted-foreground">Recent Creations</p>
+          </div>
+        </div>
+        
+        <Button className="w-full gap-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600" onClick={() => {setActiveTab(null); onClose?.();}}>
+          <Plus className="h-4 w-4" />
+          New Video
+        </Button>
+      </div>
+
+      {/* Search */}
+      <div className="p-3 lg:p-4 border-b border-purple-200/30 dark:border-purple-800/30 flex-shrink-0">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search videos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 text-sm border-purple-200/50 focus:border-purple-400"
+          />
+        </div>
+      </div>
+
+      {/* Project History */}
+      <div className="flex-1 min-h-0">
+        <div className="p-3 lg:p-4 pb-2 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <History className="h-4 w-4 text-purple-500" />
+            <h3 className="font-medium text-sm text-purple-700 dark:text-purple-300">Recent Videos</h3>
+          </div>
+        </div>
+        
+        <ScrollArea className="h-full px-3 lg:px-4">
+          <div className="space-y-3 pb-4">
+            {filteredProjects.map((project) => (
               <Card 
-                key={index}
-                className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 ${
-                  selectedPrompt === promptText ? 'ring-2 ring-primary border-primary' : ''
-                }`}
-                onClick={() => handlePromptSelect(promptText)}
+                key={project.id} 
+                className="cursor-pointer hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-200 hover:shadow-lg border-purple-200/50 dark:border-purple-800/50"
+                onClick={() => onClose?.()}
               >
-                <CardContent className="p-4">
+                <CardContent className="p-3 lg:p-4">
                   <div className="flex items-start gap-3">
-                    <div className="p-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg">
-                      <Play className="h-4 w-4 text-white" />
+                    <div className="w-12 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center text-white text-lg flex-shrink-0">
+                      {project.thumbnail}
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm leading-relaxed text-foreground">{promptText}</p>
-                      <Button variant="ghost" size="sm" className="mt-2 p-0 h-auto text-primary hover:text-primary/80">
-                        Use This Prompt →
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-xs lg:text-sm truncate mb-1">{project.title}</h4>
+                      <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{project.prompt}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge className={`text-xs ${getStatusColor(project.status)}`}>
+                            {project.status}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs border-purple-300 text-purple-600">
+                            {project.resolution}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {project.duration}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+                        <span>{formatTimestamp(project.timestamp)}</span>
+                        {project.status === 'completed' && (
+                          <span className="flex items-center gap-1">
+                            <MonitorPlay className="h-3 w-3" />
+                            {project.views}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {filteredProjects.length === 0 && (
+              <div className="text-center py-8">
+                <Film className="h-8 w-8 lg:h-12 lg:w-12 text-purple-300 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">No videos found</p>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50/30 via-background to-pink-50/30">
+      <Navbar />
+      <div className="flex h-[calc(100vh-64px)] relative">
+        {/* Desktop Sidebar */}
+        <div className="w-80 border-r border-purple-200/50 hidden lg:block">
+          <ProjectHistorySidebar />
+        </div>
+
+        {/* Mobile Sidebar */}
+        <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+          <SheetContent side="left" className="w-full sm:w-80 p-0">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Video Projects</SheetTitle>
+            </SheetHeader>
+            <ProjectHistorySidebar onClose={() => setIsMobileSidebarOpen(false)} />
+          </SheetContent>
+        </Sheet>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Mobile Header */}
+          <div className="lg:hidden border-b border-purple-200/50 bg-gradient-to-r from-purple-50/50 to-pink-50/50 backdrop-blur-sm p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="font-semibold text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Video Studio</h1>
+                <p className="text-xs text-muted-foreground">AI Video Generation</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setActiveTab(null)}
+              size="sm"
+              variant="outline"
+              className="gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+            >
+              <Plus className="h-4 w-4" />
+              New
+            </Button>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 overflow-y-auto">
+            <main className="container mx-auto px-4 py-6 lg:py-8">
+              {/* Header */}
+              <div className="text-center mb-8 lg:mb-12">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
+                    <Video className="h-8 w-8 text-white" />
+                  </div>
+                  <Badge variant="outline" className="px-4 py-2 bg-white/50 backdrop-blur-sm border-purple-300 text-purple-700">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Video Processing Models
+                  </Badge>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  Video Generation Studio
+                </h1>
+                <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
+                  Create stunning animated videos from text descriptions using cutting-edge AI technology. 
+                  Transform your ideas into visual stories in minutes.
+                </p>
+              </div>
+
+              {/* Statistics */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 lg:mb-12">
+                <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border-purple-500/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Success Rate</p>
+                        <p className="text-2xl lg:text-3xl font-bold text-purple-600">95%</p>
+                      </div>
+                      <div className="p-3 bg-purple-500/20 rounded-xl">
+                        <TrendingUp className="h-5 w-5 lg:h-6 lg:w-6 text-purple-600" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border-blue-500/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Avg Duration</p>
+                        <p className="text-2xl lg:text-3xl font-bold text-blue-600">30s</p>
+                      </div>
+                      <div className="p-3 bg-blue-500/20 rounded-xl">
+                        <Clock className="h-5 w-5 lg:h-6 lg:w-6 text-blue-600" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-green-500/10 to-green-600/10 border-green-500/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Quality</p>
+                        <p className="text-2xl lg:text-3xl font-bold text-green-600">HD</p>
+                      </div>
+                      <div className="p-3 bg-green-500/20 rounded-xl">
+                        <Star className="h-5 w-5 lg:h-6 lg:w-6 text-green-600" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 border-orange-500/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Processing</p>
+                        <p className="text-2xl lg:text-3xl font-bold text-orange-600">Fast</p>
+                      </div>
+                      <div className="p-3 bg-orange-500/20 rounded-xl">
+                        <Zap className="h-5 w-5 lg:h-6 lg:w-6 text-orange-600" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Enhanced Model Card */}
+              <div className="mb-8 lg:mb-12">
+                {videoProcessingModels.map((model) => (
+                  <Card 
+                    key={model.key}
+                    className="group cursor-pointer bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:via-purple-950/20 dark:to-pink-950/20 border-2 border-purple-200/50 hover:border-purple-400/70 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 overflow-hidden"
+                    onClick={() => handleTryNow(model.key)}
+                  >
+                    <CardContent className="p-6 lg:p-8">
+                      <div className="grid lg:grid-cols-3 gap-8">
+                        {/* Left Column - Main Info */}
+                        <div className="lg:col-span-2 space-y-6">
+                          <div className="flex items-start gap-4">
+                            <div className={`p-4 rounded-2xl bg-gradient-to-r ${model.color} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                              <model.icon className="h-8 w-8 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h3 className="font-bold text-2xl lg:text-3xl">{model.title}</h3>
+                                <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
+                                  {model.badge}
+                                </Badge>
+                              </div>
+                              <p className="text-lg text-purple-600 dark:text-purple-400 font-medium mb-3">{model.titletagline}</p>
+                              <p className="text-muted-foreground leading-relaxed">{model.description}</p>
+                            </div>
+                          </div>
+
+                          {/* Features Grid */}
+                          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                            {model.features.map((feature, index) => (
+                              <div key={index} className="flex items-center gap-2 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg border border-purple-200/50">
+                                <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                                <span className="text-sm font-medium">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Action Button */}
+                          <Button 
+                            size="lg" 
+                            className="w-full lg:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-8 py-3"
+                          >
+                            <Play className="mr-2 h-5 w-5" />
+                            Start Creating Videos
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Button>
+                        </div>
+
+                        {/* Right Column - Stats & Settings */}
+                        <div className="space-y-6">
+                          {/* Performance Stats */}
+                          <Card className="bg-white/70 dark:bg-gray-800/70 border border-purple-200/50">
+                            <CardHeader className="pb-3">
+                              <CardTitle className="text-lg flex items-center gap-2">
+                                <TrendingUp className="h-5 w-5 text-purple-500" />
+                                Performance
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-xs text-muted-foreground mb-1">Success Rate</p>
+                                  <p className="text-xl font-bold text-green-500">{model.sucessrate}%</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground mb-1">Total Runs</p>
+                                  <p className="text-xl font-bold text-blue-500">{model.totalruns.toLocaleString()}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground mb-1">Speed</p>
+                                  <p className="text-lg font-semibold text-orange-500">{model.processingspeed}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground mb-1">Quality</p>
+                                  <p className="text-lg font-semibold text-purple-500">{model.outputquality}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Video Settings */}
+                          <Card className="bg-white/70 dark:bg-gray-800/70 border border-purple-200/50">
+                            <CardHeader className="pb-3">
+                              <CardTitle className="text-lg flex items-center gap-2">
+                                <Settings className="h-5 w-5 text-purple-500" />
+                                Quick Settings
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                              <div className="space-y-3">
+                                <div>
+                                  <p className="text-xs text-muted-foreground mb-1">Resolution</p>
+                                  <div className="flex gap-1">
+                                    {model.resolutions.map((res) => (
+                                      <Badge key={res} variant="outline" className="text-xs">
+                                        {res}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground mb-1">Max Duration</p>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {model.maxDuration}
+                                  </Badge>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground mb-1">Formats</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {model.compatibility.map((format) => (
+                                      <Badge key={format} variant="outline" className="text-xs">
+                                        {format}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Example Prompts Section */}
+              <div className="mb-12">
+                <div className="text-center mb-8">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <Sparkles className="h-6 w-6 text-purple-500" />
+                    <h2 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      ✨ Try These Example Prompts
+                    </h2>
+                  </div>
+                  <p className="text-muted-foreground">Get inspired with these ready-to-use video prompts</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {examplePrompts.map((prompt, index) => (
+                    <Card 
+                      key={index}
+                      className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 bg-gradient-to-br from-white to-purple-50/50 dark:from-gray-900 dark:to-purple-950/20 border-2 border-purple-200/50 hover:border-purple-400/70 group ${
+                        selectedPrompt === prompt.text ? 'ring-2 ring-purple-500 border-purple-500' : ''
+                      }`}
+                      onClick={() => handlePromptSelect(prompt.text)}
+                    >
+                      <CardContent className="p-6">
+                        <div className="space-y-4">
+                          {/* Prompt Header */}
+                          <div className="flex items-start gap-3">
+                            <div className="text-3xl">{prompt.icon}</div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge variant="outline" className="text-xs border-purple-300 text-purple-600">
+                                  {prompt.category}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {prompt.duration}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {prompt.style}
+                                </Badge>
+                              </div>
+                              <p className="text-sm leading-relaxed text-foreground">{prompt.text}</p>
+                            </div>
+                          </div>
+                          
+                          {/* Action Button */}
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="w-full group-hover:bg-purple-500 group-hover:text-white transition-all duration-200 text-purple-600 hover:text-white"
+                          >
+                            <Play className="mr-2 h-4 w-4" />
+                            Use This Prompt →
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Call to Action */}
+              <div className="text-center">
+                <Card className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 border-purple-500/30 shadow-xl">
+                  <CardContent className="py-12 px-8">
+                    <div className="max-w-2xl mx-auto space-y-6">
+                      <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl">
+                        <Sparkles className="h-10 w-10 text-white" />
+                      </div>
+                      <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Ready to Create Amazing Videos?
+                      </h3>
+                      <p className="text-muted-foreground text-lg">
+                        Transform your ideas into stunning animated videos with our AI-powered video generation technology. 
+                        Perfect for content creators, marketers, and storytellers.
+                      </p>
+                      <Button 
+                        size="lg" 
+                        className="h-14 px-8 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                        onClick={() => handleTryNow("video-generation")}
+                      >
+                        <Play className="mr-3 h-6 w-6" />
+                        Start Creating Videos
+                        <ArrowRight className="ml-3 h-6 w-6" />
                       </Button>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              </div>
+            </main>
           </div>
         </div>
+      </div>
 
-        {viewMode === "tabs" ? (
-          <Tabs value={activeTab || "video-generation"} onValueChange={setActiveTab} className="w-full">
-            <div className="mb-8">
-              <TabsList className="bg-card/50 backdrop-blur-sm border border-border/50 p-2">
-                <TabsTrigger 
-                  value="video-generation" 
-                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg px-4 py-2"
-                >
-                  <Wand2 className="h-4 w-4" />
-                  <span>Video Generation</span>
-                </TabsTrigger>
-              </TabsList>
-            </div>
-            
-            <TabsContent value="video-generation" className="space-y-6">
-              <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-                        <Wand2 className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-xl">Video Generation</CardTitle>
-                        <p className="text-muted-foreground">Create animated videos from text prompts</p>
-                      </div>
-                    </div>
-                    <Badge className="bg-purple-500/10 border-0 text-purple-600">
-                      AI Powered
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <VideoGeneration state={state} isLocked={lockedTabs["video-generation"]} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        ) : (
-          <div className="grid grid-cols-1 gap-6">
-            {videoProcessingModels.map((model) => (
-              <Card 
-                key={model.key}
-                className={`group cursor-pointer bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:scale-105 ${model.bgColor}`}
-                onClick={() => handleTryNow(model.key)}
-              >
-                <CardContent className="p-8">
-                  <div className="flex flex-col md:flex-row items-start gap-6">
-                    {/* Left side - Icon and basic info */}
-                    <div className="flex-shrink-0">
-                      <div className={`p-4 rounded-2xl bg-gradient-to-r ${model.color} shadow-lg mb-4`}>
-                        <model.icon className="h-8 w-8 text-white" />
-                      </div>
-                      <div className="space-y-2">
-                        <Badge variant="secondary" className="text-xs">
-                          {model.badge}
-                        </Badge>
-                        <p className="text-sm text-primary font-medium">{model.sucessrate}% Success Rate</p>
-                      </div>
-                    </div>
-                    
-                    {/* Right side - Content */}
-                    <div className="flex-1">
-                      <h3 className="font-bold text-2xl mb-2">{model.title}</h3>
-                      <p className="text-lg text-primary mb-4">{model.titletagline}</p>
-                      <p className="text-muted-foreground mb-6 leading-relaxed">
-                        {model.description}
-                      </p>
-                      
-                      {/* Model stats */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Total Runs</p>
-                          <p className="font-semibold">{model.totalruns}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Speed</p>
-                          <p className="font-semibold">{model.processingspeed}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Quality</p>
-                          <p className="font-semibold">{model.outputquality}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Formats</p>
-                          <p className="font-semibold">{model.compatibility.length} types</p>
-                        </div>
-                      </div>
-                      
-                      {/* Keywords and action */}
-                      <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex flex-wrap gap-2">
-                          {model.modelkeywords.map((keyword, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
-                        <Button 
-                          size="lg" 
-                          className="group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200 px-6"
-                        >
-                          Start Creating
-                          <Play className="ml-2 h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Call to Action */}
-        {!activeTab && (
-          <div className="mt-12 text-center">
-            <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 border-purple-500/20 p-8">
-              <CardContent className="space-y-6">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Sparkles className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-foreground">Ready to Create Amazing Videos?</h3>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Transform your ideas into stunning animated videos with our AI-powered video generation technology. 
-                  Perfect for content creators, marketers, and storytellers.
-                </p>
-                <Button 
-                  size="lg" 
-                  className="h-12 px-8 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  onClick={() => handleTryNow("video-generation")}
-                >
-                  Start Creating Videos
-                  <Play className="ml-2 h-5 w-5" />
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Enhanced Modal */}
-        <ModelModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          model={activeModel}
-          isFullscreen={isFullscreen}
-          onToggleFullscreen={toggleFullscreen}
-        >
-          {renderModelContent()}
-        </ModelModal>
-      </main>
+      {/* Enhanced Modal */}
+      <ModelModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        model={activeModel}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={toggleFullscreen}
+      >
+        {renderModelContent()}
+      </ModelModal>
     </div>
   );
 };
