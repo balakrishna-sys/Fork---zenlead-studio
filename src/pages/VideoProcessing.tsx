@@ -330,17 +330,18 @@ const VideoProcessing = () => {
         </div>
       </div>
 
-      {/* Project History */}
-      <div className="flex-1 min-h-0">
+      {/* Project History - Scrollable with full remaining height */}
+      <div className="flex-1 min-h-0 overflow-hidden">
         <div className="p-3 lg:p-4 pb-2 flex-shrink-0">
           <div className="flex items-center gap-2">
             <History className="h-4 w-4 text-muted-foreground" />
             <h3 className="font-medium text-sm">Recent Videos</h3>
           </div>
         </div>
-        
-        <ScrollArea className="h-full px-3 lg:px-4">
-          <div className="space-y-3 pb-4">
+
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full px-3 lg:px-4">
+            <div className="space-y-3 pb-4">
             {filteredProjects.map((project) => (
               <Card 
                 key={project.id} 
@@ -389,8 +390,9 @@ const VideoProcessing = () => {
                 <p className="text-sm text-muted-foreground">No videos found</p>
               </div>
             )}
-          </div>
-        </ScrollArea>
+            </div>
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );
