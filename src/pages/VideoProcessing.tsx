@@ -298,59 +298,60 @@ const VideoProcessing = () => {
 
   // Project History Sidebar Component
   const ProjectHistorySidebar = ({ onClose }: { onClose?: () => void }) => (
-    <div className="h-full flex flex-col bg-gradient-to-b from-purple-50/50 to-pink-50/50 dark:from-purple-950/10 dark:to-pink-950/10">
+    <div className="h-[calc(100vh-64px)] flex flex-col">
       {/* Sidebar Header */}
-      <div className="p-4 lg:p-6 border-b border-purple-200/30 dark:border-purple-800/30 flex-shrink-0">
+      <div className="p-4 lg:p-6 border-b flex-shrink-0">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
-            <Film className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+          <div className="p-2 rounded-xl bg-gradient-to-r from-primary to-primary/80">
+            <Film className="h-4 w-4 lg:h-5 lg:w-5 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="font-semibold text-base lg:text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Video Studio</h2>
-            <p className="text-xs lg:text-sm text-muted-foreground">Recent Creations</p>
+            <h2 className="font-semibold text-base lg:text-lg">AI Studio</h2>
+            <p className="text-xs lg:text-sm text-muted-foreground">Video Processing</p>
           </div>
         </div>
         
-        <Button className="w-full gap-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600" onClick={() => {setActiveTab(null); onClose?.();}}>
+        <Button className="w-full gap-2 text-sm" onClick={() => {setActiveTab(null); onClose?.();}}>
           <Plus className="h-4 w-4" />
-          New Video
+          New Project
         </Button>
       </div>
 
       {/* Search */}
-      <div className="p-3 lg:p-4 border-b border-purple-200/30 dark:border-purple-800/30 flex-shrink-0">
+      <div className="p-3 lg:p-4 border-b flex-shrink-0">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search videos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 text-sm border-purple-200/50 focus:border-purple-400"
+            className="pl-9 text-sm"
           />
         </div>
       </div>
 
-      {/* Project History */}
-      <div className="flex-1 min-h-0">
+      {/* Project History - Scrollable with full remaining height */}
+      <div className="flex-1 min-h-0 overflow-hidden">
         <div className="p-3 lg:p-4 pb-2 flex-shrink-0">
           <div className="flex items-center gap-2">
-            <History className="h-4 w-4 text-purple-500" />
-            <h3 className="font-medium text-sm text-purple-700 dark:text-purple-300">Recent Videos</h3>
+            <History className="h-4 w-4 text-muted-foreground" />
+            <h3 className="font-medium text-sm">Recent Projects</h3>
           </div>
         </div>
         
-        <ScrollArea className="h-full px-3 lg:px-4">
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-[calc(100vh-340px)] px-3 lg:px-4">
           <div className="space-y-3 pb-4">
             {filteredProjects.map((project) => (
               <Card 
                 key={project.id} 
-                className="cursor-pointer hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-200 hover:shadow-lg border-purple-200/50 dark:border-purple-800/50"
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => onClose?.()}
               >
                 <CardContent className="p-3 lg:p-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-12 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center text-white text-lg flex-shrink-0">
-                      {project.thumbnail}
+                    <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white flex-shrink-0">
+                      <Film className="h-3 w-3 lg:h-4 lg:w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-xs lg:text-sm truncate mb-1">{project.title}</h4>
@@ -360,12 +361,14 @@ const VideoProcessing = () => {
                           <Badge className={`text-xs ${getStatusColor(project.status)}`}>
                             {project.status}
                           </Badge>
-                          <Badge variant="outline" className="text-xs border-purple-300 text-purple-600">
-                            {project.resolution}
-                          </Badge>
                           <Badge variant="outline" className="text-xs">
-                            {project.duration}
+                            Video
                           </Badge>
+                          {project.duration && (
+                            <Badge variant="outline" className="text-xs">
+                              {project.duration}
+                            </Badge>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
@@ -385,12 +388,13 @@ const VideoProcessing = () => {
             
             {filteredProjects.length === 0 && (
               <div className="text-center py-8">
-                <Film className="h-8 w-8 lg:h-12 lg:w-12 text-purple-300 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">No videos found</p>
+                <Film className="h-8 w-8 lg:h-12 lg:w-12 text-muted-foreground/50 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">No projects found</p>
               </div>
             )}
           </div>
-        </ScrollArea>
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );
@@ -400,13 +404,13 @@ const VideoProcessing = () => {
       <Navbar />
       <div className="flex h-[calc(100vh-64px)] relative">
         {/* Desktop Sidebar */}
-        <div className="w-80 border-r border-purple-200/50 hidden lg:block">
+        <div className="w-80 border-r bg-card/30 backdrop-blur-sm hidden lg:block h-full overflow-hidden">
           <ProjectHistorySidebar />
         </div>
 
         {/* Mobile Sidebar */}
         <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-          <SheetContent side="left" className="w-full sm:w-80 p-0">
+          <SheetContent side="left" className="w-full sm:w-80 p-0 h-full overflow-hidden">
             <SheetHeader className="sr-only">
               <SheetTitle>Video Projects</SheetTitle>
             </SheetHeader>
@@ -417,7 +421,7 @@ const VideoProcessing = () => {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Mobile Header */}
-          <div className="lg:hidden border-b border-purple-200/50 bg-gradient-to-r from-purple-50/50 to-pink-50/50 backdrop-blur-sm p-4 flex items-center justify-between">
+          <div className="lg:hidden border-b bg-card/50 backdrop-blur-sm p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
@@ -428,15 +432,15 @@ const VideoProcessing = () => {
                 <Menu className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="font-semibold text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Video Studio</h1>
-                <p className="text-xs text-muted-foreground">AI Video Generation</p>
+                <h1 className="font-semibold text-lg">AI Studio</h1>
+                <p className="text-xs text-muted-foreground">Video Processing</p>
               </div>
             </div>
             <Button
               onClick={() => setActiveTab(null)}
               size="sm"
               variant="outline"
-              className="gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+              className="gap-2"
             >
               <Plus className="h-4 w-4" />
               New
