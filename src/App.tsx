@@ -134,6 +134,7 @@ const App = () => {
                     </AuthenticatedRoute>
                   }
                 />
+                {/* Audio Processing Routes */}
                 <Route
                   path="/audio"
                   element={
@@ -143,7 +144,24 @@ const App = () => {
                   }
                 />
                 <Route
+                  path="/audio/*"
+                  element={
+                    <AuthenticatedRoute>
+                      <AudioProcessing />
+                    </AuthenticatedRoute>
+                  }
+                />
+                {/* Text Processing Routes */}
+                <Route
                   path="/text"
+                  element={
+                    <AuthenticatedRoute>
+                      <TextProcessing />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/text/*"
                   element={
                     <AuthenticatedRoute>
                       <TextProcessing />
