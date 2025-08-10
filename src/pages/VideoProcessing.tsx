@@ -430,7 +430,7 @@ const VideoProcessing = () => {
                 <Menu className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="font-semibold text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Video Studio</h1>
+                <h1 className="font-semibold text-lg">Video Studio</h1>
                 <p className="text-xs text-muted-foreground">AI Video Generation</p>
               </div>
             </div>
