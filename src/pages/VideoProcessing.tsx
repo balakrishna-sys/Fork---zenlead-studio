@@ -344,7 +344,7 @@ const VideoProcessing = () => {
             {filteredProjects.map((project) => (
               <Card 
                 key={project.id} 
-                className="cursor-pointer hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-200 hover:shadow-lg border-purple-200/50 dark:border-purple-800/50"
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => onClose?.()}
               >
                 <CardContent className="p-3 lg:p-4">
