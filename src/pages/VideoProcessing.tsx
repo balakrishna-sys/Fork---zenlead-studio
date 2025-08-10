@@ -311,7 +311,7 @@ const VideoProcessing = () => {
           </div>
         </div>
         
-        <Button className="w-full gap-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600" onClick={() => {setActiveTab(null); onClose?.();}}>
+        <Button className="w-full gap-2 text-sm" onClick={() => {setActiveTab(null); onClose?.();}}>
           <Plus className="h-4 w-4" />
           New Video
         </Button>
@@ -701,7 +701,7 @@ const VideoProcessing = () => {
                             className="w-full group-hover:bg-purple-500 group-hover:text-white transition-all duration-200 text-purple-600 hover:text-white"
                           >
                             <Play className="mr-2 h-4 w-4" />
-                            Use This Prompt ��
+                            Use This Prompt →
                           </Button>
                         </div>
                       </CardContent>
