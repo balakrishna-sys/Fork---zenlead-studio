@@ -120,7 +120,7 @@ export const AIStudioBase = ({
 
   // Project History Sidebar Component
   const ProjectHistorySidebar = ({ onClose }: { onClose?: () => void }) => (
-    <div className="h-full flex flex-col">
+    <div className="h-[calc(100vh-64px)] flex flex-col">
       {/* Sidebar Header */}
       <div className="p-4 lg:p-6 border-b flex-shrink-0">
         <div className="flex items-center gap-3 mb-4">
@@ -179,17 +179,18 @@ export const AIStudioBase = ({
         </div>
       </div>
 
-      {/* Project History - Scrollable with fixed height */}
-      <div className="flex-1 min-h-0">
+      {/* Project History - Scrollable with full remaining height */}
+      <div className="flex-1 min-h-0 overflow-hidden">
         <div className="p-3 lg:p-4 pb-2 flex-shrink-0">
           <div className="flex items-center gap-2">
             <History className="h-4 w-4 text-muted-foreground" />
             <h3 className="font-medium text-sm">Recent Projects</h3>
           </div>
         </div>
-        
-        <ScrollArea className="h-full px-3 lg:px-4">
-          <div className="space-y-3 pb-4">
+
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-[calc(100vh-340px)] px-3 lg:px-4">
+            <div className="space-y-3 pb-4">
             {filteredProjects.map((project) => {
               const traditionalModel = traditionalModels.find(m => m.key === project.type);
               const contentPreset = contentPresets.find(p => p.id === project.type);
@@ -244,8 +245,9 @@ export const AIStudioBase = ({
                 <p className="text-sm text-muted-foreground">No projects found</p>
               </div>
             )}
-          </div>
-        </ScrollArea>
+            </div>
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );
@@ -255,13 +257,13 @@ export const AIStudioBase = ({
       <Navbar />
       <div className="flex h-[calc(100vh-64px)] relative">
         {/* Desktop Sidebar */}
-        <div className="w-80 border-r bg-card/30 backdrop-blur-sm hidden lg:block">
+        <div className="w-80 border-r bg-card/30 backdrop-blur-sm hidden lg:block h-full overflow-hidden">
           <ProjectHistorySidebar />
         </div>
 
         {/* Mobile Sidebar */}
         <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-          <SheetContent side="left" className="w-full sm:w-80 p-0">
+          <SheetContent side="left" className="w-full sm:w-80 p-0 h-full overflow-hidden">
             <SheetHeader className="sr-only">
               <SheetTitle>Project History</SheetTitle>
             </SheetHeader>
