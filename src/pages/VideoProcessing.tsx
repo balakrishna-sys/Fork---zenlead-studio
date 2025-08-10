@@ -306,7 +306,7 @@ const VideoProcessing = () => {
             <Film className="h-4 w-4 lg:h-5 lg:w-5 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="font-semibold text-base lg:text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Video Studio</h2>
+            <h2 className="font-semibold text-base lg:text-lg">Video Studio</h2>
             <p className="text-xs lg:text-sm text-muted-foreground">Recent Creations</p>
           </div>
         </div>
@@ -701,7 +701,7 @@ const VideoProcessing = () => {
                             className="w-full group-hover:bg-purple-500 group-hover:text-white transition-all duration-200 text-purple-600 hover:text-white"
                           >
                             <Play className="mr-2 h-4 w-4" />
-                            Use This Prompt →
+                            Use This Prompt ��
                           </Button>
                         </div>
                       </CardContent>
