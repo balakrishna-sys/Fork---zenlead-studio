@@ -680,7 +680,7 @@ const VideoProcessing = () => {
                             <div className="text-3xl">{prompt.icon}</div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
-                                <Badge variant="outline" className="text-xs border-purple-300 text-purple-600">
+                                <Badge variant="outline" className="text-xs">
                                   {prompt.category}
                                 </Badge>
                                 <Badge variant="outline" className="text-xs">
