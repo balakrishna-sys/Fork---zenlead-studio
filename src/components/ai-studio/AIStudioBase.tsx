@@ -120,7 +120,7 @@ export const AIStudioBase = ({
 
   // Project History Sidebar Component
   const ProjectHistorySidebar = ({ onClose }: { onClose?: () => void }) => (
-    <div className="h-[calc(100vh-64px)] flex flex-col">
+    <div className="h-full flex flex-col">
       {/* Sidebar Header */}
       <div className="p-4 lg:p-6 border-b flex-shrink-0">
         <div className="flex items-center gap-3 mb-4">
